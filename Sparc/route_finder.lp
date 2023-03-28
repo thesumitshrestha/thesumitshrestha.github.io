@@ -14,7 +14,7 @@ predicates
     % neighbouring_route(X, Y) denotes X is the neighbouring route of Y if X and Y are in same route
     neighbouring_route(#location, #location).
     
-    % previous_route(X, Y) denotes X is the previous route of Y.
+    % previous_route(Y, X) denotes X is the previous route of Y.
     previous_route(#location, #location).
     
     % next_route(X, Y) denotes X is the next_route of Y if X and Y are in the same route.
@@ -150,7 +150,11 @@ rules
     -next_route(X,Y) :- not next_route(X, Y).
     
     % Neighbour Route
-    neighbouring_route(X, Y) :- next_route(X, Y), previous_route(X, Y).
+    neighbouring_route(X, Y) :- next_route(X, Y).
+    
+    neighbouring_route(X, Y) :- previous_route(Y, X).
     
     % Not Neighbour Route
-    -neighbouring_route(X, Y) :- not next_route(X, Y), not previous_route(X, Y).
+    -neighbouring_route(X, Y) :- not next_route(X, Y).
+    
+    -neighbouring_route(X, Y) :- not previous_route(Y, X).
