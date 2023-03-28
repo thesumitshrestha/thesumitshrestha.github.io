@@ -1,321 +1,734 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Route Finder - Texas Tech University - Lubbock</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
-    <link rel="stylesheet" href="style.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="//www.aa.com/jquery.js"></script>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="Citibus is the public transportation provider for the City of Lubbock.">
 
-    <script src="fuzzyset.js"></script>
+    <title>Home | Citibus</title>
 
-    <style>
-      #voice-input-btn {
-        background-color: #4caf50;
-        border: none;
-        color: white;
-        padding: 10px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 4px 2px;
-        cursor: pointer;
-        border-radius: 50%;
-      }
+    <!--- Favicon Citibus --->
+    <link rel="apple-touch-icon" sizes="57x57" href="assets/icons/favicon-cb/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="assets/icons/favicon-cb/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="assets/icons/favicon-cb/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="assets/icons/favicon-cb/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="assets/icons/favicon-cb/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="assets/icons/favicon-cb/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="assets/icons/favicon-cb/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="assets/icons/favicon-cb/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/favicon-cb/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="assets/icons/favicon-cb/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-cb/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="assets/icons/favicon-cb/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-cb/favicon-16x16.png">
+    <link rel="manifest" href="assets/icons/favicon-cb/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="assets/icons/favicon-cb/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
 
-      #answer-box {
-        border: 1px solid black;
-        padding: 10px;
-        margin-top: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Ask a Question</h1>
-    <div id="answer"></div>
-    <button id="voice-input-btn"><i class="fa fa-microphone"></i></button>
-    <input type="text" id="text-input" placeholder="Type your question..." />
-    <button id="submit-btn">Submit</button>
-    <div id="answer-box"></div>
+    
 
-    <script>
-      var isClose = true;
-      const stopwords = [
-        'of',
-        'the',
-        'a',
-        'an',
-        'any',
-        'is',
-        'can',
-        'who',
-        'what',
-        'why',
-        'whom',
-      ];
-      // var editor =
-      //   'sorts\n' +
-      //   '    #people = {tommy, alex, john, daniel, sarah, peter, lino}.\n' +
-      //   '    #gender = {male, female}.\n' +
-      //   'predicates\n' +
-      //   '    advisor(#people, #people).\n' +
-      //   '    friend(#people, #people).\n' +
-      //   '    gender(#people,#gender).\n' +
-      //   '    spanish(#people).\n' +
-      //   'rules\n' +
-      //   '    advisor(tommy, alex).\n' +
-      //   '    advisor(tommy, john).\n' +
-      //   '    advisor(tommy, daniel).\n' +
-      //   '    advisor(tommy, lino).\n' +
-      //   '    friend(lino, alex).\n' +
-      //   '    friend(lino, peter).\n' +
-      //   '    friend(sarah, alex).\n' +
-      //   '    friend(X, Y):-friend(Y,X).\n' +
-      //   '    gender(tommy,male).\n' +
-      //   '    gender(lino,male).\n' +
-      //   '    gender(sarah, female).\n' +
-      //   '    spanish(lino).';
+    
+            
+    
+<!-- Included CDN Stylesheets -->
+    <link rel="stylesheet" href="https://unpkg.com/flickity%402.3.0/dist/flickity.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/3d2ebb41ae.css">
 
-      // var editor =
-      // 'sorts\n' +
-      // '   #people = {john, bill, jim, joan, sam}.' +
-      // 'predicates\n' +
-      // '   father(#people, #people).' +
-      // '   mother(#people, #people).' +
-      // '   dad(#people, #people).' +
-      // '   parent(#people, #people).' +
-      // 'rules\n' +
-      // '   father(john, bill).' +
-      // '   mother(joan, bill). ' +
-      // '   mother(joan, sam). ' +
-      // '   dad(X, Y) :-  father(X, Y).' +
-      // '   parent(X, Y) :- father(X, Y).' +
-      // '   parent(X, Y) :- mother(X, Y).';
-      var editor =
-        'sorts\n' +
-        '   #professor = {jingjing_yao, micheal_shin, tommy_dang, susan_mengel, yuanlin_zhang, bashir_morshed, lu_wei, lin_chen, sunho_lim}.\n' +
-        '   #course_code = {cs5120, cs5341, cs5352, cs5363, cs5364, cs5368, cs5373, cs5374, cs5375, cs5381, cs5383, cs5384, cs5386, cs5392}.\n' +
-        '   #course_title = {computer_science_graduate_seminar, pattern_recognition, advanced_operating_system_design, software_project_management, information_retrieval, intelligent_system, software_modeling_and_architecture, software_verification_and_validation, computer_system_organization_and_architecture, analysis_of_algorithm, theory_of_automata, logic_for_computer_scientists, wireless_networking_and_mobile_computing, reinforcement_learning}.\n' +
-        '   #student = {akankshya_rajput, raj_dhaubanjar, sumit_shrestha}.\n' +
-        'predicates\n' +
-        '   course(#course_code, #course_title).\n' +
-        '   instructor(#professor, #course_code).\n' +
-        '   instructor_of(#professor, #student).\n' +
-        '   same_course(#professor, #course_code).\n' +
-        '   course_code_professor(#professor, #course_title).\n' +
-        'rules\n' +
-        '   course(cs5120, computer_science_graduate_seminar).\n' +
-        '   instructor(jingjing_yao, cs5120).\n' +
-        '   course(cs5341, pattern_recognition).\n' +
-        '   instructor(micheal_shin, cs5341).\n' +
-        '   course(cs5352, advanced_operating_system_design).\n' +
-        '   instructor(tommy_dang, cs5352).\n' +
-        '   course(cs5352, advanced_operating_system_design).\n' +
-        '   instructor(tommy_dang, cs5352).\n' +
-        '   course(cs5352, advanced_operating_system_design).\n' +
-        '   instructor(tommy_dang, cs5352).\n' +
-        '   course(cs5363, software_project_management).\n' +
-        '   instructor(micheal_shin, cs5363).\n' +
-        '   course(cs5364, information_retrieval).\n' +
-        '   instructor(micheal_shin, cs5364).\n' +
-        '   course(cs5368, intelligent_system).\n' +
-        '   instructor(yuanlin_zhang, cs5368).\n' +
-        '   course(cs5373, software_modeling_and_architecture).\n' +
-        '   instructor(micheal_shin, cs5373).\n' +
-        '   course(cs5374, software_verification_and_validation).' +
-        '   instructor(micheal_shin, cs5374).\n' +
-        '   course(cs5375, computer_system_organization_and_architecture).\n' +
-        '   instructor(bashir_morshed, cs5375).\n' +
-        '   course(cs5381, analysis_of_algorithm).\n' +
-        '   instructor(lu_wei, cs5381).\n' +
-        '   course(cs5383, theory_of_automata).\n' +
-        '   instructor(lin_chen, cs5383).\n' +
-        '   course(cs5384, logic_for_computer_scientists).\n' +
-        '   instructor(yuanlin_zhang, cs5384).\n' +
-        '   course(cs5386, wireless_networking_and_mobile_computing).\n' +
-        '   instructor(sunho_lim, cs5386).\n' +
-        '   course(cs5392, reinforcement_learning).\n' +
-        '   instructor(susan_mengel, cs5392).';
+    <!-- Font Awesome -->
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
 
-      // sorts
-      var contstring = editor.split('sorts\n')[1].split('predicates\n');
-      var sortstring = contstring[0].split('.');
-      sortstring.splice(-1, 1);
-      var sorts = {};
-      sortstring = sortstring
-        .map((d) => d.replace(/\n/g, '').trim())
-        .forEach((d) => {
-          var par = d.split('=');
-          sorts[par[0].replace(/#/, '').trim()] = par[1]
-            .replace(/{|}/g, '')
-            .split(',')
-            .map((w) => w.trim());
-        });
-      // predicates
-      var predicates = {};
-      contstring = contstring[1].split('rules\n');
-      sortstring = contstring[0].split('.');
-      sortstring.splice(-1, 1);
-      sortstring.forEach((d) => {
-        var part = d.replace(/\n/g, '').trim().split('(');
-        var func = part[0];
-        predicates[func] = {};
-        var par = part[1].split(',').map((e) => e.replace(/#|\)/g, '').trim());
-        var par1 = sorts[par[0]].slice();
-        par1.push('X');
-        par.splice(0, 1);
-        par1.forEach((e) => {
-          var strinh = (e == 'X' ? '' : e + ' ') + func;
-          predicates[func][strinh] = func + '(' + e + ')';
-          par.forEach((par2) => {
-            var temp = sorts[par2].slice();
-            temp.push('X');
-            temp.forEach((t) => {
-              var strinh =
-                (e == 'X' ? '' : e + ' ') + func + (t == 'X' ? '' : ' ' + t);
-              // if (strinh != fubnc)
-              predicates[func][strinh] = func + '(' + e + ',' + t + ')';
-            });
-          });
-        });
-      });
+    <!-- Calendar Inputs -->
+    <!-- <link rel="stylesheet" href="assets/build/css/calendar-styles.css"> -->
 
-      var all_predicates = [];
-      for (var key1 in predicates) {
-        if (predicates.hasOwnProperty(key1)) {
-          for (var key2 in predicates[key1]) {
-            if (predicates[key1].hasOwnProperty(key2))
-              all_predicates.push(key2);
-          }
-        }
-      }
-      all_predicates.push('speak spanish'); // extra terms
-      a = FuzzySet(all_predicates);
+    <!-- Main Compiled CSS -->
+    <link rel="stylesheet" href="assets/build/css/style.css">
 
-      console.log(all_predicates);
+    
 
-      // Speech recognition API
-      const SpeechRecognition =
-        window.SpeechRecognition || window.webkitSpeechRecognition;
-      const recognition = new SpeechRecognition();
-      recognition.lang = 'en-US';
+</head>
 
-      // Get DOM elements
-      const answerDiv = document.querySelector('#answer');
-      const voiceBtn = document.getElementById('voice-input-btn');
-      const textInput = document.getElementById('text-input');
-      const submitBtn = document.getElementById('submit-btn');
-      const answerBox = document.getElementById('answer-box');
 
-      submitBtn.addEventListener('click', () => {
-        const question = textInput.value;
-        if (question.trim() === '') {
-          answerBox.innerHTML = 'Please ask a question.';
-          return;
-        }
-        var trim_script = question.split(' ');
-        trim_script = trim_script.filter((f) => !stopwords.includes(f));
-        var queryQues = a.get(trim_script.join(' '), null, 0.5);
-        getAnswer(queryQues);
-      });
+<body>
+    <div id="app">
+        <header class="header " >
+            <div class="header__container">
+                <div class="header__container--left">
+                    <div class="header__logo">
+                        <a href="#">
+                            <img src="assets/images/1e653bce1d9a6192b31287915237ec48e0b780a1.svg" alt="Citibus Header logo"/>
+                        </a>
+                    </div>
+                </div>
+                <div class="header__container--mid">
+                    <nav class="main-navigation">
+                        <ul>
+                            <!-- Add dropdown__support class to enable a dropdown menu -->
+                            <li class="menu__item">
+                                <a href="#"> Schedules + Maps </a>
+                                <div class="dropdown__menu hidden">
+                                    <ul>
+                                        <li> <a class="js-scroll-trigger" href="#"> Fixed Route Schedule &amp; Map </a> </li>
+                                        <li> <a class="js-scroll-trigger" href="#">TTU Route Schedule &amp; Map</a> </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="menu__item dropdown__support">
+                                <a href="#"> Services </a>
+                                <div class="dropdown__menu">
+                                    <ul>
+                                        <li> <a class="js-scroll-trigger" href="#"> Citibus OnDemand </a> </li>
+                                        <li> <a class="js-scroll-trigger" href="#"> CitiAccess </a> </li>
+                                        <li> <a class="js-scroll-trigger" href="#"> Charters </a> </li>
+                                        <li> <a class="js-scroll-trigger" href="#"> Citikids, Summer & CitiU Passes </a> </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="menu__item dropdown__support">
+                                <a href="#">Resources</a>
+                                <div class="dropdown__menu">
+                                    <ul>
+                                        <li> <a class="js-scroll-trigger" href="#"> FAQs </a> </li>
+                                        <li> <a class="js-scroll-trigger" href="#"> How To Ride </a> </li>
+                                        <li> <a class="js-scroll-trigger" href="#"> Trip Planner </a> </li>
+                                        <li> <a class="js-scroll-trigger" href="#"> Doing Business with Citibus </a> </li>
+                                        <li> <a class="js-scroll-trigger" href="#"> Civil Rights </a> </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="menu__item dropdown__support">
+                                <a href="#">About Citibus </a>
+                                <div class="dropdown__menu">
+                                    <ul>
+                                        <li> <a class="js-scroll-trigger" href="#">Contact Citibus</a> </li>
+                                        <li> <a class="js-scroll-trigger" href="#">Staff Directory</a> </li>
+                                        <li> <a class="js-scroll-trigger" href="#">Citibus Job Opportunities </a> </li>
+                                        <li> <a class="js-scroll-trigger" href="#">Advertising Opportunities </a> </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="header__container--right">
+                    <div class="language__buttons buttons">
+                        <button class="global__icon"> <img src="assets/img/004-global.svg"/> <span class="language_text notranslate"> EN </span>
+                        </button>
+                </div>
+                    <div class="language__buttons__menu">
+                            <a href="#" class="language__button active slide-down notranslate" data-lang="English" data-text="EN">English</a>
+                            <a href="#" class="language__button slide-down notranslate" data-lang="Spanish" data-text="SP">Spanish</a>
+                    </div>
+                    <a class="cta__btn border__dark" href="#">
+                        Buy Passes
+                    </a>
 
-      // Handle speech recognition
-      recognition.onresult = (event) => {
-        const resultIndex = event.resultIndex;
-        const transcript = event.results[resultIndex][0].transcript;
-        textInput.value = transcript;
+                    <!-- Mobile Nav Trigger -->
+                    <button class="mobile-trigger">
+                        <span> </span>
+                        <span> </span>
+                        <span> </span>
+                    </button>
+                </div>
+            </div>
+            <div class="mobile__navigation">
+                <div class="mobile__navigation__wrapper">
+                    <div class="mobile__navigation--main">
+                        <ul>
+                            <li class="menu--item">
+                                <a href="#"> Schedules + Maps </a>
+                                <div class="dropdown__menu hidden">
+                                    <ul>
+                                        <li> <a class="js-scroll-trigger mobile-link" href="#"> Fixed Route Schedule &amp; Map </a> </li>
+                                        <li> <a class="js-scroll-trigger mobile-link" href="#">TTU Route Schedule &amp; Map</a> </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="dropdown__support">
+                                <button> Services </button>
+                                    <div class="dropdown__menu">
+                                        <ul>
+                                            <li> <a class="js-scroll-trigger mobile-link" href="#"> Citibus OnDemand </a> </li>
+                                            <li> <a class="js-scroll-trigger mobile-link" href="#"> CitiAccess </a> </li>
+                                            <li> <a class="js-scroll-trigger mobile-link" href="#"> NiteRide </a> </li>
+                                            <li> <a class="js-scroll-trigger mobile-link" href="#"> Citikids, Summer & CitiU Passes </a> </li>
+                                            <li> <a class="js-scroll-trigger mobile-link" href="#"> Charters </a> </li>
 
-        var trim_script = transcript.split(' ');
-        trim_script = trim_script.filter((f) => !stopwords.includes(f));
-        var queryQues = a.get(trim_script.join(' '), null, 0.5);
-        console.log(queryQues);
-        getAnswer(queryQues);
-      };
 
-      // Handle click on voice input button
-      function startSpeechRecognition() {
-        recognition.start();
-      }
-      voiceBtn.addEventListener('click', startSpeechRecognition);
+                                        </ul>
+                                </div>
+                            </li>
+                            <li class="dropdown__support">
+                                <button> Resources </button>
+                                    <div class="dropdown__menu">
+                                    <ul>
+                                        <li> <a class="js-scroll-trigger mobile-link" href="#"> Resources </a> </li>
+                                        <li> <a class="js-scroll-trigger mobile-link" href="#"> FAQs </a> </li>
+                                        <li> <a class="js-scroll-trigger mobile-link" href="#"> How To Ride </a> </li>
+                                        <li> <a class="js-scroll-trigger mobile-link" href="#"> Trip Planner </a> </li>
+                                        <li> <a class="js-scroll-trigger mobile-link" href="#"> Doing Business with Citibus </a> </li>
+                                        <li> <a class="js-scroll-trigger mobile-link" href="#"> Civil Rights </a> </li>
+                                    </ul>
+                                </div></li>
+                            <li class="dropdown__support">
+                                <button> About Citibus </button>
+                                    <div class="dropdown__menu">
+                                    <ul>
+                                        <li> <a class="js-scroll-trigger mobile-link" href="#">About Citibus</a> </li>
+                                        <li> <a class="js-scroll-trigger mobile-link" href="#">Contact Citibus</a> </li>
+                                        <li> <a class="js-scroll-trigger mobile-link" href="#">Staff Directory</a> </li>
+                                        <li> <a class="js-scroll-trigger mobile-link" href="#">Citibus Job Opportunities </a> </li>
+                                        <li> <a class="js-scroll-trigger mobile-link" href="#">Advertising Opportunities </a> </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
 
-      function getAnswer(question) {
-        if (question != null) {
-          var mainkey = question[0][1].replace('speak ', '');
-          var answerarr = mainkey.split(' ');
-          var key1 = '';
-          answerarr.forEach((d) => {
-            key1 = predicates[d] != undefined ? d : key1;
-          });
-          //var key1 = answerarr.length>2? answerarr[1]:answerarr[0];
-          var key2 = mainkey;
-          console.log(key1 + '-' + key2);
-          console.log(predicates[key1][key2]);
+                    <div class="mobile__navigation--secondary">
+                        <div class="mobile__navigation--secondary--language">
+                            <button class="global__icon">
+                                <img src="assets/img/004-global.svg" alt="Language English"> <span class="language_name notranslate"> EN </span>
+                            </button>
+                            <div class="language__buttons__menu animated">
+                                <a href="#" class="language__button active slide-down" data-lang="English" data-text="EN">English</a>
+                                <a href="#" class="language__button slide-down" data-lang="Spanish" data-text="SP">Spanish</a>
+                            </div>
+                        </div>
+                        <a class="cta__btn border__dark" href="#"> Buy Passes </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <section class="banner hp_banner fixed-route_banner" style="background-image: url(assets/images/f91099088f0ceda10b4eb97034796a6abf4d32931350.jpg);">
+            <div class="container">
+               <div class="banner__text">
+                  <h1 class="fade-in-normal sequence">We go wherever life takes you... </h1>
+                  <p class="fade-in-normal sequence">Whether you&#039;re headed to work, class, out running errands, or enjoying downtown Lubbock, we&#039;re here to get you where life leads you. So, grab your favorite book, tune into that new podcast, or just take a second to relax with us. We&#039;ve got you.</p>
+               </div>
+            </div>
+        </section>
+        <section class="top__buckets section section__content">
+            <div class="container">
+               <div class="bucket__column__row">
+                  <div class="bucket__column">
+                     <a class="bucket__item" href="#">
+                        <div class="bucket__item--icon">
+                           <img src="assets/images/c36d422d0eb84977d004b3ea4c73acff65f42b68.svg" alt="icon location">
+                        </div>
+                        <div class="bucket__item--title">
+                           <p>Citibus Bus Passes</p>
+                        </div>
+                     </a>
+                  </div>
+                  <div class="bucket__column">
+                     <a class="bucket__item" href="#">
+                        <div class="bucket__item--icon">
+                           <img src="assets/images/c3ff4bfe41ecd3f36e6aa01085d2201ed9e220f4.svg" alt="icon location">
+                        </div>
+                        <div class="bucket__item--title">
+                           <p>Citibus Bus Routes</p>
+                        </div>
+                     </a>
+                  </div>
+                  <div class="bucket__column">
+                     <a class="bucket__item" href="#">
+                        <div class="bucket__item--icon">
+                           <img src="assets/images/583f181bafec79d9a0f313b9e9c462408f1b6397.svg" alt="icon location">
+                        </div>
+                        <div class="bucket__item--title">
+                           <p>Frequently Asked Questions</p>
+                        </div>
+                     </a>
+                  </div>
+               </div>
+            </div>
+        </section>
+        <div class="split__section__graphic split__section section section__content advertising-opportunities__intro__section bottom__row__graphic  no-pad-top   no-pad-bottom ">
+            <div class="container">
+               <!--- Section's Top Row -->
+               <div class="split__section__graphic__row">
+                  <!-- Image Column -->
+                  <div class="section__col img__col col__40">
+                     <img src="assets/images/8e50ba6f7b6311d74814f0a8a81ca5324e4fdd681350.jpg" alt="In Bus Signage Advertising"/>
+                  </div>
+                  <!-- Text Column -->
+                  <div class="section__col text__col col__60 list__plain list__small__text">
+                     <div class="section__col__inner">
+                        <h2>Plan Your Trip With GoPass</h2>
+                        <p><strong>Find out when your bus arrives and plan your travel in real time. </strong></p>
+                        <p><img src="https://s3.us-east-2.amazonaws.com/files.myprimitive.cloud/08fa3b7b93aedb1cd3506923388b79ab.png"></p>
+                        <div class="contact__info">
+                           <p>Citibus&#039; Fixed Route System operates from 5:35am through 7:45pm, Monday-Friday, and from 6:35am to 7:55pm on Saturdays. For booking, download the GoPass app on the App Store or Google Play, be sure to select Citibus as your preferred agency. </p>
+                           <p><br></p>
+                           <p><a href="#" rel="noopener noreferrer"><img src="https://s3.us-east-2.amazonaws.com/files.myprimitive.cloud/0d24e1e2d3385b60b8000cca39570552.png" width="135"></a><a href="#" rel="noopener noreferrer"><img src="https://s3.us-east-2.amazonaws.com/files.myprimitive.cloud/392c78651d894a6398578bfdee6e3b3a.png" width="137"></a></p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+        </div>
+        <div class="split__section__graphic split__section section section__content advertising-opportunities__intro__section  no-pad-top   no-pad-bottom ">
+            <div class="container">
+               <!--- Section's Top Row -->
+               <div class="split__section__graphic__row">
+                  <!-- Image Column -->
+                  <!-- Text Column -->
+                  <div class="section__col text__col col__60 list__plain list__small__text">
+                     <div class="section__col__inner">
+                        <h2>Book An On-Demand Shared Ride With Citibus On-Demand</h2>
+                        <p><strong>Get a shared ride with our microtransit vans. </strong></p>
+                        <p><img src="https://s3.us-east-2.amazonaws.com/files.myprimitive.cloud/3abf38c0023f1849d2c9ed00638b0630.png"></p>
+                        <p>Citibus On-Demand is a rideshare service that prioritizes ADA and CitiAccess/Medicaid approved individuals while also providing service to all individuals that request a Citibus On-Demand ride to fill in the gaps of <span style="color: rgb(69, 73, 73);">hourly fixed route services.</span></p>
+                        <p><a href="#" style="background-color: rgb(255, 255, 255);"><u><img src="https://s3.us-east-2.amazonaws.com/files.myprimitive.cloud/c31ead5a632deb79820919d0e8c0b97b.png" width="135" style=""></u></a><a href="#" rel="noopener noreferrer"><img src="https://s3.us-east-2.amazonaws.com/files.myprimitive.cloud/0788d2fcf65f7962bdc7fb4775ddcd0a.png" width="135"></a></p>
+                        <div class="contact__info">
+                        </div>
+                     </div>
+                  </div>
+                  <div class="section__col img__col col__40">
+                     <img src="assets/images/768a93ca0f54c42e76da44f3da52af962e47bdbc1350.jpg" alt="In Bus Signage Advertising"/>
+                  </div>
+               </div>
+            </div>
+        </div>
+        <section class="cta__bar cta__bar__image section__content" id="job-opportunities">
+            <div class="cta__bar__wrapper">
+               <div class="cta__bar__image__graphic"><img src="assets/img/RedPattern.svg" alt="Map Your Route Graphic"></div>
+               <div class="cta__bar--left container">
+                  <h3 class="section__heading">View the latest news and updates below</h3>
+                  <p class="section__ptext"></p>
+               </div>
+               <div class="cta__bar--right"><a href="#">
+                  Rider Updates
+                  </a>
+               </div>
+            </div>
+        </section>
+        <div class="split__section section section__content split__text__large  ">
+            <div class="container">
+               <!-- Main Intro Text & Content -->
+               <!-- Bottom Blocks -->
+               <div class="section__col__text__link--blocks toggle-language-content" data-language="english">
+                  <div class="blocks__item">
+                     <div class="blocks__item__inner">
+                        <a class="blocks__item--link" href="#">
+                        Citibus Service Changes Effective January 2nd, 2023
+                        </a>
+                     </div>
+                  </div>
+                  <div class="blocks__item">
+                     <div class="blocks__item__inner">
+                        <a class="blocks__item--link" href="#">
+                        Chris Mandrell: Top 40 Under 40 | Mass Transit
+                        </a>
+                     </div>
+                  </div>
+                  <div class="blocks__item">
+                     <div class="blocks__item__inner">
+                        <a class="blocks__item--link" href="#">
+                        Citibus Awarded To Buy Hybrid Electric Buses
+                        </a>
+                     </div>
+                  </div>
+               </div>
+            </div>
+        </div>
+        <section class="resources__slider section section__content">
+            <div class="section__bg"></div>
+            <div class="section__container">
+               <div class="resources__slider--top">
+                  <div class="top__text">
+                     <h2 class="fade-in-normal sequence">
+                        Resources For Your Ride
+                     </h2>
+                     <p class="fade-in-normal sequence">
+                        Whether your questions are about how much a ride costs or how to do business with us, we&#039;ve got the answers you need.
+                     </p>
+                  </div>
+                  <div class="top__slider__nav slide-Left">
+                     <button class="slider__dot active">
+                     <span class="slider__dot__dot"> </span>
+                     <span class="slider__dot__text">Lubbock Planning Department</span>
+                     </button>
+                     <button class="slider__dot">
+                     <span class="slider__dot__dot"> </span>
+                     <span class="slider__dot__text">Lubbock Chamber of Commerce</span>
+                     </button>
+                     <button class="slider__dot">
+                     <span class="slider__dot__dot"> </span>
+                     <span class="slider__dot__text">Lubbock Bid Sync</span>
+                     </button>
+                     <button class="slider__dot">
+                     <span class="slider__dot__dot"> </span>
+                     <span class="slider__dot__text">City Of Lubbock</span>
+                     </button>
+                  </div>
+               </div>
+               <div class="resources__slider--bottom">
+                  <div class="empty__column"> </div>
+                  <div class="slider__container">
+                     <div class="resources__slider--slider slide-Up">
+                        <div class="slider__item">
+                           <div class="slider__item__background">
+                              <img src="assets/images/41c146805d79c55eb1ea6d368be6d7dc955a270f1350.jpg" alt="Lubbock Planning Department"/>
+                           </div>
+                           <div class="slider__item--bottom">
+                              <a href="#">
+                                 <p> Lubbock Planning Department <span class="arrow-icon"> </span>
+                                 </p>
+                              </a>
+                           </div>
+                        </div>
+                        <div class="slider__item">
+                           <div class="slider__item__background">
+                              <img src="assets/images/2bf1f130ffc61b6cae40dbe52adb2a3ec608ede61350.jpg" alt="Lubbock Chamber of Commerce"/>
+                           </div>
+                           <div class="slider__item--bottom">
+                              <a href="#">
+                                 <p> Lubbock Chamber of Commerce <span class="arrow-icon"> </span>
+                                 </p>
+                              </a>
+                           </div>
+                        </div>
+                        <div class="slider__item">
+                           <div class="slider__item__background">
+                              <img src="assets/images/32b35be433f42d7b5d44d01f6a9dfdcbf8be8fdb1350.jpg" alt="Lubbock Bid Sync"/>
+                           </div>
+                           <div class="slider__item--bottom">
+                              <a href="#">
+                                 <p> Lubbock Bid Sync <span class="arrow-icon"> </span>
+                                 </p>
+                              </a>
+                           </div>
+                        </div>
+                        <div class="slider__item">
+                           <div class="slider__item__background">
+                              <img src="assets/images/0e21f0358b625acc29ac3ed6230d2c5607ce21fd1350.jpg" alt="City Of Lubbock"/>
+                           </div>
+                           <div class="slider__item--bottom">
+                              <a href="#">
+                                 <p> City Of Lubbock <span class="arrow-icon"> </span>
+                                 </p>
+                              </a>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+        </section>
+        <section class="map__route section section__content ">
+            <div class="container">
+                <form action="#">
+                    <div class="map__route__inner">
+                       <div class="inner__left__wrapper">
+                          <div class="sectiection__graphic  hidden ">
+                             <img src="assets/img/RedPattern.svg" alt="Map Your Route Graphic"/>
+                          </div>
+                          <div class="section__text">
+                             <input type="text" class="section__heading" placeholder="Map your route" required>
+                             <!-- <h3 class="section__heading">Map your route</h3> -->
+                          </div>
+                       </div>
+                       <div class="inner__right__wrapper">
+                          <div class="inner__right__wrapper--button">
+                             <button type="sunmit" >
+                             Don&#039;t miss a stop. Start planning here
+                             </button>
+                          </div>
+                       </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+        <div class="contact__modal hidden  contact--form--popup">
+            <div class="contact__modal__background"> </div>
+            <div class="contact__modal__wrapper">
+               <div class="contact__header">
+                  <h2 class="modal-title">Contact Us Today! </h2>
+                  <button class="close__btn close--modal modal-toggle">
+                  <i class="fa fa-times" aria-hidden="true">  </i>
+                  </button>
+               </div>
+               <div class="contact__body">
+                  <!-- Form -->
+                  <primitive-form form="2f8eafc0-a50d-42a8-8d7a-7ea380963902">
+                     <template v-slot:success>
+                        <div class="form__success">
+                           <h3> Thank you for your submission. We will get back to you in regards to your submission. </h3>
+                        </div>
+                     </template>
+                     <template v-slot:error>
+                        <div class="form__error">
+                           <h3> Form Error. Sorry, your submission has not been sent. </h3>
+                        </div>
+                     </template>
+                     <template v-slot:form>
+                        <div class="form__row">
+                           <!-- Name -->
+                           <div class="form__col">
+                              <label for="name">Name  <span class="red-required"> * </span></label>
+                              <input type="text" class="form__field" id="name" name="name" required />
+                           </div>
+                           <!-- Phone -->
+                           <div class="form__col">
+                              <label for="contact__phone">Phone Number <span class="red-required"> * </span></label>
+                              <input  type="tel" class="form__field" id="contact__phone" name="phone" required />
+                           </div>
+                        </div>
+                        <div class="form__row">
+                           <div class="form__col">
+                              <label for="email">Email <span class="red-required"> * </span></label>
+                              <input  type="email" class="form__field" id="email" name="email"  required />
+                           </div>
+                        </div>
+                        <div class="form__row feedback__row">
+                           <!-- Feedback Type --->
+                           <div class="form__col">
+                              <label for="feedback__type">Feedback Type <span class="red-required"> * </span> </label>
+                              <select class="form__field feedback__selection" id="feedback__type" name="feedback_type" required >
+                                 <option value="" disabled selected > Please Select One </option>
+                                 <option value="Commendation"> Commendation </option>
+                                 <option value="Complaint"> Complaint </option>
+                                 <option value="Question"> Question </option>
+                                 <option value="Suggestion"> Suggestion </option>
+                                 <option value="Other">Other </option>
+                              </select>
+                           </div>
+                           <!-- Sub Type --->
+                           <div class="form__col sub-type hidden__field" style="">
+                              <label for="sub__type">Sub-Type <span class="red-required"> * </span> </label>
+                              <select class="form__field" id="sub__type" name="sub_type" required >
+                                 <option value="" disabled selected> Please Select One </option>
+                                 <!-- Commendation Options -->
+                                 <option value="Helpful Citibus Employee">Helpful Citibus Employee</option>
+                                 <option value="Service">Service </option>
+                                 <!-- Complaint Options -->
+                                 <option value="Fixed Route"> Fixed Route </option>
+                                 <option value="Fixed Route"> Texas Tech </option>
+                                 <option value="Facilities"> Facilities </option>
+                                 <option value="Employees"> Employees </option>
+                                 <option value="CitiAccess"> CitiAccess </option>
+                                 <!-- Question Options -->
+                                 <option value="Lost and Found">Lost & Found</option>
+                                 <option value="Service Information">Service Information </option>
+                                 <option value="Policy Information Request">Policy Information Request</option>
+                                 <!-- Suggestion Options -->
+                                 <option value="Facilities">Facilities</option>
+                                 <option value="Service">Service</option>
+                                 <option value="Bus Stop/Shelter">Bus Stop/Shelter</option>
+                                 <option value="Other">Other</option>
+                              </select>
+                           </div>
+                        </div>
+                        <!-- Message -->
+                        <div class="form__row">
+                           <div class="form__col form__col--full">
+                              <label for="contact__message">Message </label>
+                              <textarea class="form__field" id="contact__message" name="message">  </textarea>
+                           </div>
+                        </div>
+                        <div class="form-submit">
+                           <button class="cta__btn border__blue" id="btn_submit">Submit</button>
+                        </div>
+                     </template>
+                  </primitive-form>
+               </div>
+               <svg xmlns="http://www.w3.org/2000/svg" width="454.923" height="162.363" viewBox="0 0 454.923 162.363">
+                  <g id="Group_16" data-name="Group 16" transform="translate(454.923 162.363) rotate(180)">
+                     <path id="Path_4" data-name="Path 4" d="M1.152.287C50.62,46.063,48.775,118.32,0,161.789c.326.888,1.088.462,1.622.462q31.546.038,63.1.025a5.863,5.863,0,0,0,2.916-.559c17.3-9.279,31.272-22.1,40.7-39.394a86.439,86.439,0,0,0,10.152-32.752c1.642-15.914-1.6-30.813-8.2-45.242-4.694-10.267-11.621-18.758-19.445-26.685C83.954,10.667,75.749,5.559,67.33.732A5.059,5.059,0,0,0,64.731,0Q33.318.033,1.909.031a3.578,3.578,0,0,0-.757.256" transform="translate(336.012 0)" fill="#454949"/>
+                     <path id="Path_5" data-name="Path 5" d="M1.149.289C50.62,46.065,48.775,118.322,0,161.792c.325.885,1.088.462,1.622.462q31.546.038,63.1.025a5.837,5.837,0,0,0,2.916-.562c17.3-9.276,31.269-22.1,40.7-39.391a86.443,86.443,0,0,0,10.152-32.753c1.641-15.917-1.6-30.813-8.2-45.244-4.694-10.266-11.621-18.755-19.445-26.684C83.954,10.667,75.749,5.559,67.33.732A5.085,5.085,0,0,0,64.731,0Q33.319.033,1.909.033a3.471,3.471,0,0,0-.76.256" transform="translate(231.718 0.008)" fill="#454949"/>
+                     <path id="Path_6" data-name="Path 6" d="M1.149.289C50.62,46.065,48.775,118.322,0,161.792c.326.885,1.088.462,1.622.462q31.546.038,63.1.025a5.836,5.836,0,0,0,2.916-.562c17.3-9.276,31.27-22.1,40.7-39.391a86.439,86.439,0,0,0,10.152-32.753c1.642-15.917-1.6-30.813-8.2-45.244-4.694-10.266-11.621-18.755-19.445-26.684C83.954,10.667,75.749,5.559,67.33.732A5.085,5.085,0,0,0,64.731,0Q33.319.033,1.909.033a3.473,3.473,0,0,0-.76.256" transform="translate(129.468 0.008)" fill="#454949"/>
+                     <rect id="Rectangle_9" data-name="Rectangle 9" width="168.837" height="162.362" transform="translate(0 0)" fill="#454949"/>
+                  </g>
+               </svg>
+            </div>
+        </div>
+        <footer class="footer section section__content vue-footer-section">
+            <div class="container">
+            <div class="footer__top">
+                <div class="footer__top__left__column footer__top__column">
+                    <div class="footer__logo"><img src="assets/images/20757fb38f1636dff10ada236a1d3c8a72b64f2a.svg" alt="Footer Logo"></div>
+                    <p class="footer__ptext">
+                    <p><span style="color: rgba(69, 73, 73, 0.82);">Citibus is the public transportation provider for the City of Lubbock.</span></p>
+                    </p> 
+                    <div class="footer__contact">
+                        <ul>
+                        <li class="footer__contact--location footer__contact--item">
+                            <div class="icon"><img src="assets/img/004-location.svg" alt="location" class="footer__icon"></div>
+                            <div class="contact--item--text">
+                                <p><a href="#" rel="noopener noreferrer" style="color: rgb(4, 7, 7);">801 Texas Ave. | Lubbock, Texas 79401</a></p>
+                            </div>
+                        </li>
+                        <li class="footer__contact--phone footer__contact--item">
+                            <div class="icon"><img src="assets/img/002-phone-call.svg" alt="phone" class="footer__icon"></div>
+                            <div class="contact--item--text">
+                                <p><a href="#" rel="noopener noreferrer" style="color: rgb(4, 7, 7);">806-775-3640&nbsp;</a></p>
+                            </div>
+                        </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer__top__right__column footer__top__column">
+                    <div class="footer__top__right__column__inner--col">
+                        <h4> Services </h4>
+                        <div class="footer__links"><a href="#"> Schedules &amp; Maps </a> <a href="#" class="charter__request__form--trigger"> Charter Request </a> <a href="#" class="file-upload-url"> Complaint Form </a></div>
+                    </div>
+                    <div class="footer__top__right__column__inner--col">
+                        <h4> Rider Resources </h4>
+                        <div class="footer__links"><a href="#">  Bus Tracking </a> <a href="#">FAQs </a> <a href="#">  Civil Rights </a> <a href="#">  Purchase Bus Passes </a></div>
+                    </div>
+                    <div class="footer__top__right__column__inner--col">
+                        <h4>About Citibus</h4>
+                        <div class="footer__links"><a href="#"> Staff Directory </a> <a href="#"> Job Opportunities </a> <a href="#"> Advertising </a> <a href="#"> Doing Business with Citibus </a></div>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="footer__bottom">
+            <div class="container">
+                <div class="footer__bottom__wrapper">
+                    <div class="footer__bottom--left">
+                        <div class="copyright__info">
+                        <p> Citibus © Copyright 2023. All rights reserved.  |  <a href="#">Terms &amp; Conditions/Privacy Policy</a> | <a href="#"> Crafted by Primitive</a>, <a href="#"> Forged in Bind. </a></p>
+                        </div>
+                    </div>
+                    <div class="footer__bottom--right">
+                        <div class="social__info"><a href="#"><img src="assets/img/002-twitter.svg" alt="twitter icon"> <img src="assets/img/002-twitter-Hover.svg" alt="twitter icon" class="icon__hover"></a> <a href="#"><img src="assets/img/003-youtube.svg" alt="youtube icon"> <img src="assets/img/003-youtube-Hover.svg" alt="twitter icon" class="icon__hover"></a> <a href="#"><img src="assets/img/001-facebook.svg" alt="facebook icon"> <img src="assets/img/001-facebook-Hover.svg" alt="twitter icon" class="icon__hover"></a> <a href="#"><img src="assets/img/instagram.svg" alt="Citibus Lubbock Instagram"> <img src="assets/img/instagram-hover.svg" alt="Instagram Hover icon" class="icon__hover"></a> <a href="#"><img src="assets/img/linkedin.svg" alt="Citibus Lubbock LinkedIn"> <img src="assets/img/linkedin-hover.svg" alt="LinkedIn Hover Icon" class="icon__hover"></a></div>
+                        <div class="partners__info"><a href="#"><img src="assets/img/texas-tech-logo-tiny.png" alt="City of Lubbock logo"></a> <a href="#"><img src="assets/img/lubbock-city-logo.png" alt="City of Lubbock logo"></a></div>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="charter__request__form__modal">
+            <div class="modal">
+                <div class="modal-overlay"></div>
+                <div class="modal-wrapper modal-transition">
+                    <div class="popup__form__modal__wrapper">
+                        <div class="contact__header">
+                        <h2 class="modal-title">Charter Request Form</h2>
+                        <button class="close__btn"><i aria-hidden="true" class="fa fa-times"></i></button>
+                        </div>
+                        <div class="contact__disclaimer">
+                        <p class="contact__disclaimer--btn"> View Disclaimer </p>
+                        <p class="contact__disclaimer--text"> Due to the Federal regulations, when Citibus receives a request for a charter we cannot simply agree to provide the service. Citibus will get the details of the service that is being requested and will email the information to all private charter companies listed in our geographic area. If any of the private charter companies indicate to us that they are interested in providing the service, Citibus will not be able to provide the service for any reason. The private charter companies that have expressed interest in the service will contact you to work out the details of your service. In order for this process to take place, Citibus must have at least 4 days notice on charter requests.
+                        </p>
+                        </div>
+                        <div class="contact__body">
+                        <div>
+                            <!----> <!----> 
+                            <form method="post" id="contact-form">
+                                <input type="hidden" name="form" value="1e7f4e38-a704-4678-aebe-660567c43a3c"> <input autocomplete="disabled" type="text" name="primitive_bot_check" style="position: absolute; opacity: 0; z-index: -9; left: -9999px;"> 
+                                <div class="form__row">
+                                    <div class="form__col">
+                                    <label for="client-business-organization"> Client / Business Organization <span class="red-required"> * </span></label> <input type="text" id="client-business-organization" name="client___business_organization" required="required" class="form__field"> 
+                                    <div class="form-control-feedback">This field is required.</div>
+                                    </div>
+                                    <div class="form__col">
+                                    <label for="charter-contact-info"> Charter Contact Information <span class="red-required"> * </span></label> <input type="text" id="charter-contact-info" name="charter_contact_information" required="required" class="form__field"> 
+                                    <div class="form-control-feedback">This field is required.</div>
+                                    </div>
+                                    <div class="form__col">
+                                    <label for="name-of-person"> Name of Person Making Request <span class="red-required"> * </span></label> <input type="text" id="name-of-person" name="name_of_person_making_request" required="required" class="form__field"> 
+                                    <div class="form-control-feedback">This field is required.</div>
+                                    </div>
+                                    <div class="form__col">
+                                    <label for="contact__phone">Phone Number <span class="red-required"> * </span></label> <input type="tel" id="contact__phone" name="phone_number" placeholder="000.000.0000" required="required" class="form__field"> 
+                                    <div class="form-control-feedback">Enter a valid phone number.</div>
+                                    </div>
+                                </div>
+                                <div class="form__row">
+                                    <div class="form__col form__col--full">
+                                    <label for="address"> Address <span class="red-required"> * </span></label> <input type="text" id="address" name="address" required="required" class="form__field"> 
+                                    <div class="form-control-feedback">This field is required.</div>
+                                    </div>
+                                </div>
+                                <div class="form__row">
+                                    <div class="form__col">
+                                    <label for="city"> City <span class="red-required"> * </span></label> <input type="text" id="city" name="city" required="required" class="form__field"> 
+                                    <div class="form-control-feedback">This field is required.</div>
+                                    </div>
+                                    <div class="form__col">
+                                    <label for="zip"> Zip <span class="red-required"> * </span></label> <input type="text" id="zip" name="zip_code" required="required" class="form__field"> 
+                                    <div class="form-control-feedback">This field is required.</div>
+                                    </div>
+                                </div>
+                                <div class="form__row">
+                                    <div class="form__col">
+                                    <label for="event-description"> Event Description <span class="red-required"> * </span></label> <input type="text" id="event-description" name="event_description" required="required" class="form__field"> 
+                                    <div class="form-control-feedback">This field is required.</div>
+                                    </div>
+                                    <div class="form__col">
+                                    <label for="event-dates"> Date(s) of the Event <span class="red-required"> * </span></label> <input type="text" id="event-dates" name="date_s__of_the_event" placeholder="mm/dd/yyyy" required="required" class="form__field"> 
+                                    <div class="form-control-feedback">This field is required.</div>
+                                    </div>
+                                    <div class="form__col">
+                                    <label for="event-contact-person"> Contact Person for Event Day <span class="red-required"> * </span></label> <input type="text" id="event-contact-person" name="contact_person_for_event_day" required="required" class="form__field"> 
+                                    <div class="form-control-feedback">This field is required.</div>
+                                    </div>
+                                    <div class="form__col">
+                                    <label for="cell-phone-contact"> Cell Phone Number of Contact Person <span class="red-required"> * </span></label> <input type="text" id="cell-phone-contact" name="cell_phone_number_of_contact_person" required="required" class="form__field"> 
+                                    <div class="form-control-feedback">This field is required.</div>
+                                    </div>
+                                </div>
+                                <div class="form__row">
+                                    <div class="form__col form__col--full">
+                                    <p class="label__top"> Vehicle Type <span class="helper__text"> (select all that apply) </span></p>
+                                    <div class="form__col--full--inner">
+                                        <div class="checkbox__item"><input type="checkbox" id="bus" name="vehicle_type" value="Bus"> <label for="bus"> Bus (seats 35-42) </label></div>
+                                        <div class="checkbox__item"><input type="checkbox" id="trolley" name="vehicle_type" value="Trolley"> <label for="trolley"> Trolley (seats 25-28) </label></div>
+                                        <div class="checkbox__item"><input type="checkbox" id="van" name="vehicle_type" value="Van"> <label for="van"> Van </label></div>
+                                    </div>
+                                    </div>
+                                </div>
+                                <div class="form__row">
+                                    <div class="form__col"><label for="number-of-passengers"> Number of Passengers / Attendees<span class="red-required"> * </span></label> <input type="text" id="number-of-passengers" name="number_of_passengers___attendees_" required="required" class="form__field"></div>
+                                </div>
+                                <div class="form__row">
+                                    <div class="form__col form__col--half"><label for="start-time"> Start Time <span class="red-required"> * </span></label> <input type="text" id="start-time" name="start_time" required="required" class="form__field"></div>
+                                    <div class="form__col form__col--half"><label for="end-time">End time<span class="red-required"> * </span></label> <input type="text" id="end-time" name="end_time" required="required" class="form__field"></div>
+                                </div>
+                                <div class="form__row">
+                                    <div class="form__col form__col--full">
+                                    <p class="label__top"> Will this be a continuous shuttle?  </p>
+                                    <div class="form__col--full--inner">
+                                        <div class="checkbox__item"><input type="radio" id="shuttle-yes" name="will_this_be_a_continuous_shuttle_" value="YES"> <label for="shuttle-yes">Yes</label></div>
+                                        <div class="checkbox__item"><input type="radio" id="shuttle-no" name="will_this_be_a_continuous_shuttle_" value="NO"> <label for="shuttle-no">No</label></div>
+                                    </div>
+                                    </div>
+                                </div>
+                                <div class="form__row">
+                                    <div class="form__col"><label for="pickup-location">Initial Pickup location </label> <input type="text" id="pickup-location" name="initial_pickup_location" placeholder="if multiple locations, list below" required="required" class="form__field"></div>
+                                    <div class="form__col"><label for="drop-off-location">Final Drop-off Location</label> <input type="text" id="drop-off-location" name="final_drop_off_location" placeholder="if multiple locations, list below" required="required" class="form__field"></div>
+                                </div>
+                                <div class="form__row">
+                                    <div class="form__col form__col--full"><label for="itinerary">Event Itinerary / Special Instructions
+                                    </label> <textarea id="itinerary" name="event_itinerary___special_instructions" class="form__field"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-submit"><button id="btn_submit" type="submit" value="Submit" class="cta__btn border__blue"> Submit </button></div>
+                                <!---->
+                            </form>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </footer>
+    </div> 
 
-          var data = {
-            action: 'getQuery',
-            query: predicates[key1][key2],
-            editor: editor,
-          };
+    <!-- included CDN scripts -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://unpkg.com/flickity%402.3.0/dist/flickity.pkgd.min.js"></script>
 
-          console.log(data);
 
-          $.ajax({
-            url: 'https://cors-anywhere.herokuapp.com/http://wave.ttu.edu/ajax.php',
-            type: 'POST',
-            headers: {
-              'X-Requested-With': 'XMLHttpRequest',
-            },
-            data: {
-              action: 'getQuery',
-              query: predicates[key1][key2],
-              editor: editor,
-            },
-            success: function (response) {
-              console.log(response);
-              const answer = response || 'Sorry, I could not find an answer.';
-              answerDiv.innerHTML = answer;
-              answerBox.innerHTML = answer;
-            },
-            error: function (xhr, status, error) {
-              console.log('error: ' + error);
-            },
-          });
+    <!-- Scroll Reveal Animations -->
+    <script src="https://unpkg.com/scrollreveal"></script>
 
-          //$.post("http://localhost/ajax.php", { url: "http://wave.ttu.edu/" , data:data}, function (response) {
-          // Expected response : answer sets
-          //$.post("http://localhost/ajax/ajax.js",  function (response) {
-          //$.post("http://localhost/ajaxtest.php", function (response) {
-          // $.post("https://cors-anywhere.herokuapp.com/http://wave.ttu.edu/", data, function (response) {
-
-          // console.log(response);
-
-          // var html = document.createElement("html");
-          // html.innerHTML = response;
-          // contentRan
-          // var answerstring = html.querySelector("p").textContent.replace(/X =/gm, "");
-          //  var answerarr = answerstring.split("\n");
-          //  answerarr.splice(-1,1);
-          //   console.log(answerarr);
-          //   var pre_string = "The answer to your question " + transcript + " is ";
-          //   answerstring = contentRan.answer[answerarr[0].toLowerCase().trim()]==undefined?
-          //       (pre_string + (answerarr.length==1?answerstring:(answerarr.splice(-1, 0, "and"),answerarr.join())))
-          //       : generaspeak(contentRan.answer[answerarr[0].toLowerCase().trim()]);
-          //    console.log(answerstring);
-
-          //   const answer = answerstring || 'Sorry, I could not find an answer.';
-          //   answerDiv.innerHTML = answer;
-          //   answerBox.innerHTML = answer;
-          //   console.log(answer);
-
-          // });
-        }
-      }
-    </script>
-  </body>
+    <!-- Main build JS -->
+    <script src="assets/build/js/script.js"></script>
+</body>
 </html>
