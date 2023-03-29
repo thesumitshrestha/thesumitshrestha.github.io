@@ -6,4 +6,4 @@
 
 This is a project to create intelligent agent for the course CS-5368 - Intelligent Systems using SPARC, HTML, CSS, JS and NodeJS.
 
-<img width='50%' src='https://raw.github.com/thesumitshrestha/thesumitshrestha.github.io/assets/images/readme/RouteFinderOutput.png' />
+<img width='50%' src='https://github.com/thesumitshrestha/thesumitshrestha.github.io/blob/master/assets/images/readme/RouteFinderOutput.png' />
