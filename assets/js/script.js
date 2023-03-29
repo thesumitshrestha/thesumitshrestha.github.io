@@ -92,7 +92,7 @@ submitButton.onclick = function (event) {
   setTimeout(() => {
     speak();
     // inputTxt.blur();
-  }, 1000);
+  }, 2000);
   return true;
 };
 
