@@ -8,11 +8,15 @@ body{
     display: none;
 }
 
+select{
+    display: none;
+}
+
 #processing-msg {
     margin-top: 20px;
     font-size: 24px;
 }
-#answer span{
+#answer span, #answer p{
     font-family: 'Source Sans Pro', sans-serif !important;
 }
 #answer {

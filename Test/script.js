@@ -1,8 +1,12 @@
 const synth = window.speechSynthesis;
 
-const inputForm = document.querySelector('form');
-const inputTxt = document.querySelector('.txt');
-const answerText = document.querySelector('.new_txt');
+// const inputForm = document.querySelector('form');
+// const inputTxt = document.querySelector('.txt');
+const inputTxt = document.querySelector('.query-input');
+
+const submitButton = document.getElementById('submit-btn');
+// const answerText = document.querySelector('.new_txt');
+const answerText = document.getElementById('answer');
 const voiceSelect = document.querySelector('select');
 
 const pitchValue = 1;
@@ -56,7 +60,7 @@ function speak() {
 
   if (inputTxt.value !== '') {
     // const utterThis = new SpeechSynthesisUtterance(inputTxt.value);
-    const utterThis = new SpeechSynthesisUtterance(answerText.innerHTML);
+    const utterThis = new SpeechSynthesisUtterance(answerText.innerText);
 
     utterThis.onend = function (event) {
       console.log('SpeechSynthesisUtterance.onend');
@@ -81,12 +85,15 @@ function speak() {
   }
 }
 
-inputForm.onsubmit = function (event) {
+submitButton.onclick = function (event) {
+  // inputForm.onsubmit = function (event) {
+  console.log('HERE');
   event.preventDefault();
-
-  speak();
-
-  inputTxt.blur();
+  setTimeout(() => {
+    speak();
+    // inputTxt.blur();
+  }, 1000);
+  return true;
 };
 
 voiceSelect.onchange = function () {

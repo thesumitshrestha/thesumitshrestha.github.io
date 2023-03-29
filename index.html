@@ -77,22 +77,53 @@
     <!-- Question Input -->
     <div class="search-container container mt-5 mb-5">
       <h1 class="text-center text-primary fw-bold">Ask a Question</h1>
-        <div id="answer"></div>
-        <div id="answer-box"></div>
-
-      <p class="input-container">
-        <div class="voice-text d-flex">
-          <button id="voice-input-btn">
-          <i class="fa fa-microphone"></i>
-        </button>
-        <input type="text" id="text-input" class="query-input" />
-        <label for="text-input" unselectable="on"> QUESTION </label>
-        </div>
-        
-      </p> 
-      <div class="button-container">
-        <button class="btn" id="submit-btn">SEARCH</button>
+        <p id="answer" class="new_txt"></p>
+        <p id="answer-box" class="new_txt"></p>
+        <div>
+          <form>
+            <input
+              hidden
+              type="range"
+              min="0.5"
+              max="2"
+              value="1"
+              step="0.1"
+              id="rate"
+              class="txt"
+            />
+        </form>
+        <div class="clearfix"></div>
       </div>
+      <div>
+        <input
+          hidden
+          type="range"
+          min="0"
+          max="2"
+          value="1"
+          step="0.1"
+          id="pitch"
+        />
+      </div>
+      <select disabled></select>
+
+       <form>
+        <p class="input-container">
+          <div class="voice-text d-flex">
+            <button id="voice-input-btn">
+            <i class="fa fa-microphone"></i>
+          </button>
+        
+            <input type="text" id="text-input" class="query-input" autocomplete="off" /> 
+          
+          <label for="text-input" unselectable="on"> QUESTION </label>
+          </div>
+          
+        </p> 
+      </form>
+       <div class="button-container">
+          <button class="btn" id="submit-btn">SEARCH</button>
+       </div>
   </div>
 
     <div class="input-container">
@@ -166,7 +197,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </footer>
     <!-- Footer -->
 
     <script
@@ -233,51 +264,182 @@
       // '   dad(X, Y) :-  father(X, Y).' +
       // '   parent(X, Y) :- father(X, Y).' +
       // '   parent(X, Y) :- mother(X, Y).';
-      var editor =
-        'sorts\n' +
-        '   #professor = {jingjing_yao, micheal_shin, tommy_dang, susan_mengel, yuanlin_zhang, bashir_morshed, lu_wei, lin_chen, sunho_lim}.\n' +
-        '   #course_code = {cs5120, cs5341, cs5352, cs5363, cs5364, cs5368, cs5373, cs5374, cs5375, cs5381, cs5383, cs5384, cs5386, cs5392}.\n' +
-        '   #course_title = {computer_science_graduate_seminar, pattern_recognition, advanced_operating_system_design, software_project_management, information_retrieval, intelligent_system, software_modeling_and_architecture, software_verification_and_validation, computer_system_organization_and_architecture, analysis_of_algorithm, theory_of_automata, logic_for_computer_scientists, wireless_networking_and_mobile_computing, reinforcement_learning}.\n' +
-        '   #student = {akankshya_rajput, raj_dhaubanjar, sumit_shrestha}.\n' +
-        'predicates\n' +
-        '   course(#course_code, #course_title).\n' +
-        '   instructor(#professor, #course_code).\n' +
-        '   instructor_of(#professor, #student).\n' +
-        '   same_course(#professor, #course_code).\n' +
-        '   course_code_professor(#professor, #course_title).\n' +
-        'rules\n' +
-        '   course(cs5120, computer_science_graduate_seminar).\n' +
-        '   instructor(jingjing_yao, cs5120).\n' +
-        '   course(cs5341, pattern_recognition).\n' +
-        '   instructor(micheal_shin, cs5341).\n' +
-        '   course(cs5352, advanced_operating_system_design).\n' +
-        '   instructor(tommy_dang, cs5352).\n' +
-        '   course(cs5352, advanced_operating_system_design).\n' +
-        '   instructor(tommy_dang, cs5352).\n' +
-        '   course(cs5352, advanced_operating_system_design).\n' +
-        '   instructor(tommy_dang, cs5352).\n' +
-        '   course(cs5363, software_project_management).\n' +
-        '   instructor(micheal_shin, cs5363).\n' +
-        '   course(cs5364, information_retrieval).\n' +
-        '   instructor(micheal_shin, cs5364).\n' +
-        '   course(cs5368, intelligent_system).\n' +
-        '   instructor(yuanlin_zhang, cs5368).\n' +
-        '   course(cs5373, software_modeling_and_architecture).\n' +
-        '   instructor(micheal_shin, cs5373).\n' +
-        '   course(cs5374, software_verification_and_validation).' +
-        '   instructor(micheal_shin, cs5374).\n' +
-        '   course(cs5375, computer_system_organization_and_architecture).\n' +
-        '   instructor(bashir_morshed, cs5375).\n' +
-        '   course(cs5381, analysis_of_algorithm).\n' +
-        '   instructor(lu_wei, cs5381).\n' +
-        '   course(cs5383, theory_of_automata).\n' +
-        '   instructor(lin_chen, cs5383).\n' +
-        '   course(cs5384, logic_for_computer_scientists).\n' +
-        '   instructor(yuanlin_zhang, cs5384).\n' +
-        '   course(cs5386, wireless_networking_and_mobile_computing).\n' +
-        '   instructor(sunho_lim, cs5386).\n' +
-        '   course(cs5392, reinforcement_learning).\n' +
-        '   instructor(susan_mengel, cs5392).';
+      // var editor =
+      //   'sorts\n' +
+      //   '   #professor = {jingjing_yao, micheal_shin, tommy_dang, susan_mengel, yuanlin_zhang, bashir_morshed, lu_wei, lin_chen, sunho_lim}.\n' +
+      //   '   #course_code = {cs5120, cs5341, cs5352, cs5363, cs5364, cs5368, cs5373, cs5374, cs5375, cs5381, cs5383, cs5384, cs5386, cs5392}.\n' +
+      //   '   #course_title = {computer_science_graduate_seminar, pattern_recognition, advanced_operating_system_design, software_project_management, information_retrieval, intelligent_system, software_modeling_and_architecture, software_verification_and_validation, computer_system_organization_and_architecture, analysis_of_algorithm, theory_of_automata, logic_for_computer_scientists, wireless_networking_and_mobile_computing, reinforcement_learning}.\n' +
+      //   '   #student = {akankshya_rajput, raj_dhaubanjar, sumit_shrestha}.\n' +
+      //   'predicates\n' +
+      //   '   course(#course_code, #course_title).\n' +
+      //   '   instructor(#professor, #course_code).\n' +
+      //   '   instructor_of(#professor, #student).\n' +
+      //   '   same_course(#professor, #course_code).\n' +
+      //   '   course_code_professor(#professor, #course_title).\n' +
+      //   'rules\n' +
+      //   '   course(cs5120, computer_science_graduate_seminar).\n' +
+      //   '   instructor(jingjing_yao, cs5120).\n' +
+      //   '   course(cs5341, pattern_recognition).\n' +
+      //   '   instructor(micheal_shin, cs5341).\n' +
+      //   '   course(cs5352, advanced_operating_system_design).\n' +
+      //   '   instructor(tommy_dang, cs5352).\n' +
+      //   '   course(cs5352, advanced_operating_system_design).\n' +
+      //   '   instructor(tommy_dang, cs5352).\n' +
+      //   '   course(cs5352, advanced_operating_system_design).\n' +
+      //   '   instructor(tommy_dang, cs5352).\n' +
+      //   '   course(cs5363, software_project_management).\n' +
+      //   '   instructor(micheal_shin, cs5363).\n' +
+      //   '   course(cs5364, information_retrieval).\n' +
+      //   '   instructor(micheal_shin, cs5364).\n' +
+      //   '   course(cs5368, intelligent_system).\n' +
+      //   '   instructor(yuanlin_zhang, cs5368).\n' +
+      //   '   course(cs5373, software_modeling_and_architecture).\n' +
+      //   '   instructor(micheal_shin, cs5373).\n' +
+      //   '   course(cs5374, software_verification_and_validation).' +
+      //   '   instructor(micheal_shin, cs5374).\n' +
+      //   '   course(cs5375, computer_system_organization_and_architecture).\n' +
+      //   '   instructor(bashir_morshed, cs5375).\n' +
+      //   '   course(cs5381, analysis_of_algorithm).\n' +
+      //   '   instructor(lu_wei, cs5381).\n' +
+      //   '   course(cs5383, theory_of_automata).\n' +
+      //   '   instructor(lin_chen, cs5383).\n' +
+      //   '   course(cs5384, logic_for_computer_scientists).\n' +
+      //   '   instructor(yuanlin_zhang, cs5384).\n' +
+      //   '   course(cs5386, wireless_networking_and_mobile_computing).\n' +
+      //   '   instructor(sunho_lim, cs5386).\n' +
+      //   '   course(cs5392, reinforcement_learning).\n' +
+      //   '   instructor(susan_mengel, cs5392).';
+
+      var editor = 
+      'sorts\n' +
+        '#location = {college_of_business_administration, the_republic, the_holly, indiana_village, international_cultural_center, holden_hall, student_union_building, university_library, student_recreation_center, student_wellness_center}.\n'+
+        '#route_number = {41, 42, 48}.\n'+
+        '#bus_map = {college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center, college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center, college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall}.\n'+
+
+      'predicates\n' +
+          'route(#route_number, #location).\n'+
+          
+          'same_route(#location, #location).\n'+
+          
+          'neighbouring_route(#location, #location).\n'+
+          
+          'previous_route(#location, #location).\n'+
+          
+          'next_route(#location, #location).\n'+
+
+          'center_point_route(#location).\n'+
+          
+          'starting_route(#route_number, #location).\n'+
+          
+          'ending_route(#route_number, #location).\n'+
+          
+          'fastest_route(#location, #route_number, #bus_map).\n'+
+          
+          'bus_route(#route_number, #bus_map).\n'+
+
+      'rules\n'+
+          
+          'route(48, college_of_business_administration).\n'+
+          'route(48, the_republic).\n'+
+          'route(48, the_holly).\n'+
+          'route(48, indiana_village).\n'+
+          'route(48, international_cultural_center).\n'+
+          
+          'route(42, college_of_business_administration).\n'+
+          'route(42, holden_hall).\n'+
+          'route(42, student_union_building).\n'+
+          'route(42, university_library).\n'+
+          'route(42, student_recreation_center).\n'+
+          'route(42, student_wellness_center).\n'+
+          
+          'route(41, college_of_business_administration).\n'+
+          'route(41, student_wellness_center).\n'+
+          'route(41, student_recreation_center).\n'+
+          'route(41, university_library).\n'+
+          'route(41, student_union_building).\n'+
+          'route(41, holden_hall).\n'+
+
+          'center_point_route(college_of_business_administration).\n'+
+          
+          'starting_route(41, college_of_business_administration).\n'+
+          'starting_route(42, college_of_business_administration).\n'+
+          'starting_route(48, college_of_business_administration).\n'+
+          
+          'ending_route(41, holden_hall).\n'+
+          'ending_route(42, student_wellness_center).\n'+
+          'ending_route(48, international_cultural_center).\n'+
+          
+          'previous_route(college_of_business_administration, international_cultural_center).\n'+
+          'previous_route(international_cultural_center, indiana_village).\n'+
+          'previous_route(indiana_village, the_holly).\n'+
+          'previous_route(the_holly, the_republic).\n'+
+          'previous_route(the_republic, college_of_business_administration).\n'+
+          
+          'previous_route(college_of_business_administration, student_wellness_center).\n'+
+          'previous_route(student_wellness_center, student_recreation_center).\n'+
+          'previous_route(student_recreation_center, university_library).\n'+
+          'previous_route(university_library, student_union_building).\n'+
+          'previous_route(student_union_building, holden_hall).\n'+
+          'previous_route(holden_hall, college_of_business_administration).\n'+
+          
+          'previous_route(college_of_business_administration, holden_hall).\n'+
+          'previous_route(holden_hall, student_union_building).\n'+
+          'previous_route(student_union_building, university_library).\n'+
+          'previous_route(university_library, student_recreation_center).\n'+
+          'previous_route(student_recreation_center, student_wellness_center).\n'+
+          'previous_route(student_wellness_center, college_of_business_administration).\n'+
+          
+          
+          'next_route(college_of_business_administration, the_republic).\n'+
+          'next_route(the_republic, the_holly).\n'+
+          'next_route(the_holly, indiana_village).\n'+
+          'next_route(indiana_village, international_cultural_center).\n'+
+          'next_route(international_cultural_center, college_of_business_administration).\n'+
+          
+          'next_route(college_of_business_administration, holden_hall).\n'+
+          'next_route(holden_hall, student_union_building).\n'+
+          'next_route(student_union_building, university_library).\n'+
+          'next_route(university_library, student_recreation_center).\n'+
+          'next_route(student_recreation_center, student_wellness_center).\n'+
+          'next_route(student_wellness_center, college_of_business_administration).\n'+
+          
+          'next_route(college_of_business_administration, student_wellness_center).\n'+
+          'next_route(student_wellness_center, student_recreation_center).\n'+
+          'next_route(student_recreation_center, university_library).\n'+
+          'next_route(university_library, student_union_building).\n'+
+          'next_route(student_union_building, holden_hall).\n'+
+          'next_route(holden_hall, college_of_business_administration).\n'+
+          
+          'bus_route(41, college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall).\n'+
+          'bus_route(42, college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center).\n'+
+          'bus_route(48, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).\n'+
+          
+          'fastest_route(the_republic, 48, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).\n'+
+          'fastest_route(the_holly, 48, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).\n'+
+          'fastest_route(indiana_village, 48, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).\n'+
+          'fastest_route(international_cultural_center, 48, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).\n'+
+          'fastest_route(holden_hall, 42, college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center).\n'+
+          'fastest_route(student_union_building, 42, college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center).\n'+
+          'fastest_route(university_library, 42, college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center).\n'+
+          'fastest_route(university_library, 41, college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall).\n'+
+          'fastest_route(student_recreation_center, 41, college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall).\n'+
+          'fastest_route(student_wellness_center, 41, college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall).\n'+
+          
+          '-same_route(X,Y) :- not same_route(X,Y).\n'+
+          
+          'same_route(X,Y) :- route(Z, X), route(Z, Y), X != Y.\n'+
+          
+          'next_route(X,Y) :- next_route(X, Y).\n'+
+          
+          '-next_route(X,Y) :- not next_route(X, Y).\n'+
+          
+          'neighbouring_route(X, Y) :- next_route(X, Y).\n'+
+          
+          'neighbouring_route(X, Y) :- previous_route(Y, X).\n'+
+          
+          '-neighbouring_route(X, Y) :- not next_route(X, Y).\n'+
+          
+          '-neighbouring_route(X, Y) :- not previous_route(Y, X).';
 
       // sorts
       var contstring = editor.split('sorts\n')[1].split('predicates\n');
@@ -453,6 +615,7 @@
         }
       }
     </script>
+    <script src="Test/script.js"></script>
     <script>
       var myCarousel = document.querySelector('#carouselCitiBus');
       var carousel = new bootstrap.Carousel(myCarousel, {
