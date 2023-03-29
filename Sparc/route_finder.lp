@@ -30,7 +30,7 @@ predicates
     ending_route(#route_number, #location).
     
     % fastest_route(X, Y) denotes X is the fastest route of Y.
-    fastest_route(#location, #bus_map).
+    fastest_route(#location, #route_number, #bus_map).
     
     % bus_route(X, Y) denotes X is the bus route of Y.
     bus_route(#route_number, #bus_map).
@@ -125,19 +125,19 @@ rules
     bus_route(42, college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center).
     bus_route(48, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).
     
-  
-
     % Fastest Route for X to Y
-    fastest_route(the_republic, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).
-    fastest_route(the_holly, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).
-    fastest_route(indiana_village, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).
-    fastest_route(international_cultural_center, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).
-    fastest_route(holden_hall, college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center).
-    fastest_route(student_union_building, college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center).
-    fastest_route(university_library, college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center).
-    fastest_route(university_library, college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall).
-    fastest_route(student_recreation_center, college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall).
-    fastest_route(student_wellness_center, college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall).
+     
+    % Fastest Route for X to Y
+    fastest_route(the_republic, 48, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).
+    fastest_route(the_holly, 48, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).
+    fastest_route(indiana_village, 48, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).
+    fastest_route(international_cultural_center, 48,college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).
+    fastest_route(holden_hall, 42, college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center).
+    fastest_route(student_union_building, 42, college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center).
+    fastest_route(university_library, 42, college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center).
+    fastest_route(university_library, 41, college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall).
+    fastest_route(student_recreation_center, 41, college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall).
+    fastest_route(student_wellness_center, 41,  college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall).
     
     % Not Same Route
     -same_route(X,Y) :- not same_route(X,Y).
