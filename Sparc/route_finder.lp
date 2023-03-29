@@ -125,6 +125,8 @@ rules
     bus_route(42, college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center).
     bus_route(48, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).
     
+  
+
     % Fastest Route for X to Y
     fastest_route(the_republic, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).
     fastest_route(the_holly, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).
