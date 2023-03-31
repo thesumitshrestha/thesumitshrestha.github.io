@@ -21,16 +21,16 @@ predicates
     next_route(#location, #location).
 
     % center_point_route(X) denote X is the center point of the route.
-    center_point_route(#location).
+    center_point_route(#location, #route_number).
     
     % starting_route(X, Y) denotes X is the starting route of Y.
-    starting_route(#route_number, #location).
+    starting_route(#location, #route_number).
     
     % ending_route(X, Y) denotes X is the ending route of Y.
-    ending_route(#route_number, #location).
+    ending_route(#location, #route_number).
     
     % fastest_route(X, Y) denotes X is the fastest route of Y.
-    fastest_route(#location, #route_number, #bus_map).
+    fastest_route(#route_number, #location).
     
     % bus_route(X, Y) denotes X is the bus route of Y.
     bus_route(#route_number, #bus_map).
@@ -63,7 +63,7 @@ rules
     % Center Point of every route
     center_point_route(college_of_business_administration, 41).
     center_point_route(college_of_business_administration, 42).
-    center_point_route(college_of_business_administration, 43).
+    center_point_route(college_of_business_administration, 48).
     
     % Starting Location of each route
     starting_route(college_of_business_administration, 41).
@@ -128,18 +128,16 @@ rules
     bus_route(48, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).
     
     % Fastest Route for X to Y
-     
-    % Fastest Route for X to Y
-    fastest_route(college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center, the_republic).
-    fastest_route(college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center, the_holly).
-    fastest_route(college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center, indiana_village).
-    fastest_route(college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center, international_cultural_center).
-    fastest_route(college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center, holden_hall).
-    fastest_route(college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center, student_union_building).
-    fastest_route(college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center, university_library).
-    fastest_route(college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall, university_library).
-    fastest_route(college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall, student_recreation_center).
-    fastest_route(college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall, student_wellness_center).
+    fastest_route(48, the_republic).
+    fastest_route(48, the_holly).
+    fastest_route(48, indiana_village).
+    fastest_route(48, international_cultural_center).
+    fastest_route(42, holden_hall).
+    fastest_route(42, student_union_building).
+    fastest_route(42, university_library).
+    fastest_route(41, university_library).
+    fastest_route(41, student_recreation_center).
+    fastest_route(41, student_wellness_center).
     
     % Not Same Route
     -same_route(X,Y) :- not same_route(X,Y).
@@ -159,6 +157,9 @@ rules
     neighbouring_route(X, Y) :- previous_route(X, Y).
     
     % Not Neighbour Route
-    -neighbouring_route(X, Y) :- not next_route(X, Y).
+    -neighbouring_route(X, Y) :- not next_route(X, Y), not previous_route(X, Y).
+    % -neighbouring_route(X, Y) :- not previous_route(X, Y).
     
-    -neighbouring_route(X, Y) :- not previous_route(X, Y).
+    
+    
+    

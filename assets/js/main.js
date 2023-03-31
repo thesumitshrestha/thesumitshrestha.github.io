@@ -24,10 +24,10 @@ var editor =
   'neighbouring_route(#location, #location).\n' +
   'previous_route(#location, #location).\n' +
   'next_route(#location, #location).\n' +
-  'center_point_route(#location).\n' +
-  'starting_route(#route_number, #location).\n' +
-  'ending_route(#route_number, #location).\n' +
-  'fastest_route(#location, #route_number, #bus_map).\n' +
+  'center_point_route(#location, #route_number).\n' +
+  'starting_route(#location, #route_number).\n' +
+  'ending_route(#location, #route_number).\n' +
+  'fastest_route(#route_number, #location).\n' +
   'bus_route(#route_number, #bus_map).\n' +
   'rules\n' +
   'route(48, college_of_business_administration).\n' +
@@ -47,68 +47,69 @@ var editor =
   'route(41, university_library).\n' +
   'route(41, student_union_building).\n' +
   'route(41, holden_hall).\n' +
-  'center_point_route(college_of_business_administration).\n' +
-  'starting_route(41, college_of_business_administration).\n' +
-  'starting_route(42, college_of_business_administration).\n' +
-  'starting_route(48, college_of_business_administration).\n' +
-  'ending_route(41, holden_hall).\n' +
-  'ending_route(42, student_wellness_center).\n' +
-  'ending_route(48, international_cultural_center).\n' +
-  'previous_route(college_of_business_administration, international_cultural_center).\n' +
-  'previous_route(international_cultural_center, indiana_village).\n' +
-  'previous_route(indiana_village, the_holly).\n' +
-  'previous_route(the_holly, the_republic).\n' +
-  'previous_route(the_republic, college_of_business_administration).\n' +
-  'previous_route(college_of_business_administration, student_wellness_center).\n' +
-  'previous_route(student_wellness_center, student_recreation_center).\n' +
-  'previous_route(student_recreation_center, university_library).\n' +
-  'previous_route(university_library, student_union_building).\n' +
-  'previous_route(student_union_building, holden_hall).\n' +
-  'previous_route(holden_hall, college_of_business_administration).\n' +
-  'previous_route(college_of_business_administration, holden_hall).\n' +
-  'previous_route(holden_hall, student_union_building).\n' +
-  'previous_route(student_union_building, university_library).\n' +
-  'previous_route(university_library, student_recreation_center).\n' +
-  'previous_route(student_recreation_center, student_wellness_center).\n' +
-  'previous_route(student_wellness_center, college_of_business_administration).\n' +
-  'next_route(college_of_business_administration, the_republic).\n' +
-  'next_route(the_republic, the_holly).\n' +
-  'next_route(the_holly, indiana_village).\n' +
-  'next_route(indiana_village, international_cultural_center).\n' +
-  'next_route(international_cultural_center, college_of_business_administration).\n' +
-  'next_route(college_of_business_administration, holden_hall).\n' +
-  'next_route(holden_hall, student_union_building).\n' +
-  'next_route(student_union_building, university_library).\n' +
-  'next_route(university_library, student_recreation_center).\n' +
-  'next_route(student_recreation_center, student_wellness_center).\n' +
-  'next_route(student_wellness_center, college_of_business_administration).\n' +
+  'center_point_route(college_of_business_administration, 41).\n' +
+  'center_point_route(college_of_business_administration, 42).\n' +
+  'center_point_route(college_of_business_administration, 48).\n' +
+  'starting_route(college_of_business_administration, 41).\n' +
+  'starting_route(college_of_business_administration, 42).\n' +
+  'starting_route(college_of_business_administration, 48).\n' +
+  'ending_route(holden_hall, 41).\n' +
+  'ending_route(student_wellness_center, 42).\n' +
+  'ending_route(international_cultural_center, 48).\n' +
+  'next_route(college_of_business_administration, international_cultural_center).\n' +
+  'next_route(international_cultural_center, indiana_village).\n' +
+  'next_route(indiana_village, the_holly).\n' +
+  'next_route(the_holly, the_republic).\n' +
+  'next_route(the_republic, college_of_business_administration).\n' +
   'next_route(college_of_business_administration, student_wellness_center).\n' +
   'next_route(student_wellness_center, student_recreation_center).\n' +
   'next_route(student_recreation_center, university_library).\n' +
   'next_route(university_library, student_union_building).\n' +
   'next_route(student_union_building, holden_hall).\n' +
   'next_route(holden_hall, college_of_business_administration).\n' +
+  'next_route(college_of_business_administration, holden_hall).\n' +
+  'next_route(holden_hall, student_union_building).\n' +
+  'next_route(student_union_building, university_library).\n' +
+  'next_route(university_library, student_recreation_center).\n' +
+  'next_route(student_recreation_center, student_wellness_center).\n' +
+  'next_route(student_wellness_center, college_of_business_administration).\n' +
+  'previous_route(college_of_business_administration, the_republic).\n' +
+  'previous_route(the_republic, the_holly).\n' +
+  'previous_route(the_holly, indiana_village).\n' +
+  'previous_route(indiana_village, international_cultural_center).\n' +
+  'previous_route(international_cultural_center, college_of_business_administration).\n' +
+  'previous_route(college_of_business_administration, holden_hall).\n' +
+  'previous_route(holden_hall, student_union_building).\n' +
+  'previous_route(student_union_building, university_library).\n' +
+  'previous_route(university_library, student_recreation_center).\n' +
+  'previous_route(student_recreation_center, student_wellness_center).\n' +
+  'previous_route(student_wellness_center, college_of_business_administration).\n' +
+  'previous_route(college_of_business_administration, student_wellness_center).\n' +
+  'previous_route(student_wellness_center, student_recreation_center).\n' +
+  'previous_route(student_recreation_center, university_library).\n' +
+  'previous_route(university_library, student_union_building).\n' +
+  'previous_route(student_union_building, holden_hall).\n' +
+  'previous_route(holden_hall, college_of_business_administration).\n' +
   'bus_route(41, college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall).\n' +
   'bus_route(42, college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center).\n' +
   'bus_route(48, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).\n' +
-  'fastest_route(the_republic, 48, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).\n' +
-  'fastest_route(the_holly, 48, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).\n' +
-  'fastest_route(indiana_village, 48, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).\n' +
-  'fastest_route(international_cultural_center, 48, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).\n' +
-  'fastest_route(holden_hall, 42, college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center).\n' +
-  'fastest_route(student_union_building, 42, college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center).\n' +
-  'fastest_route(university_library, 42, college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center).\n' +
-  'fastest_route(university_library, 41, college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall).\n' +
-  'fastest_route(student_recreation_center, 41, college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall).\n' +
-  'fastest_route(student_wellness_center, 41, college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall).\n' +
+  'fastest_route(48, the_republic).\n' +
+  'fastest_route(48, the_holly).\n' +
+  'fastest_route(48, indiana_village).\n' +
+  'fastest_route(48, international_cultural_center).\n' +
+  'fastest_route(42, holden_hall).\n' +
+  'fastest_route(42, student_union_building).\n' +
+  'fastest_route(42, university_library).\n' +
+  'fastest_route(41, university_library).\n' +
+  'fastest_route(41, student_recreation_center).\n' +
+  'fastest_route(48, student_wellness_center).\n' +
   '-same_route(X,Y) :- not same_route(X,Y).\n' +
   'same_route(X,Y) :- route(Z, X), route(Z, Y), X != Y.\n' +
   'next_route(X,Y) :- next_route(X, Y).\n' +
   '-next_route(X,Y) :- not next_route(X, Y).\n' +
   'neighbouring_route(X, Y) :- next_route(X, Y).\n' +
-  'neighbouring_route(X, Y) :- previous_route(Y, X).\n' +
-  '-neighbouring_route(X, Y) :- not next_route(X, Y).\n' +
-  '-neighbouring_route(X, Y) :- not previous_route(Y, X).';
+  'neighbouring_route(X, Y) :- previous_route(X, Y).\n' +
+  '-neighbouring_route(X, Y) :- not next_route(X, Y), not previous_route(X, Y).';
 
 // sorts
 var contstring = editor.split('sorts\n')[1].split('predicates\n');
