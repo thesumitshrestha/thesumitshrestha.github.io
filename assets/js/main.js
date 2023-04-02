@@ -114,6 +114,7 @@ var editor =
 // sorts
 var contstring = editor.split('sorts\n')[1].split('predicates\n');
 var sortstring = contstring[0].split('.');
+
 sortstring.splice(-1, 1);
 var sorts = {};
 sortstring = sortstring
@@ -125,6 +126,7 @@ sortstring = sortstring
       .split(',')
       .map((w) => w.trim());
   });
+
 // predicates
 var predicates = {};
 contstring = contstring[1].split('rules\n');
@@ -164,7 +166,6 @@ for (var key1 in predicates) {
 }
 all_predicates.push('speak spanish'); // extra terms
 a = FuzzySet(all_predicates);
-
 console.log(all_predicates);
 
 // Speech recognition API
