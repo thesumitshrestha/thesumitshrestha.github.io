@@ -270,7 +270,7 @@ function getAnswer(question) {
         if (sparcNew.indexOf(' X ') > -1) {
           console.log('Inside IF Loop');
           firstAnswer = sparcNew[1]?.replace('X', '');
-          firstAnswer = firstAnswer.replace('<br>', '');
+          firstAnswer = firstAnswer.replaceAll('<br>', '');
         } else {
           console.log('Inside ELSE');
           firstAnswer = sparcNew[0];
@@ -290,28 +290,28 @@ function getAnswer(question) {
             ' of ' +
             secondVariable?.replace('_', ' ') +
             ' is </br>' +
-            firstAnswer?.replace('_', ' ') +
+            firstAnswer?.replaceAll('_', ' ') +
             ' and ' +
-            secondAnswer?.replace('_', ' ');
+            secondAnswer?.replaceAll('_', ' ');
           $('.answer-container').show();
         } else if (firstVariable != 'X') {
           answerDiv.innerHTML =
             firstAnswer?.replace('<br>\n<br>', '').toUpperCase() +
             ', ' +
-            firstVariable?.replace('_', ' ') +
+            firstVariable?.replaceAll('_', ' ') +
             ' and ' +
-            secondVariable?.replace('_', ' ') +
+            secondVariable?.replaceAll('_', ' ') +
             ' are the ' +
-            relation_name?.replace('_', ' ');
+            relation_name?.replaceAll('_', ' ');
           $('.answer-container').show();
         } else {
           answerDiv.innerHTML =
             'The ' +
             relation_name?.replace('_', ' ') +
             ' of ' +
-            secondVariable?.replace('_', ' ') +
+            secondVariable?.replaceAll('_', ' ') +
             ' is ' +
-            firstAnswer?.replace('_', ' ');
+            firstAnswer?.replaceAll('_', ' ');
           $('.answer-container').show();
         }
       },
