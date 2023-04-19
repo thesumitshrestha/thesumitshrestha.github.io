@@ -1,11 +1,8 @@
 const synth = window.speechSynthesis;
 
-// const inputForm = document.querySelector('form');
-// const inputTxt = document.querySelector('.txt');
 const inputTxt = document.querySelector('.query-input');
 
 const submitButton = document.getElementById('submit-btn');
-// const answerText = document.querySelector('.new_txt');
 const answerText = document.getElementById('answer');
 const voiceSelect = document.querySelector('select');
 

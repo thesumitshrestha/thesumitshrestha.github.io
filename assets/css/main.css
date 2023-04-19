@@ -16,15 +16,27 @@ select{
     margin-top: 20px;
     font-size: 24px;
 }
+
+
 #answer span, #answer p{
     font-family: 'Source Sans Pro', sans-serif !important;
 }
+
+.answer-container{
+    /* border: 2px solid #CCCCCC; */
+    border-radius: 5px;
+    padding: 0 1.4rem;
+    width: 85%;
+    margin: 0 auto;
+    margin-top: 3rem;
+    display: none;
+}
 #answer {
-    margin-top: 2rem;
-    font-size: 24px;
+    margin-top: 1rem;
+    font-size: 28px;
     font-weight: bold;
     color: #00008B;
-    margin-left: 6rem;
+    /* margin-left: 6rem; */
 }
 
 #answer-box {
@@ -166,7 +178,7 @@ input:focus {
 }
 
 .button-container{
-    margin:0 0 5rem 0;
+    margin:0 0 7rem 0;
     width: 100%;
 }
 

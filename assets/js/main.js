@@ -222,7 +222,9 @@ function getAnswer(question) {
     });
     //var key1 = answerarr.length>2? answerarr[1]:answerarr[0];
     var key2 = mainkey;
-    console.log(key1 + '-' + key2);
+    console.log(key1);
+    console.log(key2);
+    console.log('PREDICATES');
     console.log(predicates[key1][key2]);
 
     var data = {
@@ -230,7 +232,7 @@ function getAnswer(question) {
       query: predicates[key1][key2],
       editor: editor,
     };
-
+    console.log('DATA');
     console.log(data);
 
     $.ajax({
@@ -247,8 +249,71 @@ function getAnswer(question) {
       success: function (response) {
         console.log(response);
         const answer = response || 'Sorry, I could not find an answer.';
-        answerDiv.innerHTML = answer;
-        answerBox.innerHTML = answer;
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(answer, 'text/html');
+        let sparc_query = doc.querySelector('span');
+        let sparc_answer = doc.querySelector('p');
+        let splittedString = sparc_query.innerHTML.split('(');
+        let relation_name = splittedString[0];
+        let objectsArray = splittedString[1];
+
+        let objectsArrayNew = objectsArray.split(',');
+        var firstAnswer;
+        let firstVariable = objectsArrayNew[0];
+        let secondVariable = objectsArrayNew[1].split(')')[0];
+
+        // ANSWER
+        let sparcNew = sparc_answer.innerHTML.split('=');
+        console.log('SPARC NEW');
+        console.log(sparcNew);
+        console.log(sparcNew.indexOf('X'));
+        if (sparcNew.indexOf(' X ') > -1) {
+          console.log('Inside IF Loop');
+          firstAnswer = sparcNew[1]?.replace('X', '');
+          firstAnswer = firstAnswer.replace('<br>', '');
+        } else {
+          console.log('Inside ELSE');
+          firstAnswer = sparcNew[0];
+        }
+        let secondAnswer = sparcNew[2];
+        secondAnswer = secondAnswer?.replace('<br>', '');
+        console.log(sparcNew[1]);
+        console.log(sparcNew[2]);
+        console.log(relation_name);
+        console.log(firstVariable);
+        console.log(secondVariable);
+
+        if (secondAnswer) {
+          answerDiv.innerHTML =
+            'The ' +
+            relation_name?.replace('_', ' ') +
+            ' of ' +
+            secondVariable?.replace('_', ' ') +
+            ' is </br>' +
+            firstAnswer?.replace('_', ' ') +
+            ' and ' +
+            secondAnswer?.replace('_', ' ');
+          $('.answer-container').show();
+        } else if (firstVariable != 'X') {
+          answerDiv.innerHTML =
+            firstAnswer?.replace('<br>\n<br>', '').toUpperCase() +
+            ', ' +
+            firstVariable?.replace('_', ' ') +
+            ' and ' +
+            secondVariable?.replace('_', ' ') +
+            ' are the ' +
+            relation_name?.replace('_', ' ');
+          $('.answer-container').show();
+        } else {
+          answerDiv.innerHTML =
+            'The ' +
+            relation_name?.replace('_', ' ') +
+            ' of ' +
+            secondVariable?.replace('_', ' ') +
+            ' is ' +
+            firstAnswer?.replace('_', ' ');
+          $('.answer-container').show();
+        }
       },
       error: function (xhr, status, error) {
         console.log('error: ' + error);
