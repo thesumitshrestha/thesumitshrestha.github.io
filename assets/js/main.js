@@ -282,7 +282,7 @@ function getAnswer(question) {
         console.log(relation_name);
         console.log(firstVariable);
         console.log(secondVariable);
-
+        console.log(firstAnswer);
         if (secondAnswer) {
           answerDiv.innerHTML =
             'The ' +
