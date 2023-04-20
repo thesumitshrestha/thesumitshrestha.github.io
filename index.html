@@ -68,9 +68,9 @@
     </div>
     <!-- Carousel -->
 
-    <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank">
+    <!-- <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank">
       Request Server
-    </a>
+    </a> -->
 
     <!-- Question Input -->
     <div class="search-container container mt-5 mb-5">
@@ -139,7 +139,7 @@
       <div class="jumbotron p-4">
         <h1 class="fw-bold text-primary mb-5 text-center">CitiBus Routes</h1>
         <div class="row">
-          <div class="col-1">
+          <div class="col-2">
             <h3 class="service-heading fs-4 fw-bold mb-4">Route</h3>
             <div class="service-content">
               <p class="fw-bold fs-4">41</p>
@@ -152,18 +152,27 @@
             <h3 class="service-heading fs-4 fw-bold mb-4">Bus Route</h3>
             <div class="service-content">
               <p class="fs-5">
-                College of Business Administration -> The Republic -> The Holly
-                -> Indiana Village -> International Cultural Center
+                College of Business Administration
+                <i class="fa fa-arrow-right"></i> The Republic
+                <i class="fa fa-arrow-right"></i> The Holly
+                <i class="fa fa-arrow-right"></i> Indiana Village
+                <i class="fa fa-arrow-right"></i> International Cultural Center
               </p>
               <p class="fs-5">
-                College of Business Administration -> Holden Hall -> Student
-                Union Building -> University Library -> Student Recreation
-                Center -> Student Wellness Center
+                College of Business Administration
+                <i class="fa fa-arrow-right"></i> Holden Hall
+                <i class="fa fa-arrow-right"></i> Student Union Building
+                <i class="fa fa-arrow-right"></i> University Library
+                <i class="fa fa-arrow-right"></i> Student Recreation Center
+                <i class="fa fa-arrow-right"></i> Student Wellness Center
               </p>
               <p class="fs-5">
-                College of Business Administration -> Student Wellness Center ->
-                Student Recreation Center -> University Library -> Student Union
-                Building -> Holden Hall
+                College of Business Administration
+                <i class="fa fa-arrow-right"></i> Student Wellness Center
+                <i class="fa fa-arrow-right"></i> Student Recreation Center
+                <i class="fa fa-arrow-right"></i> University Library
+                <i class="fa fa-arrow-right"></i> Student Union Building
+                <i class="fa fa-arrow-right"></i> Holden Hall
               </p>
             </div>
           </div>
@@ -241,9 +250,8 @@
     ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="//www.aa.com/jquery.js"></script>
 
-    <script src="fuzzyset.js"></script>
+    <script src="assets/js/fuzzyset.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/script.js"></script>
     <script>
@@ -261,8 +269,6 @@
         if ($(this).val() === '') $(this).parent().removeClass('animation');
         $(this).parent().removeClass('animation-color');
       });
-
-      $('.element-to-clean').html($('.element-to-clean').children());
     </script>
   </body>
 </html>

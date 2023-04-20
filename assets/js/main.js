@@ -1,4 +1,6 @@
 var isClose = true;
+
+// Setting the stopwords
 const stopwords = [
   'of',
   'the',
@@ -111,10 +113,13 @@ var editor =
   'neighbouring_route(X, Y) :- previous_route(X, Y).\n' +
   '-neighbouring_route(X, Y) :- not next_route(X, Y), not previous_route(X, Y).';
 
-// sorts
+// Spliting Sorts and Predicates
 var contstring = editor.split('sorts\n')[1].split('predicates\n');
+
+// Spliting Sorts value
 var sortstring = contstring[0].split('.');
 
+// Sorts Last Value
 sortstring.splice(-1, 1);
 var sorts = {};
 sortstring = sortstring
@@ -127,11 +132,13 @@ sortstring = sortstring
       .map((w) => w.trim());
   });
 
-// predicates
+// Spliting Predicates Value
 var predicates = {};
 contstring = contstring[1].split('rules\n');
 sortstring = contstring[0].split('.');
 sortstring.splice(-1, 1);
+
+// Mapping each predicates and knowledge/rules
 sortstring.forEach((d) => {
   var part = d.replace(/\n/g, '').trim().split('(');
   var func = part[0];
@@ -156,6 +163,8 @@ sortstring.forEach((d) => {
   });
 });
 
+// This rules generates all the knowledge and rules that has the relation and
+// append it in all_predicates
 var all_predicates = [];
 for (var key1 in predicates) {
   if (predicates.hasOwnProperty(key1)) {
@@ -164,10 +173,10 @@ for (var key1 in predicates) {
     }
   }
 }
+
 all_predicates.push('speak spanish'); // extra terms
 a = FuzzySet(all_predicates);
 console.log(all_predicates);
-
 // Speech recognition API
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -181,28 +190,38 @@ const textInput = document.getElementById('text-input');
 const submitBtn = document.getElementById('submit-btn');
 const answerBox = document.getElementById('answer-box');
 
+// After user inputs the query and clicks submit button
 submitBtn.addEventListener('click', () => {
   const question = textInput.value;
   if (question.trim() === '') {
     answerBox.innerHTML = 'Please ask a question.';
     return;
   }
+  // Trims the given sentence by space ' '
   var trim_script = question.split(' ');
+
+  // Removing the stop words from the trim script
   trim_script = trim_script.filter((f) => !stopwords.includes(f));
+
+  //Compute the similarity and get value with score more than 0.5
   var queryQues = a.get(trim_script.join(' '), null, 0.5);
   getAnswer(queryQues);
 });
 
-// Handle speech recognition
+// Handle speech recognition input
 recognition.onresult = (event) => {
   const resultIndex = event.resultIndex;
   const transcript = event.results[resultIndex][0].transcript;
   textInput.value = transcript;
 
+  // Trims the given sentence by space ' '
   var trim_script = transcript.split(' ');
+
+  // Removing the stop words from the trim script
   trim_script = trim_script.filter((f) => !stopwords.includes(f));
+
+  //Compute the similarity and get value with score more than 0.5
   var queryQues = a.get(trim_script.join(' '), null, 0.5);
-  console.log(queryQues);
   getAnswer(queryQues);
 };
 
@@ -214,7 +233,9 @@ voiceBtn.addEventListener('click', startSpeechRecognition);
 
 function getAnswer(question) {
   if (question != null) {
+    // First two element of array as a main key
     var mainkey = question[0][1].replace('speak ', '');
+    // Creating array for main keys
     var answerarr = mainkey.split(' ');
     var key1 = '';
     answerarr.forEach((d) => {
@@ -222,19 +243,14 @@ function getAnswer(question) {
     });
     //var key1 = answerarr.length>2? answerarr[1]:answerarr[0];
     var key2 = mainkey;
-    console.log(key1);
-    console.log(key2);
-    console.log('PREDICATES');
-    console.log(predicates[key1][key2]);
 
     var data = {
       action: 'getQuery',
       query: predicates[key1][key2],
       editor: editor,
     };
-    console.log('DATA');
-    console.log(data);
 
+    // AJAX CALL
     $.ajax({
       url: 'https://cors-anywhere.herokuapp.com/http://wave.ttu.edu/ajax.php',
       type: 'POST',
@@ -246,8 +262,10 @@ function getAnswer(question) {
         query: predicates[key1][key2],
         editor: editor,
       },
+
+      // AJAX Success Reponse
       success: function (response) {
-        console.log(response);
+        // console.log(response);
         const answer = response || 'Sorry, I could not find an answer.';
         const parser = new DOMParser();
         const doc = parser.parseFromString(answer, 'text/html');
@@ -264,54 +282,54 @@ function getAnswer(question) {
 
         // ANSWER
         let sparcNew = sparc_answer.innerHTML.split('=');
-        console.log('SPARC NEW');
-        console.log(sparcNew);
-        console.log(sparcNew.indexOf('X'));
+        // console.log('SPARC NEW');
+        // console.log(sparcNew);
+        // console.log(sparcNew.indexOf('X'));
         if (sparcNew.indexOf(' X ') > -1) {
           console.log('Inside IF Loop');
           firstAnswer = sparcNew[1]?.replace('X', '');
-          firstAnswer = firstAnswer.replace('<br>', '');
+          firstAnswer = firstAnswer?.replaceAll('<br>', '');
         } else {
           console.log('Inside ELSE');
           firstAnswer = sparcNew[0];
         }
         let secondAnswer = sparcNew[2];
-        secondAnswer = secondAnswer?.replace('<br>', '');
-        console.log(sparcNew[1]);
-        console.log(sparcNew[2]);
-        console.log(relation_name);
-        console.log(firstVariable);
-        console.log(secondVariable);
-        console.log(firstAnswer);
+        secondAnswer = secondAnswer?.replaceAll('<br>', '');
+        // console.log(sparcNew[1]);
+        // console.log(sparcNew[2]);
+        // console.log(relation_name);
+        // console.log(firstVariable);
+        // console.log(secondVariable);
+        // console.log(firstAnswer);
         if (secondAnswer) {
           answerDiv.innerHTML =
             'The ' +
             relation_name?.replace('_', ' ') +
             ' of ' +
-            secondVariable?.replace('_', ' ') +
+            secondVariable?.replaceAll('_', ' ') +
             ' is </br>' +
-            firstAnswer?.replace('_', ' ') +
+            firstAnswer?.replaceAll('_', ' ') +
             ' and ' +
-            secondAnswer?.replace('_', ' ');
+            secondAnswer?.replaceAll('_', ' ');
           $('.answer-container').show();
         } else if (firstVariable != 'X') {
           answerDiv.innerHTML =
             firstAnswer?.replace('<br>\n<br>', '').toUpperCase() +
             ', ' +
-            firstVariable?.replace('_', ' ') +
+            firstVariable?.replaceAll('_', ' ') +
             ' and ' +
-            secondVariable?.replace('_', ' ') +
+            secondVariable?.replaceAll('_', ' ') +
             ' are the ' +
-            relation_name?.replace('_', ' ');
+            relation_name?.replaceAll('_', ' ');
           $('.answer-container').show();
         } else {
           answerDiv.innerHTML =
             'The ' +
-            relation_name?.replace('_', ' ') +
+            relation_name?.replaceAll('_', ' ') +
             ' of ' +
-            secondVariable?.replace('_', ' ') +
+            secondVariable?.replaceAll('_', ' ') +
             ' is ' +
-            firstAnswer?.replace('_', ' ');
+            firstAnswer?.replaceAll('_', ' ');
           $('.answer-container').show();
         }
       },

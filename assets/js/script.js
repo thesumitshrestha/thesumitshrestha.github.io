@@ -56,7 +56,6 @@ function speak() {
   }
 
   if (inputTxt.value !== '') {
-    // const utterThis = new SpeechSynthesisUtterance(inputTxt.value);
     const utterThis = new SpeechSynthesisUtterance(answerText.innerText);
 
     utterThis.onend = function (event) {
@@ -83,12 +82,10 @@ function speak() {
 }
 
 submitButton.onclick = function (event) {
-  // inputForm.onsubmit = function (event) {
-  console.log('HERE');
+  console.log('Speak Output Ready');
   event.preventDefault();
   setTimeout(() => {
     speak();
-    // inputTxt.blur();
   }, 2000);
   return true;
 };
