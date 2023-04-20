@@ -288,7 +288,7 @@ function getAnswer(question) {
         if (sparcNew.indexOf(' X ') > -1) {
           console.log('Inside IF Loop');
           firstAnswer = sparcNew[1]?.replace('X', '');
-          firstAnswer = firstAnswer?.replaceAll('<br>', '');
+          firstAnswer = firstAnswer.replaceAll('<br>', '');
         } else {
           console.log('Inside ELSE');
           firstAnswer = sparcNew[0];
