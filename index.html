@@ -119,7 +119,9 @@
         </div>
       </div>
       <div class="button-container">
-        <button class="btn" id="submit-btn">SEARCH</button>
+        <button onclick="typeWriteAnswer()" class="btn" id="submit-btn">
+          SEARCH
+        </button>
       </div>
 
       <div class="answer-container">
@@ -269,6 +271,19 @@
         if ($(this).val() === '') $(this).parent().removeClass('animation');
         $(this).parent().removeClass('animation-color');
       });
+    </script>
+    <script>
+      function typeWriteAnswer() {
+        var i = 0;
+        var txt = document.getElementById('answer');
+        var speed = 50;
+        console.log('typeWriteAnswer');
+        if (i < txt.length) {
+          document.getElementById('answer').innerHTML += txt.charAt(i);
+          i++;
+          setTimeout(typeWriter, speed);
+        }
+      }
     </script>
   </body>
 </html>

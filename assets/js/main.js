@@ -30,7 +30,7 @@ var editor =
   'starting_route(#location, #route_number).\n' +
   'ending_route(#location, #route_number).\n' +
   'fastest_route(#route_number, #location).\n' +
-  'bus_route(#route_number, #bus_map).\n' +
+  'bus_route(#bus_map, #route_number).\n' +
   'rules\n' +
   'route(48, college_of_business_administration).\n' +
   'route(48, the_republic).\n' +
@@ -92,9 +92,9 @@ var editor =
   'previous_route(university_library, student_union_building).\n' +
   'previous_route(student_union_building, holden_hall).\n' +
   'previous_route(holden_hall, college_of_business_administration).\n' +
-  'bus_route(41, college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall).\n' +
-  'bus_route(42, college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center).\n' +
-  'bus_route(48, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).\n' +
+  'bus_route(college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall, 41).\n' +
+  'bus_route(college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center, 42).\n' +
+  'bus_route(college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center, 48).\n' +
   'fastest_route(48, the_republic).\n' +
   'fastest_route(48, the_holly).\n' +
   'fastest_route(48, indiana_village).\n' +
@@ -177,6 +177,7 @@ for (var key1 in predicates) {
 all_predicates.push('speak spanish'); // extra terms
 a = FuzzySet(all_predicates);
 console.log(all_predicates);
+
 // Speech recognition API
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -199,12 +200,14 @@ submitBtn.addEventListener('click', () => {
   }
   // Trims the given sentence by space ' '
   var trim_script = question.split(' ');
-
+  console.log('TrimScript', trim_script);
   // Removing the stop words from the trim script
   trim_script = trim_script.filter((f) => !stopwords.includes(f));
-
+  console.log('TrimScript NEXT', trim_script);
+  console.log('TRIM JOIN', trim_script.join(' '));
   //Compute the similarity and get value with score more than 0.5
-  var queryQues = a.get(trim_script.join(' '), null, 0.5);
+  var queryQues = a.get(trim_script.join(','), null, 0.5);
+  console.log('QUERY:', queryQues);
   getAnswer(queryQues);
 });
 
@@ -237,8 +240,10 @@ function getAnswer(question) {
     var mainkey = question[0][1].replace('speak ', '');
     // Creating array for main keys
     var answerarr = mainkey.split(' ');
+    console.log('AnswerARR Key', answerarr);
     var key1 = '';
     answerarr.forEach((d) => {
+      console.log('DDDD', d);
       key1 = predicates[d] != undefined ? d : key1;
     });
     //var key1 = answerarr.length>2? answerarr[1]:answerarr[0];
@@ -249,6 +254,8 @@ function getAnswer(question) {
       query: predicates[key1][key2],
       editor: editor,
     };
+    console.log('ASP Query ');
+    console.log(predicates[key1][key2]);
 
     // AJAX CALL
     $.ajax({
@@ -282,12 +289,10 @@ function getAnswer(question) {
 
         // ANSWER
         let sparcNew = sparc_answer.innerHTML.split('=');
-        // console.log('SPARC NEW');
-        // console.log(sparcNew);
-        // console.log(sparcNew.indexOf('X'));
         if (sparcNew.indexOf(' X ') > -1) {
           console.log('Inside IF Loop');
           firstAnswer = sparcNew[1]?.replace('X', '');
+          firstAnswer = firstAnswer?.replaceAll('_', ' ');
           firstAnswer = firstAnswer.replaceAll('<br>', '');
         } else {
           console.log('Inside ELSE');
@@ -295,13 +300,8 @@ function getAnswer(question) {
         }
         let secondAnswer = sparcNew[2];
         secondAnswer = secondAnswer?.replaceAll('<br>', '');
-        // console.log(sparcNew[1]);
-        // console.log(sparcNew[2]);
-        // console.log(relation_name);
-        // console.log(firstVariable);
-        // console.log(secondVariable);
-        // console.log(firstAnswer);
         if (secondAnswer) {
+          console.log('second IF Loop');
           answerDiv.innerHTML =
             'The ' +
             relation_name?.replace('_', ' ') +
@@ -313,6 +313,7 @@ function getAnswer(question) {
             secondAnswer?.replaceAll('_', ' ');
           $('.answer-container').show();
         } else if (firstVariable != 'X') {
+          console.log('second else if Loop');
           answerDiv.innerHTML =
             firstAnswer?.replace('<br>\n<br>', '').toUpperCase() +
             ', ' +
@@ -323,6 +324,7 @@ function getAnswer(question) {
             relation_name?.replaceAll('_', ' ');
           $('.answer-container').show();
         } else {
+          console.log('second else Loop');
           answerDiv.innerHTML =
             'The ' +
             relation_name?.replaceAll('_', ' ') +
