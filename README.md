@@ -10,10 +10,10 @@ It is perfect for students who rely on public transportation to get to the campu
 
 ASP is a powerful language that enables our application to solve complex routing problems with ease. It allows us to represent routing problems as logical statements and find solutions that satisfy all constraints. This means that our application can handle even the most complex routing problems, providing students with a solution that is both accurate and efficient.
 
-**Problem Description:**
+## **Problem Description:**
 “Texas Tech University is one of the biggest universities in the US geographically,” based on this statement we can assume how difficult it will be for the new students to commute inside the campus. Additionally, there are many buses that operate on many routes both inside and outside the campus. This adds up more burden to the new students to select the bus and the route to reach their classes on time. Moreover, the duration between classes is short and student must rush toward their classes. The students also have to face difficulties in choosing the bus route that takes them to their respective student housing apartments which are located outside of the campus.
 
-**Questions**
+## **Questions**
 The sample questions that can be asked to the intelligent agents are as follows:
 
 - What is the starting route of #route number(e.g 41)?
@@ -29,39 +29,38 @@ The sample questions that can be asked to the intelligent agents are as follows:
 - Is the #location name e.g(the republic) neighbouring route of the #location name e.g(the holly)?
 - What is the fastest route of #location name (e.g the holly)?
 
-**Libraries Used**
-Bootstrap 5.2.3 for Styling webpage
+## **Libraries Used**
+### Bootstrap 5.2.3 for Styling webpage
+   - Carousel Slider, Navbar, Mobile Reponsive
 
-- Carousel Slider, Navbar, Mobile Reponsive
+### Font Awesome 4.7.0 for icons
+   - Arrow and Microphone Icon
 
-Font Awesome 4.7.0 for icons
+### JQuery 3.4.1 for Event Handling, Animation and AJAX
+   - addEventListener() - on clicking submit button, microphone icon
+   - getAnswer() - Translating the questions into ASP query and AJAX Call for sending ASP Query to ASP Solver and getting response
+   - DOMParser() - manipulating the elements from HTML documents used to parse ASP solver response human readable language
 
-- Arrow and Microphone Icon
+### FuzzySet for computing similarities to the closest ASP query
 
-JQuery 3.4.1 for Event Handling, Animation and AJAX
+   - get() - trying to match the string to the closest ASP query with threshold 0.5.
 
-- addEventListener() - on clicking submit button, microphone icon
-- getAnswer() - Translating the questions into ASP query and AJAX Call for sending ASP Query to ASP Solver and getting response
-- DOMParser() - manipulating the elements from HTML documents used to parse ASP solver response human readable language
+### SpeechSynthesisVoice for translating the text to voice output
 
-FuzzySet for computing similarities to the closest ASP query
+  - speak() - to generate the voice output after generating the answer in the webpage
 
-- get() - trying to match the string to the closest ASP query with threshold 0.5.
+### SpeechRecognition for translating the voice speech to text
 
-SpeechSynthesisVoice for translating the text to voice output
+  - start() - gets the voice input from microphone and transfers it to the text in the input
 
-- speak() - to generate the voice output after generating the answer in the webpage
+### SPARC Solver for getting the response of ASP Query
 
-SpeechRecognition for translating the voice speech to text
-
-- start() - gets the voice input from microphone and transfers it to the text in the input
-
-SPARC Solver for getting the response of ASP Query
-
-- Online SPARC Solver is (http://wave.ttu.edu/ajax.php).
-- Requesting temporary access to the server via https://cors-anywhere.herokuapp.com/corsdemo and clicking on the “request temporary access to the demo server.” button
-- Passing the ASP query to the solver by getAnswer() in main.js
-- Getting response from the Online SPARC Solver (http://wave.ttu.edu/ajax.php) in ASP response format.
+  - Online SPARC Solver is (http://wave.ttu.edu/ajax.php).
+  - Requesting temporary access to the server via https://cors-anywhere.herokuapp.com/corsdemo and clicking on the “request temporary access to the demo server.” button
+  - Passing the ASP query to the solver by getAnswer() in main.js
+  - Getting response from the Online SPARC Solver (http://wave.ttu.edu/ajax.php) in ASP response format.
 
 **The Citibus Route Finder** is a project to create an intelligent agent web based application for the course CS-5368 - Intelligent System created using HTML, CSS and JavaScript. The backend of the app is created using SPARC programming language and hosted on GitHub.
+<br />
+<br />
 <img width='100%' src='https://github.com/thesumitshrestha/thesumitshrestha.github.io/blob/master/assets/images/readme/RouteFinderOutput.png' />
