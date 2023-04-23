@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+  <!-- HTML Head Start -->
   <head>
     <meta charset="utf-8" />
     <title>Route Finder - Texas Tech University - Lubbock</title>
@@ -21,6 +22,9 @@
     />
     <link rel="stylesheet" href="assets/css/main.css" />
   </head>
+  <!-- HTML Head End -->
+
+  <!-- HTML Body Start -->
   <body>
     <!-- Header -->
     <nav class="navbar navbar-light bg-light fixed-top">
@@ -76,6 +80,7 @@
     <div class="search-container container mt-5 mb-5">
       <h1 class="text-center text-primary fw-bold">Ask a Question</h1>
 
+      <!-- Speech Rate Default 1 -->
       <div>
         <input
           hidden
@@ -89,6 +94,7 @@
         />
         <div class="clearfix"></div>
       </div>
+      <!-- Speech Pitch Default 1 -->
       <div>
         <input
           hidden
@@ -128,11 +134,7 @@
       </div>
     </div>
 
-    <div class="input-container">
-      <!-- <button id="voice-input-btn"><i class="fa fa-microphone"></i></button> -->
-      <!-- <input type="text" id="text-input" placeholder="Type your question..." /> -->
-      <!-- <button id="submit-btn">Submit</button> -->
-    </div>
+    <div class="input-container"></div>
     <!-- Question Input -->
     <!-- Routes -->
     <div class="container bg-light mb-5">
@@ -243,17 +245,23 @@
     </footer>
     <!-- Footer -->
 
+    <!-- Bootstrap 5 Library -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
       crossorigin="anonymous"
     ></script>
+
+    <!-- Jquery -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
+    <!-- Fuzzy Search -->
     <script src="assets/js/fuzzyset.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/script.js"></script>
+
+    <!-- Bootstrap Carousel -->
     <script>
       var myCarousel = document.querySelector('#carouselCitiBus');
       var carousel = new bootstrap.Carousel(myCarousel, {
@@ -271,4 +279,5 @@
       });
     </script>
   </body>
+  <!-- HTML Body End -->
 </html>

@@ -32,8 +32,8 @@ predicates
     % fastest_route(X, Y) denotes X is the fastest route of Y.
     fastest_route(#route_number, #location).
     
-    % bus_route(X, Y) denotes X is the bus route of Y.
-    bus_route(#route_number, #bus_map).
+    % bus_route(X, Y) denotes X is the bus map of Y.
+    bus_route(#bus_map, #route_number).
 
 rules
     
@@ -123,9 +123,9 @@ rules
     previous_route(holden_hall, college_of_business_administration).
     
     % Bus Route
-    bus_route(41, college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall).
-    bus_route(42, college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center).
-    bus_route(48, college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center).
+    bus_route(college_of_business_administration___student_wellness_center___student_recreation_center___university_library___student_union_building___holden_hall, 41).
+    bus_route(college_of_business_administration___holden_hall___student_union_building___university_library___student_recreation_center___student_wellness_center, 42).
+    bus_route(college_of_business_administration___the_republic___the_holly___indiana_village___international_cultural_center, 48).
     
     % Fastest Route for X to Y
     fastest_route(48, the_republic).
@@ -151,12 +151,12 @@ rules
     % Not Next Route
     -next_route(X,Y) :- not next_route(X, Y).
     
-    % Neighbour Route
+    % Neighboring Route
     neighbouring_route(X, Y) :- next_route(X, Y).
     
     neighbouring_route(X, Y) :- previous_route(X, Y).
     
-    % Not Neighbour Route
+    % Not Neighboring Route
     -neighbouring_route(X, Y) :- not next_route(X, Y), not previous_route(X, Y).
     % -neighbouring_route(X, Y) :- not previous_route(X, Y).
     
