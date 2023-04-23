@@ -200,10 +200,8 @@ submitBtn.addEventListener('click', () => {
   }
   // Trims the given sentence by space ' '
   var trim_script = question.split(' ');
-  console.log('TrimScript', trim_script);
   // Removing the stop words from the trim script
   trim_script = trim_script.filter((f) => !stopwords.includes(f));
-  console.log('TrimScript NEXT', trim_script);
   console.log('TRIM JOIN', trim_script.join(' '));
   //Compute the similarity and get value with score more than 0.5
   var queryQues = a.get(trim_script.join(','), null, 0.5);
@@ -243,7 +241,6 @@ function getAnswer(question) {
     console.log('AnswerARR Key', answerarr);
     var key1 = '';
     answerarr.forEach((d) => {
-      console.log('DDDD', d);
       key1 = predicates[d] != undefined ? d : key1;
     });
     //var key1 = answerarr.length>2? answerarr[1]:answerarr[0];
@@ -290,18 +287,15 @@ function getAnswer(question) {
         // ANSWER
         let sparcNew = sparc_answer.innerHTML.split('=');
         if (sparcNew.indexOf(' X ') > -1) {
-          console.log('Inside IF Loop');
           firstAnswer = sparcNew[1]?.replace('X', '');
           firstAnswer = firstAnswer?.replaceAll('_', ' ');
           firstAnswer = firstAnswer.replaceAll('<br>', '');
         } else {
-          console.log('Inside ELSE');
           firstAnswer = sparcNew[0];
         }
         let secondAnswer = sparcNew[2];
         secondAnswer = secondAnswer?.replaceAll('<br>', '');
         if (secondAnswer) {
-          console.log('second IF Loop');
           answerDiv.innerHTML =
             'The ' +
             relation_name?.replace('_', ' ') +
@@ -313,7 +307,6 @@ function getAnswer(question) {
             secondAnswer?.replaceAll('_', ' ');
           $('.answer-container').show();
         } else if (firstVariable != 'X') {
-          console.log('second else if Loop');
           answerDiv.innerHTML =
             firstAnswer?.replace('<br>\n<br>', '').toUpperCase() +
             ', ' +
@@ -324,7 +317,6 @@ function getAnswer(question) {
             relation_name?.replaceAll('_', ' ');
           $('.answer-container').show();
         } else {
-          console.log('second else Loop');
           answerDiv.innerHTML =
             'The ' +
             relation_name?.replaceAll('_', ' ') +
