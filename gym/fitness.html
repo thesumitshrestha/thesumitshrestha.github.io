@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>8-Week Strength &amp; Sprint Fat Loss Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --track-black:#14181C;
+  --surface:#1C2126;
+  --paper:#F6F4EF;
+  --chalk:#FFFFFF;
+  --lane-red:#D62839;
+  --lane-red-dim:#8f1b26;
+  --field-green:#3A6B4A;
+  --tempo-blue:#2E5C8A;
+  --rest-grey:#8A8F97;
+  --graphite:#22262B;
+  --steel:#6B7480;
+  --line:#DAD5C8;
+}
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  margin:0;
+  background:var(--paper);
+  color:var(--graphite);
+  font-family:'Inter',sans-serif;
+  font-size:16px;
+  line-height:1.55;
+}
+h1,h2,h3,.display {
+  font-family:'Oswald',sans-serif;
+  text-transform:uppercase;
+  letter-spacing:0.02em;
+  color:var(--track-black);
+  margin:0;
+}
+.mono { font-family:'JetBrains Mono',monospace; }
+a { color:inherit; }
+
+/* ---------- NAV ---------- */
+nav.topnav {
+  position:sticky; top:0; z-index:50;
+  background:var(--track-black);
+  border-bottom:3px solid var(--lane-red);
+  overflow-x:auto;
+  white-space:nowrap;
+}
+nav.topnav .inner {
+  display:flex; gap:0;
+  max-width:1100px; margin:0 auto;
+}
+nav.topnav a {
+  color:#CBD1D6;
+  text-decoration:none;
+  font-family:'Oswald',sans-serif;
+  text-transform:uppercase;
+  font-size:0.78rem;
+  letter-spacing:0.08em;
+  padding:14px 16px;
+  border-right:1px solid #2A3138;
+  transition:background 0.15s, color 0.15s;
+}
+nav.topnav a:hover { background:var(--lane-red); color:#fff; }
+
+/* ---------- HERO ---------- */
+header.hero {
+  background:var(--track-black);
+  color:var(--chalk);
+  padding:56px 24px 40px;
+  position:relative;
+}
+header.hero::after {
+  content:"";
+  position:absolute; left:0; right:0; bottom:0;
+  height:6px;
+  background:repeating-linear-gradient(90deg, var(--lane-red) 0 40px, #fff0 40px 56px);
+  opacity:0.9;
+}
+.hero-inner { max-width:1100px; margin:0 auto; }
+.eyebrow {
+  font-family:'JetBrains Mono',monospace;
+  color:var(--lane-red);
+  font-size:0.8rem;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+h1.title {
+  font-size:clamp(2rem, 5vw, 3.4rem);
+  line-height:1.05;
+  color:#fff;
+  margin-bottom:6px;
+}
+h1.title em { color:var(--lane-red); font-style:normal; }
+.hero-sub { color:#B7BEC5; font-size:1.05rem; max-width:640px; margin-top:10px; }
+
+.stat-row {
+  display:flex; flex-wrap:wrap; gap:28px;
+  margin-top:32px;
+  padding-top:24px;
+  border-top:1px solid #2A3138;
+}
+.stat { min-width:120px; }
+.stat .num { font-family:'JetBrains Mono',monospace; font-size:1.9rem; color:#fff; font-weight:700; }
+.stat .num .arrow { color:var(--lane-red); font-size:1.2rem; margin:0 4px; }
+.stat .label { font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; color:#8B929A; margin-top:2px; }
+
+/* Lane tracker (signature element) */
+.lanes {
+  margin-top:36px;
+  display:grid;
+  grid-template-columns:repeat(8,1fr);
+  gap:4px;
+}
+.lane {
+  background:#20262C;
+  border:1px solid #2E353C;
+  border-radius:2px;
+  padding:10px 6px;
+  text-align:center;
+  text-decoration:none;
+  transition:background .15s, transform .15s;
+}
+.lane:hover { background:var(--lane-red-dim); transform:translateY(-2px); }
+.lane .lnum { font-family:'JetBrains Mono',monospace; color:var(--lane-red); font-size:0.75rem; display:block; }
+.lane .lname { font-family:'Oswald',sans-serif; text-transform:uppercase; color:#fff; font-size:0.72rem; letter-spacing:0.03em; display:block; margin-top:3px; }
+
+/* ---------- SECTIONS ---------- */
+main { max-width:1100px; margin:0 auto; padding:0 24px; }
+section { padding:52px 0; border-bottom:1px solid var(--line); }
+section:last-of-type { border-bottom:none; }
+h2.sec-title {
+  font-size:1.7rem;
+  color:var(--track-black);
+  display:flex; align-items:baseline; gap:12px;
+  margin-bottom:22px;
+}
+h2.sec-title .no { font-family:'JetBrains Mono',monospace; color:var(--lane-red); font-size:1rem; }
+h3.sub-title { font-family:'Oswald',sans-serif; text-transform:uppercase; font-size:1.05rem; color:var(--tempo-blue); margin:26px 0 10px; letter-spacing:0.02em;}
+p { margin:0 0 12px; color:#3A3F44; }
+.callout {
+  background:#fff;
+  border-left:4px solid var(--lane-red);
+  padding:16px 20px;
+  border-radius:0 4px 4px 0;
+  font-size:0.95rem;
+  margin:18px 0;
+}
+.small { font-size:0.85rem; color:var(--steel); }
+
+/* ---------- WEEKLY SCHEDULE TABLE ---------- */
+table.schedule { width:100%; border-collapse:collapse; background:#fff; }
+table.schedule th {
+  background:var(--track-black); color:#fff;
+  font-family:'Oswald',sans-serif; text-transform:uppercase; font-size:0.78rem; letter-spacing:0.06em;
+  text-align:left; padding:10px 14px;
+}
+table.schedule td { padding:12px 14px; border-bottom:1px solid var(--line); font-size:0.92rem; }
+table.schedule tr:last-child td { border-bottom:none; }
+.day-name { font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--track-black); white-space:nowrap; }
+
+.tag {
+  display:inline-block; font-family:'JetBrains Mono',monospace; font-size:0.68rem;
+  text-transform:uppercase; letter-spacing:0.04em; padding:2px 7px; border-radius:3px;
+  color:#fff; margin-right:6px; vertical-align:middle;
+}
+.k-strength { background:var(--track-black); }
+.k-sprint { background:var(--lane-red); }
+.k-tempo { background:var(--tempo-blue); }
+.k-longrun { background:var(--field-green); }
+.k-rest { background:var(--rest-grey); }
+
+/* ---------- CALENDAR ---------- */
+details.week-block {
+  background:#fff; border:1px solid var(--line); border-radius:6px; margin-bottom:10px; overflow:hidden;
+}
+details.week-block summary {
+  cursor:pointer; list-style:none; display:flex; align-items:center; gap:16px;
+  padding:14px 18px; font-family:'Oswald',sans-serif; text-transform:uppercase;
+  background:#EFEBE0;
+}
+details.week-block summary::-webkit-details-marker { display:none; }
+details.week-block summary::before {
+  content:"+"; font-family:'JetBrains Mono',monospace; color:var(--lane-red); font-size:1.1rem; width:14px;
+}
+details.week-block[open] summary::before { content:"–"; }
+.week-num { font-family:'JetBrains Mono',monospace; color:var(--lane-red); font-size:0.9rem; }
+.week-name { font-size:0.95rem; letter-spacing:0.03em; flex:1; }
+.week-range { font-family:'JetBrains Mono',monospace; text-transform:none; font-size:0.8rem; color:var(--steel); }
+
+table.cal-table { width:100%; border-collapse:collapse; }
+table.cal-table td { padding:10px 16px; border-top:1px solid var(--line); vertical-align:top; font-size:0.9rem; }
+td.cal-date { width:90px; font-family:'JetBrains Mono',monospace; white-space:nowrap; }
+td.cal-date .cal-day { display:block; color:var(--steel); font-size:0.72rem; text-transform:uppercase; }
+td.cal-date .cal-num { display:block; font-weight:700; color:var(--track-black); }
+td.cal-kcal { width:100px; text-align:right; font-family:'JetBrains Mono',monospace; font-weight:700; white-space:nowrap; }
+.detail { color:var(--steel); font-size:0.82rem; margin-top:2px; }
+
+/* ---------- MACRO TABLES ---------- */
+table.macro { width:100%; border-collapse:collapse; background:#fff; margin-bottom:8px; }
+table.macro th {
+  background:var(--track-black); color:#fff; font-family:'Oswald',sans-serif;
+  text-transform:uppercase; font-size:0.72rem; letter-spacing:0.05em; padding:9px 12px; text-align:left;
+}
+table.macro td { padding:10px 12px; border-bottom:1px solid var(--line); font-size:0.88rem; }
+table.macro td.num { font-family:'JetBrains Mono',monospace; }
+
+/* ---------- PHASE CARDS ---------- */
+.phase {
+  background:#fff; border:1px solid var(--line); border-radius:8px; padding:28px 26px; margin-bottom:22px;
+  border-top:4px solid var(--lane-red);
+}
+.phase h3.day-head {
+  font-family:'Oswald',sans-serif; text-transform:uppercase; color:var(--track-black);
+  font-size:1rem; margin:22px 0 8px; padding-bottom:6px; border-bottom:2px solid var(--line);
+}
+.phase h3.day-head:first-of-type { margin-top:4px; }
+ul.workout-list { margin:0 0 4px; padding-left:20px; }
+ul.workout-list li { margin-bottom:6px; font-size:0.92rem; color:#3A3F44; }
+
+table.exercises { width:100%; border-collapse:collapse; margin:10px 0 18px; }
+table.exercises th {
+  background:#EFEBE0; text-align:left; padding:7px 10px; font-size:0.72rem;
+  text-transform:uppercase; letter-spacing:0.04em; color:var(--steel); font-family:'JetBrains Mono',monospace;
+}
+table.exercises td { padding:8px 10px; border-bottom:1px solid var(--line); font-size:0.86rem; }
+
+/* ---------- NUTRITION ---------- */
+.nutri-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; margin:18px 0; }
+.nutri-card { background:#fff; border:1px solid var(--line); border-radius:6px; padding:16px 18px; }
+.nutri-card h4 { font-family:'Oswald',sans-serif; text-transform:uppercase; font-size:0.85rem; color:var(--tempo-blue); margin:0 0 8px; }
+.nutri-card p { font-size:0.88rem; margin:0; }
+ul.tips { padding-left:20px; }
+ul.tips li { margin-bottom:8px; font-size:0.92rem; }
+
+footer { background:var(--track-black); color:#8B929A; padding:34px 24px; font-size:0.82rem; }
+footer .inner { max-width:1100px; margin:0 auto; }
+footer strong { color:#fff; }
+
+@media (max-width:700px) {
+  .lanes { grid-template-columns:repeat(4,1fr); }
+  .stat-row { gap:20px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="inner">
+    <a href="#overview">Overview</a>
+    <a href="#schedule">Schedule</a>
+    <a href="#calendar">Calendar</a>
+    <a href="#calories">Calories</a>
+    <a href="#phase1">Wk 1-2</a>
+    <a href="#phase2">Wk 3-4</a>
+    <a href="#phase3">Wk 5-6</a>
+    <a href="#phase4">Wk 7-8</a>
+    <a href="#nutrition">Nutrition</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">8-Week Training Block &middot; Aug 03, 2026 &ndash; Sep 27, 2026</div>
+    <h1 class="title">Strength + Sprint<br><em>Fat Loss Plan</em></h1>
+    <p class="hero-sub">Full-body strength, sprint intervals, swim cross-training, and long runs &mdash; paired with daily calorie targets, over an 8-week progressive block.</p>
+
+    <div class="stat-row">
+      <div class="stat"><div class="num">200<span class="arrow">&rarr;</span>185</div><div class="label">Weight Goal (lbs)</div></div>
+      <div class="stat"><div class="num">3</div><div class="label">Runs / Week</div></div>
+      <div class="stat"><div class="num">3</div><div class="label">Lifts / Week</div></div>
+      <div class="stat"><div class="num">~1.0-1.2</div><div class="label">Target lb/week loss</div></div>
+    </div>
+
+    <div class="lanes">
+      <a class="lane" href="#phase1"><span class="lnum">01</span><span class="lname">Wk 1</span></a>
+      <a class="lane" href="#phase1"><span class="lnum">02</span><span class="lname">Wk 2</span></a>
+      <a class="lane" href="#phase2"><span class="lnum">03</span><span class="lname">Wk 3</span></a>
+      <a class="lane" href="#phase2"><span class="lnum">04</span><span class="lname">Wk 4</span></a>
+      <a class="lane" href="#phase3"><span class="lnum">05</span><span class="lname">Wk 5</span></a>
+      <a class="lane" href="#phase3"><span class="lnum">06</span><span class="lname">Wk 6</span></a>
+      <a class="lane" href="#phase4"><span class="lnum">07</span><span class="lname">Wk 7</span></a>
+      <a class="lane" href="#phase4"><span class="lnum">08</span><span class="lname">Wk 8</span></a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section id="overview">
+  <h2 class="sec-title"><span class="no">00</span> Overview &amp; Honest Expectations</h2>
+  <p>Losing 15 lbs (200 &rarr; 185) in 8 weeks works out to about 1.9 lbs/week &mdash; an aggressive rate. The generally recommended safe, sustainable pace is 1-1.5 lb/week, especially while lifting weights, so you lose mostly fat and not muscle. This plan targets a realistic ~1-1.2 lb/week rate, landing you around <strong>190-191 lbs by the end of week 8</strong>. If you're still a few pounds from 185 at that point, repeat weeks 7-8 for another 2-4 weeks.</p>
+  <div class="callout">Calorie targets are estimated from your stats (Mifflin-St Jeor formula) with a moderate-active multiplier, adjusted for a fat-loss deficit. They're a well-informed starting point, not an exact science &mdash; adjust up or down by 100-150 kcal after week 2 based on how the scale and your energy are trending.</div>
+</section>
+
+<section id="schedule">
+  <h2 class="sec-title"><span class="no">01</span> Weekly Structure</h2>
+  <p class="small">6 days on, 1 rest &mdash; starting Monday, Aug 03. This skeleton repeats for all 8 weeks; intensity, volume, and calories change by phase (see below).</p>
+  <table class="schedule">
+    <tr><th>Day</th><th>Focus</th><th>Type</th></tr>
+    <tr><td class="day-name">Monday</td><td>Strength A &mdash; Lower Body + Core</td><td><span class="tag k-strength">Strength</span></td></tr>
+    <tr><td class="day-name">Tuesday</td><td>Sprint Intervals</td><td><span class="tag k-sprint">Sprint</span></td></tr>
+    <tr><td class="day-name">Wednesday</td><td>Strength B &mdash; Upper Body (Push/Pull)</td><td><span class="tag k-strength">Strength</span></td></tr>
+    <tr><td class="day-name">Thursday</td><td>Swim Class (6:00&ndash;6:30 PM) + Tempo Run + Mobility</td><td><span class="tag k-tempo">Swim+Run</span></td></tr>
+    <tr><td class="day-name">Friday</td><td>Strength C &mdash; Full Body / Power</td><td><span class="tag k-strength">Strength</span></td></tr>
+    <tr><td class="day-name">Saturday</td><td>Long Run &mdash; 6+ miles, easy/moderate pace</td><td><span class="tag k-longrun">Long Run</span></td></tr>
+    <tr><td class="day-name">Sunday</td><td>Rest &mdash; walk, stretch, foam roll</td><td><span class="tag k-rest">Rest</span></td></tr>
+  </table>
+</section>
+
+<section id="calendar">
+  <h2 class="sec-title"><span class="no">02</span> Full 8-Week Calendar</h2>
+  <p class="small">Aug 03 &ndash; Sep 27, 2026. Click a week to expand.</p>
+  
+    <details class="week-block" open>
+      <summary><span class="week-num">01</span><span class="week-name">Week 1 &mdash; Foundation</span><span class="week-range">Aug 03&ndash;Aug 09</span></summary>
+      <table class="cal-table">
+        <tbody>
+          
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Mon</span><span class="cal-num">Aug 03</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength A</strong><div class="detail">Lower Body + Core</div></td>
+          <td class="cal-kcal">2,300 kcal</td>
+        </tr>
+
+        <tr class="k-sprint">
+          <td class="cal-date"><span class="cal-day">Tue</span><span class="cal-num">Aug 04</span></td>
+          <td><span class="tag k-sprint">Sprint</span> <strong>Sprint Intervals</strong><div class="detail">6-12 x 100m, effort ramps by phase</div></td>
+          <td class="cal-kcal">2,450 kcal</td>
+        </tr>
+
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Wed</span><span class="cal-num">Aug 05</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength B</strong><div class="detail">Upper Body (Push/Pull)</div></td>
+          <td class="cal-kcal">2,300 kcal</td>
+        </tr>
+
+        <tr class="k-tempo">
+          <td class="cal-date"><span class="cal-day">Thu</span><span class="cal-num">Aug 06</span></td>
+          <td><span class="tag k-tempo">Swim+Run</span> <strong>Swim + Tempo Run</strong><div class="detail">Swim class 6:00-6:30 PM, then run</div></td>
+          <td class="cal-kcal">2,150 kcal</td>
+        </tr>
+
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Fri</span><span class="cal-num">Aug 07</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength C</strong><div class="detail">Full Body / Power</div></td>
+          <td class="cal-kcal">2,300 kcal</td>
+        </tr>
+
+        <tr class="k-longrun">
+          <td class="cal-date"><span class="cal-day">Sat</span><span class="cal-num">Aug 08</span></td>
+          <td><span class="tag k-longrun">Long Run</span> <strong>Long Run</strong><div class="detail">6+ miles, easy/moderate pace</div></td>
+          <td class="cal-kcal">2,750 kcal</td>
+        </tr>
+
+        <tr class="k-rest">
+          <td class="cal-date"><span class="cal-day">Sun</span><span class="cal-num">Aug 09</span></td>
+          <td><span class="tag k-rest">Rest</span> <strong>Rest</strong><div class="detail">Walk, stretch, foam roll</div></td>
+          <td class="cal-kcal">2,000 kcal</td>
+        </tr>
+        </tbody>
+      </table>
+    </details>
+
+    <details class="week-block">
+      <summary><span class="week-num">02</span><span class="week-name">Week 2 &mdash; Foundation</span><span class="week-range">Aug 10&ndash;Aug 16</span></summary>
+      <table class="cal-table">
+        <tbody>
+          
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Mon</span><span class="cal-num">Aug 10</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength A</strong><div class="detail">Lower Body + Core</div></td>
+          <td class="cal-kcal">2,300 kcal</td>
+        </tr>
+
+        <tr class="k-sprint">
+          <td class="cal-date"><span class="cal-day">Tue</span><span class="cal-num">Aug 11</span></td>
+          <td><span class="tag k-sprint">Sprint</span> <strong>Sprint Intervals</strong><div class="detail">6-12 x 100m, effort ramps by phase</div></td>
+          <td class="cal-kcal">2,450 kcal</td>
+        </tr>
+
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Wed</span><span class="cal-num">Aug 12</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength B</strong><div class="detail">Upper Body (Push/Pull)</div></td>
+          <td class="cal-kcal">2,300 kcal</td>
+        </tr>
+
+        <tr class="k-tempo">
+          <td class="cal-date"><span class="cal-day">Thu</span><span class="cal-num">Aug 13</span></td>
+          <td><span class="tag k-tempo">Swim+Run</span> <strong>Swim + Tempo Run</strong><div class="detail">Swim class 6:00-6:30 PM, then run</div></td>
+          <td class="cal-kcal">2,150 kcal</td>
+        </tr>
+
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Fri</span><span class="cal-num">Aug 14</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength C</strong><div class="detail">Full Body / Power</div></td>
+          <td class="cal-kcal">2,300 kcal</td>
+        </tr>
+
+        <tr class="k-longrun">
+          <td class="cal-date"><span class="cal-day">Sat</span><span class="cal-num">Aug 15</span></td>
+          <td><span class="tag k-longrun">Long Run</span> <strong>Long Run</strong><div class="detail">6+ miles, easy/moderate pace</div></td>
+          <td class="cal-kcal">2,750 kcal</td>
+        </tr>
+
+        <tr class="k-rest">
+          <td class="cal-date"><span class="cal-day">Sun</span><span class="cal-num">Aug 16</span></td>
+          <td><span class="tag k-rest">Rest</span> <strong>Rest</strong><div class="detail">Walk, stretch, foam roll</div></td>
+          <td class="cal-kcal">2,000 kcal</td>
+        </tr>
+        </tbody>
+      </table>
+    </details>
+
+    <details class="week-block">
+      <summary><span class="week-num">03</span><span class="week-name">Week 3 &mdash; Build</span><span class="week-range">Aug 17&ndash;Aug 23</span></summary>
+      <table class="cal-table">
+        <tbody>
+          
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Mon</span><span class="cal-num">Aug 17</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength A</strong><div class="detail">Lower Body + Core</div></td>
+          <td class="cal-kcal">2,300 kcal</td>
+        </tr>
+
+        <tr class="k-sprint">
+          <td class="cal-date"><span class="cal-day">Tue</span><span class="cal-num">Aug 18</span></td>
+          <td><span class="tag k-sprint">Sprint</span> <strong>Sprint Intervals</strong><div class="detail">6-12 x 100m, effort ramps by phase</div></td>
+          <td class="cal-kcal">2,450 kcal</td>
+        </tr>
+
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Wed</span><span class="cal-num">Aug 19</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength B</strong><div class="detail">Upper Body (Push/Pull)</div></td>
+          <td class="cal-kcal">2,300 kcal</td>
+        </tr>
+
+        <tr class="k-tempo">
+          <td class="cal-date"><span class="cal-day">Thu</span><span class="cal-num">Aug 20</span></td>
+          <td><span class="tag k-tempo">Swim+Run</span> <strong>Swim + Tempo Run</strong><div class="detail">Swim class 6:00-6:30 PM, then run</div></td>
+          <td class="cal-kcal">2,150 kcal</td>
+        </tr>
+
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Fri</span><span class="cal-num">Aug 21</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength C</strong><div class="detail">Full Body / Power</div></td>
+          <td class="cal-kcal">2,300 kcal</td>
+        </tr>
+
+        <tr class="k-longrun">
+          <td class="cal-date"><span class="cal-day">Sat</span><span class="cal-num">Aug 22</span></td>
+          <td><span class="tag k-longrun">Long Run</span> <strong>Long Run</strong><div class="detail">6+ miles, easy/moderate pace</div></td>
+          <td class="cal-kcal">2,750 kcal</td>
+        </tr>
+
+        <tr class="k-rest">
+          <td class="cal-date"><span class="cal-day">Sun</span><span class="cal-num">Aug 23</span></td>
+          <td><span class="tag k-rest">Rest</span> <strong>Rest</strong><div class="detail">Walk, stretch, foam roll</div></td>
+          <td class="cal-kcal">2,000 kcal</td>
+        </tr>
+        </tbody>
+      </table>
+    </details>
+
+    <details class="week-block">
+      <summary><span class="week-num">04</span><span class="week-name">Week 4 &mdash; Build</span><span class="week-range">Aug 24&ndash;Aug 30</span></summary>
+      <table class="cal-table">
+        <tbody>
+          
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Mon</span><span class="cal-num">Aug 24</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength A</strong><div class="detail">Lower Body + Core</div></td>
+          <td class="cal-kcal">2,300 kcal</td>
+        </tr>
+
+        <tr class="k-sprint">
+          <td class="cal-date"><span class="cal-day">Tue</span><span class="cal-num">Aug 25</span></td>
+          <td><span class="tag k-sprint">Sprint</span> <strong>Sprint Intervals</strong><div class="detail">6-12 x 100m, effort ramps by phase</div></td>
+          <td class="cal-kcal">2,450 kcal</td>
+        </tr>
+
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Wed</span><span class="cal-num">Aug 26</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength B</strong><div class="detail">Upper Body (Push/Pull)</div></td>
+          <td class="cal-kcal">2,300 kcal</td>
+        </tr>
+
+        <tr class="k-tempo">
+          <td class="cal-date"><span class="cal-day">Thu</span><span class="cal-num">Aug 27</span></td>
+          <td><span class="tag k-tempo">Swim+Run</span> <strong>Swim + Tempo Run</strong><div class="detail">Swim class 6:00-6:30 PM, then run</div></td>
+          <td class="cal-kcal">2,150 kcal</td>
+        </tr>
+
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Fri</span><span class="cal-num">Aug 28</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength C</strong><div class="detail">Full Body / Power</div></td>
+          <td class="cal-kcal">2,300 kcal</td>
+        </tr>
+
+        <tr class="k-longrun">
+          <td class="cal-date"><span class="cal-day">Sat</span><span class="cal-num">Aug 29</span></td>
+          <td><span class="tag k-longrun">Long Run</span> <strong>Long Run</strong><div class="detail">6+ miles, easy/moderate pace</div></td>
+          <td class="cal-kcal">2,750 kcal</td>
+        </tr>
+
+        <tr class="k-rest">
+          <td class="cal-date"><span class="cal-day">Sun</span><span class="cal-num">Aug 30</span></td>
+          <td><span class="tag k-rest">Rest</span> <strong>Rest</strong><div class="detail">Walk, stretch, foam roll</div></td>
+          <td class="cal-kcal">2,000 kcal</td>
+        </tr>
+        </tbody>
+      </table>
+    </details>
+
+    <details class="week-block">
+      <summary><span class="week-num">05</span><span class="week-name">Week 5 &mdash; Intensity</span><span class="week-range">Aug 31&ndash;Sep 06</span></summary>
+      <table class="cal-table">
+        <tbody>
+          
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Mon</span><span class="cal-num">Aug 31</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength A</strong><div class="detail">Lower Body + Core</div></td>
+          <td class="cal-kcal">2,200 kcal</td>
+        </tr>
+
+        <tr class="k-sprint">
+          <td class="cal-date"><span class="cal-day">Tue</span><span class="cal-num">Sep 01</span></td>
+          <td><span class="tag k-sprint">Sprint</span> <strong>Sprint Intervals</strong><div class="detail">6-12 x 100m, effort ramps by phase</div></td>
+          <td class="cal-kcal">2,350 kcal</td>
+        </tr>
+
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Wed</span><span class="cal-num">Sep 02</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength B</strong><div class="detail">Upper Body (Push/Pull)</div></td>
+          <td class="cal-kcal">2,200 kcal</td>
+        </tr>
+
+        <tr class="k-tempo">
+          <td class="cal-date"><span class="cal-day">Thu</span><span class="cal-num">Sep 03</span></td>
+          <td><span class="tag k-tempo">Swim+Run</span> <strong>Swim + Tempo Run</strong><div class="detail">Swim class 6:00-6:30 PM, then run</div></td>
+          <td class="cal-kcal">2,050 kcal</td>
+        </tr>
+
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Fri</span><span class="cal-num">Sep 04</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength C</strong><div class="detail">Full Body / Power</div></td>
+          <td class="cal-kcal">2,200 kcal</td>
+        </tr>
+
+        <tr class="k-longrun">
+          <td class="cal-date"><span class="cal-day">Sat</span><span class="cal-num">Sep 05</span></td>
+          <td><span class="tag k-longrun">Long Run</span> <strong>Long Run</strong><div class="detail">6+ miles, easy/moderate pace</div></td>
+          <td class="cal-kcal">2,600 kcal</td>
+        </tr>
+
+        <tr class="k-rest">
+          <td class="cal-date"><span class="cal-day">Sun</span><span class="cal-num">Sep 06</span></td>
+          <td><span class="tag k-rest">Rest</span> <strong>Rest</strong><div class="detail">Walk, stretch, foam roll</div></td>
+          <td class="cal-kcal">1,900 kcal</td>
+        </tr>
+        </tbody>
+      </table>
+    </details>
+
+    <details class="week-block">
+      <summary><span class="week-num">06</span><span class="week-name">Week 6 &mdash; Intensity</span><span class="week-range">Sep 07&ndash;Sep 13</span></summary>
+      <table class="cal-table">
+        <tbody>
+          
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Mon</span><span class="cal-num">Sep 07</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength A</strong><div class="detail">Lower Body + Core</div></td>
+          <td class="cal-kcal">2,200 kcal</td>
+        </tr>
+
+        <tr class="k-sprint">
+          <td class="cal-date"><span class="cal-day">Tue</span><span class="cal-num">Sep 08</span></td>
+          <td><span class="tag k-sprint">Sprint</span> <strong>Sprint Intervals</strong><div class="detail">6-12 x 100m, effort ramps by phase</div></td>
+          <td class="cal-kcal">2,350 kcal</td>
+        </tr>
+
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Wed</span><span class="cal-num">Sep 09</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength B</strong><div class="detail">Upper Body (Push/Pull)</div></td>
+          <td class="cal-kcal">2,200 kcal</td>
+        </tr>
+
+        <tr class="k-tempo">
+          <td class="cal-date"><span class="cal-day">Thu</span><span class="cal-num">Sep 10</span></td>
+          <td><span class="tag k-tempo">Swim+Run</span> <strong>Swim + Tempo Run</strong><div class="detail">Swim class 6:00-6:30 PM, then run</div></td>
+          <td class="cal-kcal">2,050 kcal</td>
+        </tr>
+
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Fri</span><span class="cal-num">Sep 11</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength C</strong><div class="detail">Full Body / Power</div></td>
+          <td class="cal-kcal">2,200 kcal</td>
+        </tr>
+
+        <tr class="k-longrun">
+          <td class="cal-date"><span class="cal-day">Sat</span><span class="cal-num">Sep 12</span></td>
+          <td><span class="tag k-longrun">Long Run</span> <strong>Long Run</strong><div class="detail">6+ miles, easy/moderate pace</div></td>
+          <td class="cal-kcal">2,600 kcal</td>
+        </tr>
+
+        <tr class="k-rest">
+          <td class="cal-date"><span class="cal-day">Sun</span><span class="cal-num">Sep 13</span></td>
+          <td><span class="tag k-rest">Rest</span> <strong>Rest</strong><div class="detail">Walk, stretch, foam roll</div></td>
+          <td class="cal-kcal">1,900 kcal</td>
+        </tr>
+        </tbody>
+      </table>
+    </details>
+
+    <details class="week-block">
+      <summary><span class="week-num">07</span><span class="week-name">Week 7 &mdash; Peak</span><span class="week-range">Sep 14&ndash;Sep 20</span></summary>
+      <table class="cal-table">
+        <tbody>
+          
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Mon</span><span class="cal-num">Sep 14</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength A</strong><div class="detail">Lower Body + Core</div></td>
+          <td class="cal-kcal">2,200 kcal</td>
+        </tr>
+
+        <tr class="k-sprint">
+          <td class="cal-date"><span class="cal-day">Tue</span><span class="cal-num">Sep 15</span></td>
+          <td><span class="tag k-sprint">Sprint</span> <strong>Sprint Intervals</strong><div class="detail">6-12 x 100m, effort ramps by phase</div></td>
+          <td class="cal-kcal">2,350 kcal</td>
+        </tr>
+
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Wed</span><span class="cal-num">Sep 16</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength B</strong><div class="detail">Upper Body (Push/Pull)</div></td>
+          <td class="cal-kcal">2,200 kcal</td>
+        </tr>
+
+        <tr class="k-tempo">
+          <td class="cal-date"><span class="cal-day">Thu</span><span class="cal-num">Sep 17</span></td>
+          <td><span class="tag k-tempo">Swim+Run</span> <strong>Swim + Tempo Run</strong><div class="detail">Swim class 6:00-6:30 PM, then run</div></td>
+          <td class="cal-kcal">2,050 kcal</td>
+        </tr>
+
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Fri</span><span class="cal-num">Sep 18</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength C</strong><div class="detail">Full Body / Power</div></td>
+          <td class="cal-kcal">2,200 kcal</td>
+        </tr>
+
+        <tr class="k-longrun">
+          <td class="cal-date"><span class="cal-day">Sat</span><span class="cal-num">Sep 19</span></td>
+          <td><span class="tag k-longrun">Long Run</span> <strong>Long Run</strong><div class="detail">6+ miles, easy/moderate pace</div></td>
+          <td class="cal-kcal">2,600 kcal</td>
+        </tr>
+
+        <tr class="k-rest">
+          <td class="cal-date"><span class="cal-day">Sun</span><span class="cal-num">Sep 20</span></td>
+          <td><span class="tag k-rest">Rest</span> <strong>Rest</strong><div class="detail">Walk, stretch, foam roll</div></td>
+          <td class="cal-kcal">1,900 kcal</td>
+        </tr>
+        </tbody>
+      </table>
+    </details>
+
+    <details class="week-block">
+      <summary><span class="week-num">08</span><span class="week-name">Week 8 &mdash; Taper</span><span class="week-range">Sep 21&ndash;Sep 27</span></summary>
+      <table class="cal-table">
+        <tbody>
+          
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Mon</span><span class="cal-num">Sep 21</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength A</strong><div class="detail">Lower Body + Core</div></td>
+          <td class="cal-kcal">2,200 kcal</td>
+        </tr>
+
+        <tr class="k-sprint">
+          <td class="cal-date"><span class="cal-day">Tue</span><span class="cal-num">Sep 22</span></td>
+          <td><span class="tag k-sprint">Sprint</span> <strong>Sprint Intervals</strong><div class="detail">6-12 x 100m, effort ramps by phase</div></td>
+          <td class="cal-kcal">2,350 kcal</td>
+        </tr>
+
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Wed</span><span class="cal-num">Sep 23</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength B</strong><div class="detail">Upper Body (Push/Pull)</div></td>
+          <td class="cal-kcal">2,200 kcal</td>
+        </tr>
+
+        <tr class="k-tempo">
+          <td class="cal-date"><span class="cal-day">Thu</span><span class="cal-num">Sep 24</span></td>
+          <td><span class="tag k-tempo">Swim+Run</span> <strong>Swim + Tempo Run</strong><div class="detail">Swim class 6:00-6:30 PM, then run</div></td>
+          <td class="cal-kcal">2,050 kcal</td>
+        </tr>
+
+        <tr class="k-strength">
+          <td class="cal-date"><span class="cal-day">Fri</span><span class="cal-num">Sep 25</span></td>
+          <td><span class="tag k-strength">Strength</span> <strong>Strength C</strong><div class="detail">Full Body / Power</div></td>
+          <td class="cal-kcal">2,200 kcal</td>
+        </tr>
+
+        <tr class="k-longrun">
+          <td class="cal-date"><span class="cal-day">Sat</span><span class="cal-num">Sep 26</span></td>
+          <td><span class="tag k-longrun">Long Run</span> <strong>Long Run</strong><div class="detail">6+ miles, easy/moderate pace</div></td>
+          <td class="cal-kcal">2,600 kcal</td>
+        </tr>
+
+        <tr class="k-rest">
+          <td class="cal-date"><span class="cal-day">Sun</span><span class="cal-num">Sep 27</span></td>
+          <td><span class="tag k-rest">Rest</span> <strong>Rest</strong><div class="detail">Walk, stretch, foam roll</div></td>
+          <td class="cal-kcal">1,900 kcal</td>
+        </tr>
+        </tbody>
+      </table>
+    </details>
+</section>
+
+<section id="calories">
+  <h2 class="sec-title"><span class="no">03</span> Daily Calorie &amp; Macro Targets</h2>
+
+  <h3 class="sub-title">Weeks 1-4 (starting ~200 lbs)</h3>
+  <table class="macro">
+    <tr><th>Day Type</th><th>Days</th><th>Calories</th><th>Protein</th><th>Carbs</th><th>Fat</th></tr>
+    <tr><td>Rest Day</td><td>Sunday</td><td class="num">2,000 kcal</td><td class="num">180g</td><td class="num">185g</td><td class="num">60g</td></tr>
+    <tr><td>Strength Day</td><td>Mon / Wed / Fri</td><td class="num">2,300 kcal</td><td class="num">185g</td><td class="num">245g</td><td class="num">65g</td></tr>
+    <tr><td>Sprint Day</td><td>Tuesday</td><td class="num">2,450 kcal</td><td class="num">185g</td><td class="num">275g</td><td class="num">68g</td></tr>
+    <tr><td>Swim + Tempo Day</td><td>Thursday</td><td class="num">2,150 kcal</td><td class="num">180g</td><td class="num">220g</td><td class="num">62g</td></tr>
+    <tr><td>Long Run Day (6+ mi)</td><td>Saturday</td><td class="num">2,750 kcal</td><td class="num">185g</td><td class="num">356g</td><td class="num">65g</td></tr>
+  </table>
+  <p class="small">Weekly average: ~2,340 kcal/day &rarr; ~450-550 kcal/day deficit &rarr; ~0.9-1.1 lb/week loss. The long run day sits higher on purpose &mdash; 6 miles burns roughly 650-700 extra calories, and under-fueling it would leave you flat for Monday's lift.</p>
+
+  <h3 class="sub-title">Weeks 5-8 (recalculated at ~194 lbs)</h3>
+  <table class="macro">
+    <tr><th>Day Type</th><th>Days</th><th>Calories</th><th>Protein</th><th>Carbs</th><th>Fat</th></tr>
+    <tr><td>Rest Day</td><td>Sunday</td><td class="num">1,900 kcal</td><td class="num">175g</td><td class="num">170g</td><td class="num">58g</td></tr>
+    <tr><td>Strength Day</td><td>Mon / Wed / Fri</td><td class="num">2,200 kcal</td><td class="num">180g</td><td class="num">235g</td><td class="num">62g</td></tr>
+    <tr><td>Sprint Day</td><td>Tuesday</td><td class="num">2,350 kcal</td><td class="num">180g</td><td class="num">265g</td><td class="num">65g</td></tr>
+    <tr><td>Swim + Tempo Day</td><td>Thursday</td><td class="num">2,050 kcal</td><td class="num">175g</td><td class="num">210g</td><td class="num">60g</td></tr>
+    <tr><td>Long Run Day (6+ mi)</td><td>Saturday</td><td class="num">2,600 kcal</td><td class="num">180g</td><td class="num">330g</td><td class="num">62g</td></tr>
+  </table>
+  <p class="small">As body weight drops, energy needs drop slightly too. Re-weigh weekly (same morning conditions) and switch to this table starting week 5, or sooner if week 3-4 average loss is under 0.5 lb/week.</p>
+  <p>Protein target is set high (~0.9-1g per lb of bodyweight) to protect muscle while in a deficit and doing heavy strength work. Prioritize lean protein at every meal; shift carbs higher around Tuesday's sprint session and especially Saturday's long run for performance and glycogen refill.</p>
+</section>
+
+<section id="phase1">
+  <h2 class="sec-title"><span class="no">04</span> Phase 1 &mdash; Weeks 1-2: Foundation</h2>
+  <div class="phase">
+    <p>Goal: groove movement patterns, build a running base, and let your body adapt to a new routine without excessive soreness or burnout. Effort: moderate (leave 2-3 reps in reserve on lifts).</p>
+
+    <h3 class="day-head">Monday &mdash; Strength A: Lower Body + Core</h3>
+    <table class="exercises">
+      <tr><th>Exercise</th><th>Sets x Reps</th><th>Rest</th><th>Notes</th></tr>
+      <tr><td>Back Squat (or Goblet Squat)</td><td>3 x 8-10</td><td>90s</td><td>Controlled tempo, full depth</td></tr>
+      <tr><td>Romanian Deadlift</td><td>3 x 10</td><td>90s</td><td>Slight knee bend, feel hamstrings</td></tr>
+      <tr><td>Walking Lunges</td><td>3 x 10/leg</td><td>60s</td><td>Bodyweight or dumbbells</td></tr>
+      <tr><td>Leg Press or Step-Ups</td><td>3 x 12</td><td>60s</td><td>Controlled, no bouncing</td></tr>
+      <tr><td>Plank</td><td>3 x 30-40s</td><td>45s</td><td>Brace core, straight line</td></tr>
+      <tr><td>Bird Dog</td><td>2 x 10/side</td><td>30s</td><td>Slow and controlled</td></tr>
+    </table>
+
+    <h3 class="day-head">Tuesday &mdash; Sprint Intervals</h3>
+    <ul class="workout-list">
+      <li>10 min easy jog warm-up + dynamic stretches (leg swings, lunges, high knees)</li>
+      <li>6 x 100m sprints at ~80-85% effort, walk back as full recovery</li>
+      <li>10 min easy jog or walk cool-down + static stretching</li>
+    </ul>
+
+    <h3 class="day-head">Wednesday &mdash; Strength B: Upper Body (Push/Pull)</h3>
+    <table class="exercises">
+      <tr><th>Exercise</th><th>Sets x Reps</th><th>Rest</th><th>Notes</th></tr>
+      <tr><td>Dumbbell Bench Press</td><td>3 x 8-10</td><td>90s</td><td>Full range of motion</td></tr>
+      <tr><td>Bent-Over Row (barbell/dumbbell)</td><td>3 x 10</td><td>90s</td><td>Squeeze shoulder blades</td></tr>
+      <tr><td>Overhead Press</td><td>3 x 8-10</td><td>75s</td><td>Brace core, no arching back</td></tr>
+      <tr><td>Lat Pulldown or Pull-Ups</td><td>3 x 8-10</td><td>75s</td><td>Assisted if needed</td></tr>
+      <tr><td>DB Curl + Triceps Pushdown (superset)</td><td>2 x 12 each</td><td>45s</td><td>Superset back-to-back</td></tr>
+    </table>
+
+    <h3 class="day-head">Thursday &mdash; Swim Class (6:00-6:30 PM) + Tempo Run + Mobility</h3>
+    <ul class="workout-list">
+      <li>Swim class, 6:00-6:30 PM</li>
+      <li>After swim: 3-5 min easy jog or dynamic stretches to re-warm-up</li>
+      <li>20 minutes continuous jog, conversational-but-purposeful pace (Zone 2-3) &mdash; may feel tougher on swim fatigue, that's normal</li>
+      <li>5 min cool-down walk/jog + mobility: hip flexor stretch, couch stretch, ankle circles, foam rolling</li>
+      <li>Snack tip: small carb snack (banana, dates, crackers) between swim and run</li>
+    </ul>
+
+    <h3 class="day-head">Friday &mdash; Strength C: Full Body / Power</h3>
+    <table class="exercises">
+      <tr><th>Exercise</th><th>Sets x Reps</th><th>Rest</th><th>Notes</th></tr>
+      <tr><td>Trap Bar or Conventional Deadlift</td><td>3 x 6-8</td><td>2 min</td><td>Prioritize form over load</td></tr>
+      <tr><td>Dumbbell Push Press</td><td>3 x 8</td><td>90s</td><td>Explosive drive from legs</td></tr>
+      <tr><td>Kettlebell Swing</td><td>3 x 15</td><td>60s</td><td>Hip hinge, not a squat</td></tr>
+      <tr><td>Med Ball Slam</td><td>3 x 10</td><td>45s</td><td>Full effort, controlled catch</td></tr>
+      <tr><td>Hanging Knee Raise</td><td>3 x 12</td><td>45s</td><td>Control the swing</td></tr>
+    </table>
+
+    <h3 class="day-head">Saturday &mdash; Long Run</h3>
+    <ul class="workout-list">
+      <li>6+ miles at an easy, conversational pace (Zone 2) &mdash; time on your feet, not speed</li>
+      <li>Walk the first and last 5 minutes as warm-up/cool-down if needed</li>
+      <li>Optional: 1 easy round of core afterward (Plank 30s, Leg Raise 10) &mdash; skip if tired</li>
+    </ul>
+
+    <h3 class="day-head">Sunday &mdash; Rest</h3>
+    <p>Easy 20-30 min walk, stretch, or full rest. If you want to keep swimming in the mix, an easy 15-20 min swim works well here too &mdash; keep it light, it's still a recovery day.</p>
+  </div>
+</section>
+
+<section id="phase2">
+  <h2 class="sec-title"><span class="no">05</span> Phase 2 &mdash; Weeks 3-4: Build</h2>
+  <div class="phase">
+    <p>Goal: add volume and intensity now that movement patterns feel solid. Increase strength loads 5-10% from Phase 1 where you had 2+ reps in reserve. Sprint efforts move to 85-90%.</p>
+
+    <h3 class="day-head">Strength Days (A/B/C) &mdash; Changes from Phase 1</h3>
+    <table class="exercises">
+      <tr><th>Exercise</th><th>Sets x Reps</th><th>Rest</th><th>Notes</th></tr>
+      <tr><td>All main lifts (Squat, RDL, Bench, Row, OHP, Deadlift)</td><td>Add 1 set (now 4 total)</td><td>Same</td><td>Increase load 5-10%</td></tr>
+      <tr><td>Accessory work (lunges, curls, core)</td><td>Keep sets, add 2 reps</td><td>Same</td><td>Increase difficulty/weight slightly</td></tr>
+      <tr><td>Add: Farmer's Carry</td><td>3 x 40m</td><td>60s</td><td>New addition on Friday (Full Body day)</td></tr>
+    </table>
+
+    <h3 class="day-head">Tuesday &mdash; Sprint Intervals (Progression)</h3>
+    <ul class="workout-list">
+      <li>10 min warm-up jog + dynamic stretches</li>
+      <li>8 x 100m sprints at 85-90% effort, walk-back recovery (slightly shorter rest than Phase 1)</li>
+      <li>10 min cool-down + stretching</li>
+    </ul>
+
+    <h3 class="day-head">Thursday &mdash; Swim Class (6:00-6:30 PM) + Tempo Run (Progression)</h3>
+    <p>After swim, re-warm-up 3-5 min, then increase to 25-28 minutes continuous at the same conversational-effort pace, plus mobility work.</p>
+
+    <h3 class="day-head">Saturday &mdash; Long Run (Progression)</h3>
+    <ul class="workout-list">
+      <li>6-7 miles at an easy-to-moderate pace, slightly more purposeful than Phase 1 but still conversational</li>
+      <li>Optional: pick up the pace slightly for the final 5 minutes if feeling strong</li>
+    </ul>
+  </div>
+</section>
+
+<section id="phase3">
+  <h2 class="sec-title"><span class="no">06</span> Phase 3 &mdash; Weeks 5-6: Intensity</h2>
+  <div class="phase">
+    <p>Goal: heavier strength work at lower reps for continued muscle retention/strength, and faster, harder sprint work for conditioning and calorie burn. This is the most demanding phase &mdash; sleep and protein intake matter most here.</p>
+
+    <h3 class="day-head">Strength Days &mdash; Changes</h3>
+    <table class="exercises">
+      <tr><th>Exercise</th><th>Sets x Reps</th><th>Rest</th><th>Notes</th></tr>
+      <tr><td>Main lifts (Squat, Deadlift, Bench, OHP, Row)</td><td>4 x 5-6 (heavier)</td><td>2 min</td><td>Increase load 5-10% again, keep 1-2 reps in reserve</td></tr>
+      <tr><td>Accessory work</td><td>3 x 10-12</td><td>60s</td><td>Maintain or slightly increase weight</td></tr>
+      <tr><td>Add: Bulgarian Split Squat</td><td>3 x 8/leg</td><td>75s</td><td>Replaces walking lunges on Mondays</td></tr>
+    </table>
+
+    <h3 class="day-head">Tuesday &mdash; Sprint Intervals (Peak Volume)</h3>
+    <ul class="workout-list">
+      <li>10 min warm-up</li>
+      <li>10 x 100m sprints at 90% effort, walk-back recovery</li>
+      <li>Once per week this phase (Tuesday), add 4 x 20-second hill sprints at the end if a hill is available</li>
+      <li>10 min cool-down</li>
+    </ul>
+
+    <h3 class="day-head">Thursday &mdash; Swim Class (6:00-6:30 PM) + Tempo Run</h3>
+    <p>After swim, re-warm-up 3-5 min, then 30 minutes continuous, pace slightly faster than Phase 2 while still conversational.</p>
+
+    <h3 class="day-head">Saturday &mdash; Long Run (Peak)</h3>
+    <ul class="workout-list">
+      <li>7 miles, moderate effort throughout &mdash; still sustainable, but noticeably more purposeful than Phase 1-2</li>
+      <li>Optional: last mile at a slightly faster tempo effort if energy allows</li>
+    </ul>
+  </div>
+</section>
+
+<section id="phase4">
+  <h2 class="sec-title"><span class="no">07</span> Phase 4 &mdash; Weeks 7-8: Peak &amp; Taper</h2>
+  <div class="phase">
+    <p>Week 7 is your hardest week. Week 8 is a planned taper (reduce volume ~30-40%) so you finish the block feeling strong and recovered rather than run down &mdash; this also protects against overtraining and gives your body a chance to show the full result of 7 weeks of work.</p>
+
+    <h3 class="day-head">Week 7 &mdash; Strength Days</h3>
+    <table class="exercises">
+      <tr><th>Exercise</th><th>Sets x Reps</th><th>Rest</th><th>Notes</th></tr>
+      <tr><td>Main lifts</td><td>4 x 4-5 (heaviest of the program)</td><td>2-2.5 min</td><td>Push loads with good form, 1 rep in reserve</td></tr>
+      <tr><td>Accessory work</td><td>3 x 10</td><td>60s</td><td>Maintain Phase 3 loads</td></tr>
+    </table>
+
+    <h3 class="day-head">Week 7 &mdash; Tuesday Sprints</h3>
+    <ul class="workout-list">
+      <li>10 min warm-up</li>
+      <li>12 x 100m sprints at 90-95% effort, full walk-back recovery</li>
+      <li>10 min cool-down</li>
+    </ul>
+
+    <h3 class="day-head">Week 7 &mdash; Thursday Swim Class (6:00-6:30 PM) + Tempo Run</h3>
+    <p>After swim, re-warm-up 3-5 min, then 30-35 minutes continuous at Phase 3 effort &mdash; hold steady, this is your recovery day between hard sprint/lift/long-run sessions.</p>
+
+    <h3 class="day-head">Week 7 &mdash; Saturday Long Run (Peak)</h3>
+    <ul class="workout-list">
+      <li>7-8 miles at moderate effort &mdash; your longest run of the program</li>
+      <li>Optional: last 1-2 miles at a faster tempo effort if feeling strong</li>
+    </ul>
+
+    <h3 class="day-head">Week 8 &mdash; Taper &amp; Retest</h3>
+    <table class="exercises">
+      <tr><th>Exercise</th><th>Sets x Reps</th><th>Rest</th><th>Notes</th></tr>
+      <tr><td>Main lifts</td><td>3 x 6 at ~80% of Week 7 load</td><td>90s</td><td>Lighter, crisp reps &mdash; not a grind</td></tr>
+      <tr><td>Accessory work</td><td>2 x 10</td><td>45s</td><td>Reduced volume</td></tr>
+    </table>
+    <ul class="workout-list">
+      <li><strong>Tuesday sprints (taper):</strong> 6 x 100m at 85% effort (about half the Week 7 volume)</li>
+      <li><strong>Thursday:</strong> Swim class + 20 minutes easy continuous jogging &mdash; taper volume down like everything else this week</li>
+      <li><strong>Saturday long run (taper):</strong> keep it at 6 miles (baseline), but at an easy, relaxed pace &mdash; this week is about recovery, not effort</li>
+      <li><strong>Friday of week 8 (optional):</strong> time yourself over 100m or a 1-mile run to measure speed/conditioning gains since week 1</li>
+    </ul>
+    <div class="callout">End of Week 8: re-weigh yourself under the same conditions as day 1, and compare. If you're close to 185 but not quite there, repeat the Week 7-8 template (Phase 3 loads, taper every 4th week) until you hit goal.</div>
+  </div>
+</section>
+
+<section id="nutrition">
+  <h2 class="sec-title"><span class="no">08</span> Nutrition Guidelines</h2>
+  <div class="nutri-grid">
+    <div class="nutri-card">
+      <h4>Protein (25-40g/meal, 4-5 meals/day)</h4>
+      <p>Chicken breast, lean beef/turkey, white fish, salmon, eggs/egg whites, Greek yogurt, cottage cheese, whey or plant protein powder, tofu/tempeh, legumes.</p>
+    </div>
+    <div class="nutri-card">
+      <h4>Carbs (load around Tue &amp; Sat)</h4>
+      <p>Rice, oats, potatoes/sweet potatoes, whole-grain bread/pasta, fruit, beans, quinoa.</p>
+    </div>
+    <div class="nutri-card">
+      <h4>Fats</h4>
+      <p>Olive oil, avocado, nuts/nut butter, egg yolks, fatty fish.</p>
+    </div>
+  </div>
+
+  <h3 class="sub-title">Practical Tips</h3>
+  <ul class="tips">
+    <li>Weigh yourself once a week, same morning, same conditions &mdash; day-to-day swings are mostly water.</li>
+    <li>Hit your protein target every day even more consistently than the exact calorie number.</li>
+    <li>Drink water throughout the day; aim for at least half your bodyweight (lbs) in ounces.</li>
+    <li>Sleep 7-9 hours &mdash; recovery drives both fat loss and strength/speed gains.</li>
+    <li>If a training day leaves you unusually hungry or flat, add 100-150 kcal from protein/carbs rather than skipping food.</li>
+  </ul>
+
+  <div class="callout">This plan is general fitness guidance, not individualized medical or dietetic advice. Calorie and macro numbers are estimates based on standard formulas and the stats provided &mdash; actual needs vary by individual. If you have any underlying health conditions, are new to structured exercise, or experience pain (not just normal muscle fatigue), check with a doctor or a certified trainer/dietitian before starting, and adjust or stop any exercise that doesn't feel right for your body.</div>
+</section>
+
+</main>
+
+<footer>
+  <div class="inner">
+    <strong>8-Week Strength + Sprint Fat Loss Plan</strong> &middot; August 03, 2026 &ndash; September 27, 2026<br>
+    Built for personal training use. Not a substitute for medical or professional coaching advice.
+  </div>
+</footer>
+
+</body>
+</html>
