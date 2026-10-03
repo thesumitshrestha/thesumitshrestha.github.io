@@ -186,7 +186,7 @@ input[type=range]{width:100%;accent-color:var(--ink)}
       <span class="lbl">Extras</span>
       <div class="row">
         <button class="chip" id="tilt" type="button" aria-pressed="true" data-for="sticky copy">Tilted</button>
-        <button class="chip" id="handle" type="button" aria-pressed="true">@unsaid.daily</button>
+        <button class="chip" id="handle" type="button" aria-pressed="true">@unsaid.daiily</button>
       </div>
     </div>
   </section>
@@ -371,7 +371,7 @@ function drawHandle(ctx,W,H,color,shadow){
   ctx.save();ctx.fillStyle=color;ctx.textAlign="center";ctx.font=`500 ${W*.03}px "Cormorant Garamond", Georgia, serif`;
   if(shadow){ctx.shadowColor="rgba(0,0,0,.5)";ctx.shadowBlur=12}
   if("letterSpacing" in ctx)ctx.letterSpacing=`${W*.006}px`;
-  ctx.fillText("@unsaid.daily",W/2,H-Math.min(W,H)*.06);ctx.restore();
+  ctx.fillText("@unsaid.daiily",W/2,H-Math.min(W,H)*.06);ctx.restore();
 }
 
 function drawSticky(ctx,W,H,f){
@@ -488,7 +488,7 @@ function drawNotes(ctx,W,H,f){
   ctx.beginPath();ctx.moveTo(qx-6*u,ty2+6*u);ctx.lineTo(qx+24*u,ty2-24*u);ctx.stroke();
   // home indicator
   ctx.fillStyle=fg;rrect(ctx,W/2-140*u,H-32*u,280*u,10*u,5*u);ctx.fill();
-  if(st.handle){ctx.fillStyle=sub;ctx.textAlign="center";ctx.font=`${28*u}px ${SYS}`;ctx.fillText("@unsaid.daily",W/2,H-190*u)}
+  if(st.handle){ctx.fillStyle=sub;ctx.textAlign="center";ctx.font=`${28*u}px ${SYS}`;ctx.fillText("@unsaid.daiily",W/2,H-190*u)}
 }
 
 let timer;
@@ -596,7 +596,7 @@ function localCaptions(q,m){
     Sad:["Some things are easier to read than to say. 🤍","If you felt this, you're not alone.","Saving this for the quiet nights."],
     Healing:["A gentle reminder you didn't know you needed. 🤍","Breathe. You're doing better than you think.","Save this for the hard days."]
   }[md];
-  return lines.map((t,i)=>({caption:t+(i===2?"\n\nFollow @unsaid.daily for words you never said.":""),hashtags:h,tiktok:t.replace(/\s*🤍/,"")+" #unsaid "+TAGS[md].slice(0,3).join(" ")+" #fyp"}));
+  return lines.map((t,i)=>({caption:t+(i===2?"\n\nFollow @unsaid.daiily for words you never said.":""),hashtags:h,tiktok:t.replace(/\s*🤍/,"")+" #unsaid "+TAGS[md].slice(0,3).join(" ")+" #fyp"}));
 }
 function copyText(t,btn){
   const done=()=>{const o=btn.textContent;btn.textContent="Copied";setTimeout(()=>btn.textContent=o,1400)};
@@ -622,7 +622,7 @@ $("capBtn").onclick=async()=>{
   btn.disabled=true;btn.textContent="Writing captions…";msg.textContent="";
   try{
     const res=await sampler.json(
-`You write captions for @unsaid.daily, an Instagram and TikTok account that posts quote images (motivational, love, sad, healing). Tone: soft, short, human, relatable. No clichés like "Double tap if". At most one emoji per caption (🤍 fits the brand). Never repeat the quote word for word.
+`You write captions for @unsaid.daiily, an Instagram and TikTok account that posts quote images (motivational, love, sad, healing). Tone: soft, short, human, relatable. No clichés like "Double tap if". At most one emoji per caption (🤍 fits the brand). Never repeat the quote word for word.
 
 Quote on the image: """${q}"""
 Mood: ${mood==="Auto"?"decide from the quote":mood}
