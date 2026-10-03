@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>html{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Unsaid Note Maker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Karla:wght@400;500;700&family=Gochi+Hand&family=Patrick+Hand&family=Caveat:wght@500&family=Shadows+Into+Light&family=Kalam&family=Indie+Flower&family=Reenie+Beanie&family=Nanum+Pen+Script&family=Homemade+Apple&family=Dancing+Script:wght@500&family=Sacramento&family=Playfair+Display:ital@1&family=Lora:ital@1&family=EB+Garamond&family=Special+Elite&family=Courier+Prime&family=Quicksand:wght@500&family=Instrument+Serif&display=swap">
+<style>
+/* Layout: two-pane studio — controls left, the finished image right; stacks on phones with the image first */
+:root{
+  --bg:#efeae3; --panel:#f8f5f0; --ink:#1f201d; --muted:#6c675f; --line:#d9d2c7; --accent:#1f201d; --accent-ink:#f3efe7;
+  --display:"Cormorant Garamond", Georgia, serif;
+  --body:"Karla", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#171815; --panel:#20211d; --ink:#ece7dd; --muted:#a39d92; --line:#36372f; --accent:#ece7dd; --accent-ink:#1f201d; color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#171815; --panel:#20211d; --ink:#ece7dd; --muted:#a39d92; --line:#36372f; --accent:#ece7dd; --accent-ink:#1f201d; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;padding:28px 16px 48px}
+.wrap{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:32px;align-items:start}
+header{grid-column:1/-1;display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px}
+h1{font-family:var(--display);font-weight:500;font-size:40px;letter-spacing:.18em;margin:0;line-height:1}
+header p{margin:0;color:var(--muted);font-size:14px}
+.controls{display:flex;flex-direction:column;gap:22px;min-width:0}
+label,.lbl{display:block;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+textarea,input[type=text]{width:100%;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+textarea{min-height:140px;resize:vertical;font-size:16px}
+textarea:focus,input:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:14px;padding:8px 12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.sw{width:36px;height:36px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0;background-size:cover;background-position:center}
+.sw[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 2px var(--bg) inset}
+.hint{font-size:13px;color:var(--muted);margin:6px 0 0}
+.styles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.style .i4{background:linear-gradient(#fff 0 8px,#fff 8px) ;border:1px solid #ddd;position:relative;background:repeating-linear-gradient(#fff 0 9px,#e9e9ec 9px 10px) 0 14px/100% 100% no-repeat,#fff;box-shadow:inset 0 3px 0 #e6b422}
+@media (max-width:420px){.styles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.style{font:inherit;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:10px 8px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;font-weight:500}
+.style[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink) inset}
+.style i{display:block;width:44px;height:44px;border-radius:3px}
+.style .i1{background:#f2a7b8;transform:rotate(-4deg);box-shadow:0 3px 6px rgba(0,0,0,.2)}
+.style .i2{background:repeating-linear-gradient(#fdfdfb 0 7px,#9ebde0 7px 8px);border-left:6px solid #fdfdfb;box-shadow:inset 9px 0 0 -7px #e07a7a,0 3px 6px rgba(0,0,0,.15)}
+.style .i3{background:linear-gradient(160deg,#f1a36b,#7a4f8e 60%,#2b2a4a)}
+.photos{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.photos .sw{width:52px;height:52px;border-radius:8px}
+.upload{font:inherit;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px dashed var(--muted);border-radius:8px;cursor:pointer;color:var(--ink);background:transparent}
+.upload input{position:absolute;width:1px;height:1px;opacity:0}
+.links{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:14px;margin-top:8px}
+.links a{color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--ink)}
+.btn{font:inherit;font-weight:700;padding:12px 18px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);cursor:pointer}
+.preview{position:sticky;top:16px;display:flex;flex-direction:column;align-items:center;gap:12px;min-width:0}
+.preview img{display:block;max-width:100%;max-height:76vh;width:auto;border-radius:4px;box-shadow:0 10px 30px rgba(0,0,0,.18);-webkit-touch-callout:default}
+.save{font-size:14px;color:var(--muted);text-align:center;margin:0}
+.savebtn{display:inline-flex;align-items:center;gap:10px;font-size:16px;padding:14px 26px;border-radius:999px}
+.savebtn[hidden]{display:none!important}
+.fgroups{display:flex;flex-direction:column;gap:12px}
+.fgroups .gname{font-size:12px;color:var(--muted);margin-bottom:6px}
+.fgroups .chip{font-size:18px;padding:6px 14px;line-height:1.3}
+.cap{width:100%;max-width:560px;border-top:1px solid var(--line);padding-top:18px;margin-top:6px;display:flex;flex-direction:column;gap:12px}
+.caphead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+.caphead .chip{font-size:13px;padding:5px 10px}
+.capbtn{width:100%}
+.capbtn[disabled]{opacity:.6;cursor:wait}
+.capcard{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.capcard .tag{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.capcard p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.capcard .hash{color:var(--muted);font-size:14px}
+.capcard .acts{display:flex;gap:8px;flex-wrap:wrap}
+.capcard .chip{font-size:13px;padding:6px 12px}
+.psrow input{font-size:16px}
+.libgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;max-height:360px;overflow-y:auto;padding:2px;margin-top:10px}
+.lp{position:relative;padding:0;border:2px solid transparent;border-radius:8px;overflow:hidden;cursor:pointer;aspect-ratio:1;background:var(--line);max-width:100%}
+.lp img{width:100%;height:100%;object-fit:cover;display:block}
+.lp[aria-pressed="true"]{border-color:var(--ink)}
+.lp .nm{position:absolute;left:0;right:0;bottom:0;font-size:11px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.65));padding:12px 6px 4px;text-align:left}
+.lp .badge{position:absolute;top:4px;left:4px;font-size:10px;font-weight:700;background:#fff;color:#111;border-radius:999px;padding:2px 7px}
+.more{margin-top:14px;font-size:14px}.more summary{cursor:pointer;font-weight:700}
+.sites{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 12px}
+.sites a{font-size:14px;font-weight:700;text-decoration:none;color:var(--accent-ink);background:var(--accent);padding:8px 14px;border-radius:999px}
+.ideas{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.idea{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.idea b{font-size:15px}.idea span{font-size:13px;color:var(--muted)}
+.idea .il{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:13px}.idea .il a{color:var(--ink)}
+#caps{display:flex;flex-direction:column;gap:10px}
+@media (max-width:760px){.wrap{grid-template-columns:minmax(0,1fr)}.preview{position:static;order:-1}h1{font-size:32px}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>unsaid</h1>
+    <p>Type a quote, pick a look, then save the image.</p>
+  </header>
+
+  <section class="controls">
+    <div>
+      <span class="lbl">Style</span>
+      <div class="styles" id="styles">
+        <button class="style" type="button" data-s="sticky" aria-pressed="true"><i class="i1"></i>Sticky note</button>
+        <button class="style" type="button" data-s="copy" aria-pressed="false"><i class="i2"></i>Copy paper</button>
+        <button class="style" type="button" data-s="photo" aria-pressed="false"><i class="i3"></i>Photo</button>
+        <button class="style" type="button" data-s="notes" aria-pressed="false"><i class="i4"></i>Phone notes</button>
+      </div>
+    </div>
+
+    <div>
+      <label for="q">Quote</label>
+      <textarea id="q">Some feelings don't need to be explained. They just need to be felt, and then let go.</textarea>
+      <div class="row" style="margin-top:8px">
+        <button class="chip" id="shuffle" type="button">Try a sample</button>
+      </div>
+    </div>
+    <div>
+      <label for="sig">Signature</label>
+      <input type="text" id="sig" value="unsaid">
+      <p class="hint">Shown under the quote as “— unsaid”. Leave empty to hide.</p>
+    </div>
+
+    <div data-for="sticky">
+      <span class="lbl">Note color</span>
+      <div class="row" id="notes"></div>
+    </div>
+
+    <div data-for="photo">
+      <span class="lbl">Photo</span>
+      <div class="photos" id="photos">
+        <label class="upload" for="file" style="margin:0;text-transform:none;letter-spacing:0">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 16V4m0 0-5 5m5-5 5 5M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Upload photo
+          <input type="file" id="file" accept="image/*">
+        </label>
+      </div>
+      <div class="libwrap">
+        <span class="lbl" style="margin:14px 0 8px">Photo library</span>
+        <input type="text" id="libQ" placeholder="Search: rain, moon, flowers, mountains…" autocomplete="off">
+        <div class="row" id="libMoods" style="margin:10px 0"></div>
+        <button class="chip" id="psSuggest" type="button">✦ Suggest photos for my quote</button>
+        <p class="hint" id="psMsg"></p>
+        <div class="libgrid" id="lib"></div>
+        <p class="hint" id="libEmpty" hidden>No photos match. Try another word, or look online below.</p>
+      </div>
+      <details class="more">
+        <summary>More photos online</summary>
+        <form id="psForm" class="psrow" style="margin-top:10px">
+          <input type="text" id="psQ" placeholder="e.g. rainy window, lonely road, roses" autocomplete="off">
+        </form>
+        <div class="sites" id="psSites"></div>
+        <p class="hint">Opens free photo sites. Save a photo you like, then tap <b>Upload photo</b>.</p>
+      </details>
+      <div style="margin-top:14px">
+        <label for="dim">Darken photo</label>
+        <input type="range" id="dim" min="0" max="80" value="40">
+      </div>
+    </div>
+
+    <div data-for="notes">
+      <span class="lbl">Screen</span>
+      <div class="row" id="nmodes"></div>
+      <p class="hint">Looks like a note on a phone screen. Uses the phone’s own clean font.</p>
+    </div>
+
+    <div data-for="sticky copy">
+      <span class="lbl">Background</span>
+      <div class="row" id="bgs"></div>
+    </div>
+
+    <div data-for="sticky copy">
+      <span class="lbl">Ink</span>
+      <div class="row" id="inks"></div>
+    </div>
+
+    <div data-for="sticky copy photo">
+      <span class="lbl">Font</span>
+      <div class="fgroups" id="fonts"></div>
+    </div>
+    <div>
+      <span class="lbl">Size</span>
+      <div class="row" id="sizes"></div>
+    </div>
+    <div>
+      <span class="lbl">Extras</span>
+      <div class="row">
+        <button class="chip" id="tilt" type="button" aria-pressed="true" data-for="sticky copy">Tilted</button>
+        <button class="chip" id="handle" type="button" aria-pressed="true">@unsaid.daily</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="preview">
+    <img id="out" alt="Your quote card">
+    <button class="btn savebtn" id="saveBtn" type="button" hidden>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Save image
+    </button>
+    <p class="save" id="saveMsg">You can also press and hold the image on your phone, or right‑click → “Save image as” on a computer.</p>
+
+    <div class="cap">
+      <div class="caphead">
+        <span class="lbl" style="margin:0">Caption</span>
+        <div class="row" id="moods"></div>
+      </div>
+      <button class="btn capbtn" id="capBtn" type="button">Write captions for this quote</button>
+      <p class="hint" id="capMsg"></p>
+      <div id="caps"></div>
+    </div>
+  </section>
+</div>
+<canvas id="c" hidden></canvas>
+
+<script>
+const NOTES={Blush:"#f2a7b8",Butter:"#f7e27c",Mint:"#b9e3c6",Sky:"#acd2ec",Lilac:"#cbbbe9",Paper:"#f6f2ea"};
+const BGS={
+  Linen:{a:"#ebe5dc",b:"#cfc6b9",mark:"#5d574e"},
+  Charcoal:{a:"#2a2b27",b:"#141512",mark:"#cfc8bb"},
+  Dusk:{a:"#3b3550",b:"#1c1a29",mark:"#d4cde6"},
+  Blush:{a:"#f6e3e3",b:"#e3c3c6",mark:"#6b4c51"},
+  Wood:{a:"#a77b55",b:"#6b4a30",mark:"#f1e4d3"}
+};
+const INKS={Black:"#1d1b1a","Blue pen":"#1f3c8f",Pencil:"#55524d","Red pen":"#a8232b"};
+// name -> [css family, size scale, style prefix]
+const FONT_GROUPS={
+  "Handwritten":{
+    "Marker":["Gochi Hand",1,""],"Neat":["Patrick Hand",1,""],"Quick note":["Caveat",1.12,"500 "],
+    "Diary":["Shadows Into Light",1,""],"Pen":["Kalam",.92,""],"Bubbly":["Indie Flower",.95,""],
+    "Scribble":["Reenie Beanie",1.3,""],"Brush pen":["Nanum Pen Script",1.3,""],"Messy ink":["Homemade Apple",.72,""]
+  },
+  "Romantic script":{
+    "Love letter":["Dancing Script",1.05,"500 "],"Wedding":["Sacramento",1.35,""]
+  },
+  "Bold statement":{
+    "Tall serif":["Instrument Serif",1.25,""]
+  },
+  "Elegant serif":{
+    "Classic":["EB Garamond",.95,""],"Poetic":["Playfair Display",.88,"italic "],"Soft italic":["Lora",.9,"italic "],
+    "Book":["Cormorant Garamond",1,"italic 500 "]
+  },
+  "Typewriter & clean":{
+    "Typewriter":["Special Elite",.82,""],"Letter":["Courier Prime",.82,""],"Modern":["Quicksand",.88,"500 "]
+  }
+};
+const FONTS={};Object.values(FONT_GROUPS).forEach(g=>Object.assign(FONTS,g));
+const SIZES={"Post 4:5":[1080,1350],"Story 9:16":[1080,1920],"Square":[1080,1080]};
+const SAMPLES=[
+  "Some feelings don't need to be explained. They just need to be felt, and then let go.",
+  "You don't have to have it all figured out to keep moving forward.",
+  "I still check my phone hoping it's you. I just stopped admitting it.",
+  "Be proud of how far you've come, even on the days you feel stuck.",
+  "Love is not loud. It's the person who remembers how you take your tea.",
+  "Not every goodbye is said out loud. Some just slowly happen.",
+  "Rest is not quitting. It's how you come back stronger.",
+  "Some people stay in your heart long after they leave your life."
+];
+const st={style:"sticky",note:"Blush",bg:"Linen",ink:"Black",font:"Marker",size:"Post 4:5",tilt:true,handle:true,photo:"White"};
+const $=id=>document.getElementById(id);
+
+/* ---------- built-in photo-like backgrounds (drawn, so they always work) ---------- */
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const PRESETS={
+  White(ctx,W,H){ctx.fillStyle="#fff";ctx.fillRect(0,0,W,H);const g=ctx.createLinearGradient(W,0,0,H);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.05)");ctx.fillStyle=g;ctx.fillRect(0,0,W,H)},
+  Black(ctx,W,H){ctx.fillStyle="#0b0b0b";ctx.fillRect(0,0,W,H)},
+  Sunset(ctx,W,H){const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,"#2b2a4a");g.addColorStop(.45,"#7a4f8e");g.addColorStop(.75,"#e0835f");g.addColorStop(1,"#f6c27a");ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    const s=ctx.createRadialGradient(W*.5,H*.8,0,W*.5,H*.8,W*.5);s.addColorStop(0,"rgba(255,226,170,.9)");s.addColorStop(.25,"rgba(255,190,120,.35)");s.addColorStop(1,"rgba(255,190,120,0)");ctx.fillStyle=s;ctx.fillRect(0,0,W,H)},
+  "Night sky"(ctx,W,H){const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,"#05070f");g.addColorStop(.6,"#101a38");g.addColorStop(1,"#2a3560");ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    const r=rng(7);for(let i=0;i<420;i++){const x=r()*W,y=r()*H*.9,rad=r()*r()*2.6+.4;ctx.globalAlpha=.3+r()*.7;ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(x,y,rad,0,7);ctx.fill()}ctx.globalAlpha=1},
+  Ocean(ctx,W,H){const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,"#cfe3ea");g.addColorStop(.42,"#8fb7c6");g.addColorStop(.46,"#3f7d93");g.addColorStop(1,"#0f3346");ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    const r=rng(3);ctx.strokeStyle="rgba(255,255,255,.18)";for(let i=0;i<70;i++){const y=H*.47+Math.pow(r(),1.6)*H*.53,x=r()*W,w=20+r()*120;ctx.lineWidth=1+r()*2;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+w,y);ctx.stroke()}},
+  Rain(ctx,W,H){const g=ctx.createLinearGradient(0,0,W,H);g.addColorStop(0,"#3c4652");g.addColorStop(1,"#1a2028");ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    const r=rng(11),cols=["255,200,120","120,170,255","255,140,160","255,255,255"];for(let i=0;i<70;i++){const x=r()*W,y=r()*H,rad=20+r()*90,c=cols[i%4];const b=ctx.createRadialGradient(x,y,0,x,y,rad);b.addColorStop(0,`rgba(${c},${.12+r()*.2})`);b.addColorStop(1,`rgba(${c},0)`);ctx.fillStyle=b;ctx.fillRect(x-rad,y-rad,rad*2,rad*2)}
+    ctx.strokeStyle="rgba(220,230,240,.12)";for(let i=0;i<160;i++){const x=r()*W,y=r()*H,l=20+r()*60;ctx.lineWidth=1+r();ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-l*.15,y+l);ctx.stroke()}},
+  Mist(ctx,W,H){const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,"#dfe3e2");g.addColorStop(1,"#9aa5a3");ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    const r=rng(5);[["#8a9694",.55],["#6c7876",.7],["#4c5756",.85]].forEach(([c,base],k)=>{ctx.fillStyle=c;ctx.globalAlpha=.55+k*.15;ctx.beginPath();ctx.moveTo(0,H);let y=H*base;ctx.lineTo(0,y);for(let x=0;x<=W;x+=W/12){y=H*base-r()*H*.12;ctx.lineTo(x,y)}ctx.lineTo(W,H);ctx.fill()});ctx.globalAlpha=1}
+};
+const PRESET_THUMB={White:"#fff",Black:"#0b0b0b",Sunset:"linear-gradient(#2b2a4a,#7a4f8e,#f6c27a)","Night sky":"radial-gradient(#fff 1px,transparent 1.5px) 0 0/9px 9px,linear-gradient(#05070f,#2a3560)",Ocean:"linear-gradient(#cfe3ea 45%,#3f7d93 46%,#0f3346)",Rain:"radial-gradient(circle at 30% 40%,#c99a5a55,transparent 40%),linear-gradient(135deg,#3c4652,#1a2028)",Mist:"linear-gradient(#dfe3e2,#9aa5a3 60%,#4c5756)"};
+let userImg=null,userBtn=null;
+
+/* ---------- controls ---------- */
+const presetBtns=[];
+function chips(id,obj,key,type){
+  const box=$(id);
+  Object.keys(obj).forEach(k=>{
+    const b=document.createElement("button");b.type="button";
+    if(type==="sw"){b.className="sw";b.style.background=obj[k].a?`linear-gradient(135deg,${obj[k].a},${obj[k].b})`:obj[k];b.title=k;b.setAttribute("aria-label",k)}
+    else if(type==="ink"){b.className="chip";b.innerHTML=`<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${obj[k]};margin-right:6px"></span>${k}`}
+    else{b.className="chip";b.textContent=k}
+    b.setAttribute("aria-pressed",st[key]===k);
+    b.onclick=()=>{st[key]=k;[...box.children].forEach(c=>c.setAttribute("aria-pressed",c===b));draw()};
+    box.appendChild(b);
+  });
+}
+st.nmode="Light";chips("nmodes",{Light:1,Dark:1},"nmode");
+chips("notes",NOTES,"note","sw");chips("bgs",BGS,"bg","sw");chips("inks",INKS,"ink","ink");chips("sizes",SIZES,"size");
+(()=>{const box=$("photos"),up=box.firstElementChild;
+  Object.keys(PRESETS).forEach(k=>{const b=document.createElement("button");b.type="button";b.className="sw";b.style.background=PRESET_THUMB[k];b.title=k;b.setAttribute("aria-label",k);
+    b.setAttribute("aria-pressed",st.photo===k);b.onclick=()=>pickPhoto(k,b);box.insertBefore(b,up);presetBtns.push(b)});
+})();
+function pickPhoto(k,b){st.photo=k;[...presetBtns,...libBtns,userBtn].forEach(c=>c&&c.setAttribute("aria-pressed",c===b));draw()}
+function loadUserImage(file){
+  if(!file||!file.type.startsWith("image/"))return;
+  const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{userImg=im;
+    if(!userBtn){userBtn=document.createElement("button");userBtn.type="button";userBtn.className="sw";userBtn.title="Your photo";userBtn.setAttribute("aria-label","Your photo");
+      userBtn.onclick=()=>pickPhoto("user",userBtn);$("photos").insertBefore(userBtn,$("photos").firstChild)}
+    userBtn.style.backgroundImage=`url(${r.result})`;setStyle("photo");pickPhoto("user",userBtn)};im.src=r.result};r.readAsDataURL(file);
+}
+$("file").onchange=e=>loadUserImage(e.target.files[0]);
+document.addEventListener("paste",e=>{const it=[...(e.clipboardData?.items||[])].find(i=>i.type.startsWith("image/"));if(it){e.preventDefault();loadUserImage(it.getAsFile())}});
+document.addEventListener("dragover",e=>e.preventDefault());
+document.addEventListener("drop",e=>{const f=e.dataTransfer?.files?.[0];if(f&&f.type.startsWith("image/")){e.preventDefault();loadUserImage(f)}});
+$("dim").oninput=draw;
+
+(()=>{const box=$("fonts"),all=[];
+  Object.entries(FONT_GROUPS).forEach(([g,fs])=>{
+    const sec=document.createElement("div"),h=document.createElement("div"),row=document.createElement("div");
+    h.className="gname";h.textContent=g;row.className="row";sec.append(h,row);box.appendChild(sec);
+    Object.entries(fs).forEach(([k,[fam,,sty]])=>{
+      const b=document.createElement("button");b.type="button";b.className="chip";b.textContent=k;
+      b.style.font=`${sty}18px "${fam}", cursive`;b.setAttribute("aria-pressed",st.font===k);
+      b.onclick=()=>{st.font=k;all.forEach(c=>c.setAttribute("aria-pressed",c===b));draw()};
+      row.appendChild(b);all.push(b);
+    });
+  });
+})();
+function setStyle(s){st.style=s;
+  document.querySelectorAll("#styles .style").forEach(b=>b.setAttribute("aria-pressed",b.dataset.s===s));
+  document.querySelectorAll("[data-for]").forEach(el=>el.hidden=!el.dataset.for.split(" ").includes(s));
+  draw()}
+document.querySelectorAll("#styles .style").forEach(b=>b.onclick=()=>setStyle(b.dataset.s));
+["tilt","handle"].forEach(k=>$(k).onclick=()=>{st[k]=!st[k];$(k).setAttribute("aria-pressed",st[k]);draw()});
+let si=0;$("shuffle").onclick=()=>{si=(si+1)%SAMPLES.length;$("q").value=SAMPLES[si];draw()};
+$("q").oninput=draw;$("sig").oninput=draw;
+
+/* ---------- drawing ---------- */
+const grain=document.createElement("canvas");grain.width=grain.height=160;
+(()=>{const g=grain.getContext("2d"),d=g.createImageData(160,160);
+for(let i=0;i<d.data.length;i+=4){const v=Math.random()*255;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=Math.random()*28}g.putImageData(d,0,0)})();
+
+function wrap(ctx,text,maxW){
+  const out=[];
+  text.split(/\n/).forEach(par=>{
+    const words=par.trim().split(/\s+/).filter(Boolean);
+    if(!words.length){out.push("");return}
+    let line=words[0];
+    for(let i=1;i<words.length;i++){const t=line+" "+words[i];if(ctx.measureText(t).width>maxW){out.push(line);line=words[i]}else line=t}
+    out.push(line);
+  });
+  return out;
+}
+// shrink font until text (+ signature) fits the box
+function fit(ctx,quote,sig,maxW,maxH,start,fam,sty,lhMul){
+  let fs=start,lines,lh,sigH;
+  for(;fs>start*.25;fs-=2){
+    ctx.font=`${sty}${fs}px "${fam}", cursive`;lines=wrap(ctx,quote,maxW);lh=fs*lhMul;sigH=sig?lh*1.3:0;
+    if(lines.length*lh+sigH<=maxH)break;
+  }
+  return{fs,lines,lh,sigH};
+}
+function paintBg(ctx,W,H){
+  const bg=BGS[st.bg];
+  const g=ctx.createRadialGradient(W*.35,H*.25,50,W*.5,H*.5,Math.max(W,H)*.85);
+  g.addColorStop(0,bg.a);g.addColorStop(1,bg.b);ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  if(st.bg==="Wood"){const r=rng(9);ctx.strokeStyle="rgba(60,35,15,.18)";for(let i=0;i<90;i++){const y=r()*H;ctx.lineWidth=1+r()*3;ctx.beginPath();ctx.moveTo(0,y);ctx.bezierCurveTo(W*.3,y+r()*20-10,W*.6,y+r()*20-10,W,y+r()*14-7);ctx.stroke()}}
+  ctx.globalAlpha=.5;ctx.fillStyle=ctx.createPattern(grain,"repeat");ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;
+  return bg.mark;
+}
+function drawHandle(ctx,W,H,color,shadow){
+  if(!st.handle)return;
+  ctx.save();ctx.fillStyle=color;ctx.textAlign="center";ctx.font=`500 ${W*.03}px "Cormorant Garamond", Georgia, serif`;
+  if(shadow){ctx.shadowColor="rgba(0,0,0,.5)";ctx.shadowBlur=12}
+  if("letterSpacing" in ctx)ctx.letterSpacing=`${W*.006}px`;
+  ctx.fillText("@unsaid.daily",W/2,H-Math.min(W,H)*.06);ctx.restore();
+}
+
+function drawSticky(ctx,W,H,f){
+  const mark=paintBg(ctx,W,H);
+  const S=Math.min(W,H)*.8,x=-S/2,y=-S/2,col=NOTES[st.note];
+  ctx.save();ctx.translate(W/2,H/2-(st.handle?H*.015:0));if(st.tilt)ctx.rotate(-2.2*Math.PI/180);
+  ctx.shadowColor="rgba(0,0,0,.28)";ctx.shadowBlur=50;ctx.shadowOffsetY=26;ctx.shadowOffsetX=6;
+  ctx.fillStyle=col;ctx.fillRect(x,y,S,S);ctx.shadowColor="transparent";
+  const ng=ctx.createLinearGradient(0,y,0,y+S);
+  ng.addColorStop(0,"rgba(0,0,0,.07)");ng.addColorStop(.12,"rgba(0,0,0,0)");ng.addColorStop(.85,"rgba(255,255,255,.05)");ng.addColorStop(1,"rgba(0,0,0,.06)");
+  ctx.fillStyle=ng;ctx.fillRect(x,y,S,S);
+  ctx.globalAlpha=.6;ctx.fillStyle=ctx.createPattern(grain,"repeat");ctx.fillRect(x,y,S,S);ctx.globalAlpha=1;
+  const pad=S*.1,{fs,lines,lh,sigH}=fit(ctx,f.quote,f.sig,S-pad*2,S-pad*2.2,S*.1*f.scale,f.fam,f.sty,f.lhMul);
+  let ty=y+(S-(lines.length*lh+sigH))/2+fs*.9;
+  ctx.fillStyle=INKS[st.ink];ctx.textAlign="left";
+  lines.forEach(l=>{ctx.fillText(l,x+pad,ty);ty+=lh});
+  if(f.sig){ty+=lh*.3;ctx.fillText("— "+f.sig,x+pad+fs*.3,ty)}
+  ctx.font=`${S*.09}px "Gochi Hand", cursive`;ctx.textAlign="right";ctx.fillStyle="#1d1b1a";ctx.globalAlpha=.5;
+  ctx.fillText("“ ”",x+S-pad*.55,y+S-pad*.25);ctx.globalAlpha=1;
+  ctx.restore();
+  drawHandle(ctx,W,H,mark);
+}
+
+function drawCopy(ctx,W,H,f){
+  const mark=paintBg(ctx,W,H);
+  const pw=W*.8,ph=Math.min(H*.8,pw*1.3),x=-pw/2,y=-ph/2;
+  ctx.save();ctx.translate(W/2,H/2-(st.handle?H*.015:0));if(st.tilt)ctx.rotate(1.6*Math.PI/180);
+  ctx.shadowColor="rgba(0,0,0,.25)";ctx.shadowBlur=40;ctx.shadowOffsetY=20;
+  ctx.fillStyle="#fbfbf7";ctx.fillRect(x,y,pw,ph);ctx.shadowColor="transparent";
+  ctx.globalAlpha=.45;ctx.fillStyle=ctx.createPattern(grain,"repeat");ctx.fillRect(x,y,pw,ph);ctx.globalAlpha=1;
+  // layout: top band, red margin, ruled lines that match the writing size
+  const top=ph*.13,marginX=x+pw*.15,textX=marginX+pw*.04,textW=x+pw-pw*.07-textX,bottom=y+ph-ph*.06;
+  const avail=bottom-(y+top);
+  const {fs,lines,lh}=fit(ctx,f.quote,f.sig,textW,avail-avail*.12,pw*.075*f.scale,f.fam,f.sty,1.5);
+  // ruled lines
+  ctx.strokeStyle="rgba(95,140,200,.55)";ctx.lineWidth=2;
+  for(let ly=y+top;ly<=bottom;ly+=lh){ctx.beginPath();ctx.moveTo(x,ly);ctx.lineTo(x+pw,ly);ctx.stroke()}
+  ctx.strokeStyle="rgba(214,80,80,.75)";ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.moveTo(marginX,y);ctx.lineTo(marginX,y+ph);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(marginX+6,y);ctx.lineTo(marginX+6,y+ph);ctx.stroke();
+  // punched holes
+  ctx.fillStyle=BGS[st.bg].b;for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(x+pw*.065,y+ph*(.2+i*.3),pw*.022,0,7);ctx.fill()}
+  // text sits on the lines, block centred vertically on the ruling
+  const rows=Math.floor(avail/lh),used=lines.length+(f.sig?2:0),startRow=Math.max(1,Math.floor((rows-used)/2)+1);
+  ctx.fillStyle=INKS[st.ink];ctx.textAlign="left";
+  let ly=y+top+lh*(startRow-1)+lh-fs*.18;
+  ctx.font=`${f.sty}${fs}px "${f.fam}", cursive`;
+  lines.forEach(l=>{ctx.fillText(l,textX,ly);ly+=lh});
+  if(f.sig){ly+=lh;ctx.textAlign="right";ctx.fillText("— "+f.sig,x+pw-pw*.08,ly)}
+  // date line in the top band
+  ctx.textAlign="right";ctx.font=`${pw*.03}px "Patrick Hand", cursive`;ctx.fillStyle="rgba(60,70,90,.55)";
+  ctx.fillText("Date: ____________",x+pw-pw*.07,y+top*.62);
+  ctx.restore();
+  drawHandle(ctx,W,H,mark);
+}
+
+function drawPhoto(ctx,W,H,f){
+  const src=st.photo==="user"?userImg:st.photo.startsWith("lib:")?libImg(+st.photo.slice(4),draw):null;
+  if(src){
+    const s=Math.max(W/src.width,H/src.height),iw=src.width*s,ih=src.height*s;
+    ctx.drawImage(src,(W-iw)/2,(H-ih)/2,iw,ih);
+  }else if(st.photo.startsWith("lib:")){ctx.fillStyle="#222";ctx.fillRect(0,0,W,H)}else (PRESETS[st.photo]||PRESETS.Sunset)(ctx,W,H);
+  const plain=st.photo==="White"||st.photo==="Black",light=st.photo==="White";
+  if(!plain){ctx.fillStyle=`rgba(0,0,0,${$("dim").value/100})`;ctx.fillRect(0,0,W,H)}
+  const boxW=W*.78,boxH=H*.6;
+  const {fs,lines,lh,sigH}=fit(ctx,f.quote,f.sig,boxW,boxH,W*.075*f.scale,f.fam,f.sty,f.lhMul);
+  let ty=H/2-(lines.length*lh+sigH)/2+fs*.85;
+  ctx.save();ctx.fillStyle=light?"#0d0d0d":"#fbf8f2";ctx.textAlign="center";if(!plain){ctx.shadowColor="rgba(0,0,0,.45)";ctx.shadowBlur=18;ctx.shadowOffsetY=2}
+  lines.forEach(l=>{ctx.fillText(l,W/2,ty);ty+=lh});
+  if(f.sig){ty+=lh*.3;ctx.font=`${f.sty}${fs*.7}px "${f.fam}", cursive`;ctx.globalAlpha=.85;ctx.fillText("— "+f.sig,W/2,ty)}
+  ctx.restore();
+  drawHandle(ctx,W,H,light?"rgba(0,0,0,.45)":"rgba(251,248,242,.85)",!plain);
+}
+
+function rrect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+function drawNotes(ctx,W,H,f){
+  const dark=st.nmode==="Dark",bg=dark?"#000":"#fff",fg=dark?"#f2f2f7":"#111",sub=dark?"#8d8d93":"#8a8a8e",acc="#e6a817",u=W/1080;
+  const SYS='-apple-system, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif';
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  // status bar
+  ctx.fillStyle=fg;ctx.font=`600 ${40*u}px ${SYS}`;ctx.textAlign="left";ctx.fillText("9:41",90*u,82*u);
+  const bx=W-90*u-70*u;ctx.strokeStyle=fg;ctx.lineWidth=3*u;rrect(ctx,bx,52*u,62*u,30*u,8*u);ctx.stroke();
+  ctx.fillRect(bx+66*u,61*u,5*u,12*u);rrect(ctx,bx+5*u,57*u,44*u,20*u,4*u);ctx.fill();
+  for(let i=0;i<4;i++)ctx.fillRect(bx-110*u+i*14*u,80*u-(10+i*7)*u,9*u,(10+i*7)*u);
+  // nav bar
+  ctx.strokeStyle=acc;ctx.lineWidth=6*u;ctx.lineCap="round";ctx.lineJoin="round";
+  ctx.beginPath();ctx.moveTo(78*u,150*u);ctx.lineTo(58*u,172*u);ctx.lineTo(78*u,194*u);ctx.stroke();
+  ctx.fillStyle=acc;ctx.font=`${46*u}px ${SYS}`;ctx.fillText("Notes",96*u,188*u);
+  // share + more icons
+  const sx=W-210*u;ctx.lineWidth=5*u;rrect(ctx,sx,160*u,44*u,46*u,6*u);ctx.stroke();ctx.fillStyle=bg;ctx.fillRect(sx+10*u,152*u,24*u,16*u);
+  ctx.beginPath();ctx.moveTo(sx+22*u,184*u);ctx.lineTo(sx+22*u,138*u);ctx.moveTo(sx+10*u,150*u);ctx.lineTo(sx+22*u,138*u);ctx.lineTo(sx+34*u,150*u);ctx.stroke();
+  ctx.beginPath();ctx.arc(W-104*u,172*u,26*u,0,7);ctx.stroke();ctx.fillStyle=acc;[-11,0,11].forEach(d=>{ctx.beginPath();ctx.arc(W-104*u+d*u,172*u,3.6*u,0,7);ctx.fill()});
+  // date
+  const d=new Date(),date=d.toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})+" at "+d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+  ctx.fillStyle=sub;ctx.textAlign="center";ctx.font=`${30*u}px ${SYS}`;ctx.fillText(date,W/2,270*u);
+  // body text, top aligned like a real note
+  const left=70*u,maxW=W-140*u,top=360*u,bottomBar=H-200*u;
+  let fs=54*u,lines,lh;
+  for(;fs>26*u;fs-=2*u){ctx.font=`${fs}px ${SYS}`;lines=wrap(ctx,f.quote,maxW);lh=fs*1.38;if((lines.length+(f.sig?2:0))*lh<=bottomBar-top-60*u)break}
+  ctx.fillStyle=fg;ctx.textAlign="left";let ty=top+fs;
+  lines.forEach((l,i)=>{ctx.font=`${i===0&&st.ntitle?"700 ":""}${fs}px ${SYS}`;ctx.fillText(l,left,ty);ty+=lh});
+  if(f.sig){ty+=lh;ctx.font=`${fs}px ${SYS}`;ctx.fillText("— "+f.sig,left,ty)}
+  // text cursor after last line
+  // bottom toolbar
+  ctx.strokeStyle=acc;ctx.fillStyle=acc;ctx.lineWidth=5*u;const ty2=H-110*u;
+  // checklist
+  ctx.beginPath();ctx.arc(110*u,ty2,22*u,0,7);ctx.stroke();ctx.beginPath();ctx.moveTo(100*u,ty2);ctx.lineTo(108*u,ty2+8*u);ctx.lineTo(122*u,ty2-8*u);ctx.stroke();
+  // camera
+  const cx=W*.36;rrect(ctx,cx-30*u,ty2-20*u,60*u,42*u,8*u);ctx.stroke();ctx.beginPath();ctx.arc(cx,ty2+1*u,11*u,0,7);ctx.stroke();
+  // pen
+  const px=W*.62;ctx.beginPath();ctx.moveTo(px-20*u,ty2+22*u);ctx.lineTo(px+18*u,ty2-18*u);ctx.lineTo(px+24*u,ty2-12*u);ctx.lineTo(px-14*u,ty2+28*u);ctx.closePath();ctx.stroke();
+  // compose
+  const qx=W-120*u;rrect(ctx,qx-24*u,ty2-22*u,46*u,46*u,8*u);ctx.stroke();ctx.fillStyle=bg;ctx.fillRect(qx+4*u,ty2-30*u,26*u,26*u);
+  ctx.beginPath();ctx.moveTo(qx-6*u,ty2+6*u);ctx.lineTo(qx+24*u,ty2-24*u);ctx.stroke();
+  // home indicator
+  ctx.fillStyle=fg;rrect(ctx,W/2-140*u,H-32*u,280*u,10*u,5*u);ctx.fill();
+  if(st.handle){ctx.fillStyle=sub;ctx.textAlign="center";ctx.font=`${28*u}px ${SYS}`;ctx.fillText("@unsaid.daily",W/2,H-190*u)}
+}
+
+let timer;
+function draw(){clearTimeout(timer);timer=setTimeout(render,90)}
+async function render(){
+  const [fam,scale,sty]=FONTS[st.font];
+  try{await document.fonts.load(`${sty}60px "${fam}"`)}catch(e){}
+  const [W,H]=SIZES[st.size],c=$("c"),ctx=c.getContext("2d");c.width=W;c.height=H;ctx.textBaseline="alphabetic";
+  if("letterSpacing" in ctx)ctx.letterSpacing=fam==="Instrument Serif"?"-2px":"0px";
+  const f={fam,scale,sty,lhMul:fam==="Homemade Apple"?1.7:fam==="Instrument Serif"?1.02:1.42,sig:$("sig").value.trim(),quote:$("q").value.trim()||"Type your quote…"};
+  ({sticky:drawSticky,copy:drawCopy,photo:drawPhoto,notes:drawNotes})[st.style](ctx,W,H,f);
+  $("out").src=c.toDataURL("image/png");
+}
+setStyle("sticky");
+document.fonts.ready.then(render);
+
+/* ---------- photo library (free Pixabay-licensed photos, shipped with the page) ---------- */
+const LIB=[{"id": 7, "name": "Storm clouds", "tags": "sad night sky clouds dark bw"}, {"id": 103, "name": "Window light", "tags": "sad lonely home window quiet"}, {"id": 119, "name": "Misty forest", "tags": "healing sad fog forest calm"}, {"id": 311, "name": "Grey shore", "tags": "sad sea ocean beach bw"}, {"id": 439, "name": "Still lake", "tags": "sad calm lake water bw minimal"}, {"id": 727, "name": "Foggy valley", "tags": "sad fog mountains bw"}, {"id": 1271, "name": "Lonely boat", "tags": "sad lonely lake boat bw minimal"}, {"id": 1687, "name": "Bird on a wire", "tags": "sad lonely minimal bird white"}, {"id": 1815, "name": "Grey sea", "tags": "sad minimal sea ocean grey"}, {"id": 1175, "name": "Candle", "tags": "sad night candle warm dark"}, {"id": 1383, "name": "Last candle", "tags": "sad night candle dark"}, {"id": 1095, "name": "Dried rose", "tags": "sad love rose book heartbreak"}, {"id": 1783, "name": "Moon", "tags": "night moon dark sad love"}, {"id": 983, "name": "Starry night", "tags": "night stars sky dark dream"}, {"id": 1911, "name": "Melting ice", "tags": "sad cold ice bw minimal"}, {"id": 1495, "name": "Pink lotus", "tags": "love flower pink soft"}, {"id": 1527, "name": "Magnolia", "tags": "love flower spring soft"}, {"id": 375, "name": "Blossom", "tags": "love flower spring warm"}, {"id": 1063, "name": "Soft blooms", "tags": "love flower bw soft"}, {"id": 807, "name": "Petals", "tags": "love flower bw minimal"}, {"id": 1303, "name": "Water lily", "tags": "love healing flower warm"}, {"id": 1335, "name": "Sunflower sunset", "tags": "motivational love sunset flower field"}, {"id": 695, "name": "Beach sunset", "tags": "love sunset beach ocean warm"}, {"id": 215, "name": "Snow peaks", "tags": "motivational mountains sky blue"}, {"id": 1191, "name": "Mountain peak", "tags": "motivational mountain sunrise"}, {"id": 1415, "name": "Alpine glow", "tags": "motivational mountains sunset"}, {"id": 1943, "name": "Summit", "tags": "motivational mountain bw minimal dark"}, {"id": 167, "name": "Hiker", "tags": "motivational mountain journey bw"}, {"id": 775, "name": "Open hills", "tags": "motivational hills sky journey"}, {"id": 39, "name": "Violet sea", "tags": "healing calm sea ocean purple dream"}, {"id": 407, "name": "Quiet trees", "tags": "healing calm trees fog minimal warm"}, {"id": 663, "name": "Dandelions", "tags": "healing hope spring green"}, {"id": 743, "name": "Wish", "tags": "healing hope dandelion soft"}, {"id": 1719, "name": "Golden lake", "tags": "healing calm sunset lake"}, {"id": 1959, "name": "Sun on water", "tags": "healing calm sea sunset warm minimal"}, {"id": 903, "name": "River", "tags": "healing calm river journey warm"}, {"id": 1047, "name": "Above clouds", "tags": "healing calm clouds sky dream warm"}, {"id": 1575, "name": "Misty peak", "tags": "healing calm mountain fog warm"}, {"id": 1751, "name": "Frosty pine", "tags": "healing winter cold calm"}, {"id": 1767, "name": "Frost", "tags": "healing winter cold bw minimal"}, {"id": 1799, "name": "Autumn leaves", "tags": "healing autumn warm change"}, {"id": 55, "name": "Raindrops", "tags": "sad rain leaf warm"}, {"id": 647, "name": "Autumn forest", "tags": "healing autumn forest"}];
+const libImgs={};let libBtns=[],suggested=[],libMood="All";
+function libImg(id,cb){if(libImgs[id]?.complete&&libImgs[id].naturalWidth)return libImgs[id];
+  if(!libImgs[id]){const im=new Image();im.onload=()=>cb&&cb();im.src="photos/p"+id+".jpg";libImgs[id]=im}return null}
+function renderLib(){
+  const q=$("libQ").value.trim().toLowerCase(),box=$("lib");box.innerHTML="";libBtns=[];
+  let items=LIB.filter(p=>(libMood==="All"||p.tags.includes(libMood.toLowerCase()))&&(!q||q.split(/\s+/).every(w=>(p.name+" "+p.tags).toLowerCase().includes(w))));
+  items.sort((a,b)=>(suggested.indexOf(b.id)>-1)-(suggested.indexOf(a.id)>-1)||suggested.indexOf(a.id)-suggested.indexOf(b.id));
+  items.forEach(p=>{const b=document.createElement("button");b.type="button";b.className="lp";b.title=p.name;b.setAttribute("aria-label",p.name);
+    b.innerHTML=`<img loading="lazy" alt="" src="photos/t${p.id}.jpg"><span class="nm"></span>`+(suggested.includes(p.id)?'<span class="badge">Pick</span>':"");
+    b.querySelector(".nm").textContent=p.name;b.setAttribute("aria-pressed",st.photo==="lib:"+p.id);
+    b.onclick=()=>pickPhoto("lib:"+p.id,b);box.appendChild(b);libBtns.push(b)});
+  $("libEmpty").hidden=items.length>0;
+}
+(()=>{const box=$("libMoods");["All","Sad","Love","Motivational","Healing","Night","Minimal"].forEach(m=>{const b=document.createElement("button");b.type="button";b.className="chip";b.textContent=m;b.style.cssText="font-size:13px;padding:5px 10px";
+  b.setAttribute("aria-pressed",m===libMood);b.onclick=()=>{libMood=m;[...box.children].forEach(c=>c.setAttribute("aria-pressed",c===b));renderLib()};box.appendChild(b)})})();
+$("libQ").oninput=renderLib;renderLib();
+
+/* ---------- photo search ---------- */
+const SITES={
+  Unsplash:q=>"https://unsplash.com/s/photos/"+encodeURIComponent(q.trim().replace(/\s+/g,"-")),
+  Pexels:q=>"https://www.pexels.com/search/"+encodeURIComponent(q.trim())+"/",
+  Pixabay:q=>"https://pixabay.com/images/search/"+encodeURIComponent(q.trim())+"/"
+};
+function siteLinks(q,box){box.innerHTML="";Object.entries(SITES).forEach(([n,u])=>{const a=document.createElement("a");a.href=u(q||"aesthetic");a.target="_blank";a.rel="noopener";a.textContent=n;box.appendChild(a)})}
+function updSites(){const q=$("psQ").value.trim();siteLinks(q||"moody aesthetic",$("psSites"));
+  [...$("psSites").children].forEach(a=>a.textContent=(q?"Search ":"Browse ")+a.textContent.replace(/^(Search|Browse) /,""))}
+$("psQ").oninput=updSites;updSites();
+$("psForm").onsubmit=e=>{e.preventDefault();$("psSites").firstChild?.focus()};
+const PHOTO_IDEAS={
+  Sad:[["Rain on a window","rain window night","Quiet, lonely mood"],["Empty road at dusk","empty road dusk","Feels like someone left"],["Dim bedroom light","dark room lamp","Late-night overthinking"],["Grey ocean","stormy sea","Heavy, restless feeling"]],
+  Love:[["Holding hands","holding hands","Warm and close"],["Soft roses","pink roses aesthetic","Romantic, gentle"],["Golden hour couple","couple sunset silhouette","Dreamy love"],["Coffee for two","two coffee cups","Small everyday love"]],
+  Motivational:[["Mountain peak","mountain summit sunrise","Reaching the top"],["Open road","road ahead","Keep moving forward"],["Morning light","sunrise sky","A fresh start"],["Running track","running track","Effort and drive"]],
+  Healing:[["Calm lake","calm lake mist","Peace and stillness"],["Soft clouds","pastel clouds","Lightness, breathing room"],["Green leaves","green leaves sunlight","Growth after hard times"],["Quiet beach","quiet beach morning","Letting go"]]
+};
+function showIdeas(list){const box=$("psIdeas");box.innerHTML="";
+  list.forEach(it=>{const d=document.createElement("div");d.className="idea";
+    const b=document.createElement("b");b.textContent=it.label;const sp=document.createElement("span");sp.textContent=it.why||"";
+    const il=document.createElement("div");il.className="il";
+    Object.entries(SITES).forEach(([n,u])=>{const a=document.createElement("a");a.href=u(it.query);a.target="_blank";a.rel="noopener";a.textContent=n+" →";il.appendChild(a)});
+    const use=document.createElement("button");use.type="button";use.className="chip";use.style.cssText="font-size:12px;padding:4px 10px;align-self:flex-start";use.textContent="Use as search";
+    use.onclick=()=>{$("psQ").value=it.query;updSites()};
+    d.append(b,sp,il,use);box.appendChild(d)})}
+$("psSuggest").onclick=async()=>{
+  const q=$("q").value.trim(),msg=$("psMsg"),btn=$("psSuggest");if(!q){msg.textContent="Type a quote first.";return}
+  const apply=(ids,note)=>{suggested=ids.filter(id=>LIB.some(p=>p.id===id)).slice(0,4);libMood="All";$("libQ").value="";
+    [...$("libMoods").children].forEach(c=>c.setAttribute("aria-pressed",c.textContent==="All"));
+    if(suggested.length){st.photo="lib:"+suggested[0];setStyle("photo")}renderLib();$("lib").scrollTop=0;msg.textContent=note};
+  const local=()=>{const m=guessMood(q).toLowerCase();const pool=LIB.filter(p=>p.tags.includes(m));
+    apply(pool.sort(()=>Math.random()-.5).map(p=>p.id),"Picked photos that match your quote's mood. Tap any to switch.")};
+  if(!sampler){local();return}
+  btn.disabled=true;btn.textContent="Choosing photos…";msg.textContent="";
+  try{
+    const list=LIB.map(p=>`${p.id}: ${p.name} (${p.tags})`).join("\n");
+    const r=await sampler.json(`Pick the 4 best background photos for this quote post, best first. The quote text sits on top of the photo, so mood match matters most.
+Quote: """${q}"""
+Photos (id: name (tags)):
+${list}
+Return JSON only: {"ids":[id,id,id,id],"why":"one short sentence on the mood you chose"}`,{modelTier:"quick",cache:false});
+    if(!r?.ids?.length)throw{code:"empty"};apply(r.ids.map(Number),(r.why||"Here are my picks.")+" Tap any to switch.");
+  }catch(e){local()}
+  finally{btn.disabled=false;btn.textContent="✦ Suggest photos for my quote"}
+};
+
+/* ---------- captions ---------- */
+const MOODS=["Auto","Motivational","Love","Sad","Healing"];let mood="Auto";
+(()=>{const box=$("moods");MOODS.forEach(m=>{const b=document.createElement("button");b.type="button";b.className="chip";b.textContent=m;b.setAttribute("aria-pressed",m===mood);
+  b.onclick=()=>{mood=m;[...box.children].forEach(c=>c.setAttribute("aria-pressed",c===b))};box.appendChild(b)})})();
+let sampler=null;
+Promise.resolve(window.claude?.use?.("sample")).then(s=>{sampler=s}).catch(()=>{});
+
+const TAGS={
+  Motivational:["#motivation","#keepgoing","#selfgrowth","#mindset","#dailyquotes"],
+  Love:["#lovequotes","#love","#relationshipquotes","#softlove","#feelings"],
+  Sad:["#sadquotes","#heartbreak","#feelings","#deepquotes","#overthinking"],
+  Healing:["#healing","#selflove","#letgo","#innerpeace","#mentalhealthmatters"]
+};
+function guessMood(q){q=q.toLowerCase();
+  if(/\b(miss|goodbye|gone|left|cry|tears|alone|hurt|broken|leave)\b/.test(q))return"Sad";
+  if(/\b(love|heart|kiss|hold|you and me|together)\b/.test(q))return"Love";
+  if(/\b(heal|rest|peace|let go|gentle|breathe|okay)\b/.test(q))return"Healing";
+  return"Motivational"}
+function localCaptions(q,m){
+  const md=m==="Auto"?guessMood(q):m,base=["#unsaid","#unsaiddaily","#quotes","#quoteoftheday","#relatable"],h=[...TAGS[md],...base].join(" ");
+  const lines={
+    Motivational:["Save this for the days you forget how strong you are. 🤍","Read it twice. Then keep going.","Your reminder for today. Tag someone who needs it."],
+    Love:["Send this to the one who makes it feel easy. 🤍","Some love doesn't need to be loud.","Tag the person you thought of first."],
+    Sad:["Some things are easier to read than to say. 🤍","If you felt this, you're not alone.","Saving this for the quiet nights."],
+    Healing:["A gentle reminder you didn't know you needed. 🤍","Breathe. You're doing better than you think.","Save this for the hard days."]
+  }[md];
+  return lines.map((t,i)=>({caption:t+(i===2?"\n\nFollow @unsaid.daily for words you never said.":""),hashtags:h,tiktok:t.replace(/\s*🤍/,"")+" #unsaid "+TAGS[md].slice(0,3).join(" ")+" #fyp"}));
+}
+function copyText(t,btn){
+  const done=()=>{const o=btn.textContent;btn.textContent="Copied";setTimeout(()=>btn.textContent=o,1400)};
+  navigator.clipboard?.writeText(t).then(done).catch(()=>{const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done()}catch(e){}ta.remove()});
+}
+function showCaps(list){
+  const box=$("caps");box.innerHTML="";
+  list.forEach((c,i)=>{
+    const card=document.createElement("div");card.className="capcard";
+    const full=`${c.caption}\n.\n.\n${c.hashtags}`;
+    card.innerHTML=`<span class="tag">Option ${i+1}</span><p class="t"></p><p class="hash"></p><div class="acts">
+      <button class="chip" type="button" data-a="ig">Copy for Instagram</button><button class="chip" type="button" data-a="tt">Copy for TikTok</button></div>`;
+    card.querySelector(".t").textContent=c.caption;card.querySelector(".hash").textContent=c.hashtags;
+    card.querySelector('[data-a=ig]').onclick=e=>copyText(full,e.target);
+    card.querySelector('[data-a=tt]').onclick=e=>copyText(c.tiktok||c.caption,e.target);
+    box.appendChild(card);
+  });
+}
+$("capBtn").onclick=async()=>{
+  const q=$("q").value.trim(),msg=$("capMsg"),btn=$("capBtn");
+  if(!q){msg.textContent="Type a quote first.";return}
+  if(!sampler){showCaps(localCaptions(q,mood));msg.textContent="Quick captions made from templates.";return}
+  btn.disabled=true;btn.textContent="Writing captions…";msg.textContent="";
+  try{
+    const res=await sampler.json(
+`You write captions for @unsaid.daily, an Instagram and TikTok account that posts quote images (motivational, love, sad, healing). Tone: soft, short, human, relatable. No clichés like "Double tap if". At most one emoji per caption (🤍 fits the brand). Never repeat the quote word for word.
+
+Quote on the image: """${q}"""
+Mood: ${mood==="Auto"?"decide from the quote":mood}
+
+Write 3 different caption options. Vary them: one reflective (2-3 short lines), one that invites engagement (ask a question or "send this to…"), one very short (under 10 words).
+Return JSON only: {"captions":[{"caption":"...","hashtags":"12-15 relevant hashtags in one line, include #unsaid and #unsaiddaily","tiktok":"one short line plus 4-5 hashtags including #fyp"}]}`,
+      {modelTier:"quick",cache:false});
+    const list=(res&&res.captions)||[];
+    if(!list.length)throw{code:"empty"};
+    showCaps(list);
+  }catch(e){
+    showCaps(localCaptions(q,mood));
+    msg.textContent=e&&e.code==="rate_limited"?"Too many requests just now. Here are quick template captions; try again in a minute.":
+      e&&(e.code==="not_granted"||e.code==="declined")?"Showing template captions. Allow Claude access to get custom ones.":"Showing template captions for now.";
+  }finally{btn.disabled=false;btn.textContent="Write new captions"}
+};
+
+/* ---------- save ---------- */
+let dl=null;
+if(!window.claude){$("saveBtn").hidden=false}  // standalone: always offer Save
+else Promise.resolve(window.claude?.use?.("downloads")).then(d=>{dl=d;if(d)$("saveBtn").hidden=false}).catch(()=>{});
+$("saveBtn").onclick=()=>{
+  const msg=$("saveMsg");
+  $("c").toBlob(async blob=>{
+    const slug=($("q").value.trim().split(/\s+/).slice(0,4).join("-").toLowerCase().replace(/[^a-z0-9-]/g,""))||"note";
+    const fname=`unsaid-${slug}.png`;
+    if(!dl){ // standalone (e.g. GitHub Pages): share sheet on phones, normal download elsewhere
+      const file=new File([blob],fname,{type:"image/png"});
+      if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file]});msg.textContent="Choose “Save Image” to put it in Photos."}catch(e){}return}
+      const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=fname;document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(a.href),4000);msg.textContent="Saved to your Downloads.";return}
+    try{await dl.save({filename:fname,data:blob});msg.textContent="Saved. Check your Photos or Downloads."}
+    catch(e){
+      if(e&&e.code==="declined")msg.textContent="Save cancelled.";
+      else if(e&&e.code==="rate_limited")msg.textContent="A save is already open. Finish that one first.";
+      else{msg.textContent="Saving isn't available here. Press and hold the image to save it instead.";$("saveBtn").hidden=true}
+    }
+  },"image/png");
+};
+</script>
+
+</body>
+</html>
