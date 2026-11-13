@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Big-O Field Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: single reading column (~760px) with a wide interactive band; growth classes ramp cool→hot like a stove dial */
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --ink:#1b2230; --muted:#5d6678; --line:#dfe3ea;
+  --accent:#2f5bd3; --accent-soft:#e7edfb; --code-bg:#f0f2f6; --comment:#7b8496;
+  --c1:#1f9d6b; --c2:#3aa0b8; --c3:#2f5bd3; --c4:#7a5bd0; --c5:#d08a1f; --c6:#d9572b; --c7:#c2264b;
+  --good:#1f9d6b; --bad:#c2264b;
+  --f-display:"Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Inter", system-ui, -apple-system, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11151c; --surface:#181d27; --ink:#e6e9ef; --muted:#9aa3b5; --line:#2a3140;
+  --accent:#7b9cff; --accent-soft:#1f2a45; --code-bg:#1d2330; --comment:#7f889b;
+  --c1:#3cc48f; --c2:#5cc3da; --c3:#7b9cff; --c4:#a88cf0; --c5:#f0ac45; --c6:#f07a52; --c7:#f0587a;
+  --good:#3cc48f; --bad:#f0587a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11151c; --surface:#181d27; --ink:#e6e9ef; --muted:#9aa3b5; --line:#2a3140;
+  --accent:#7b9cff; --accent-soft:#1f2a45; --code-bg:#1d2330; --comment:#7f889b;
+  --c1:#3cc48f; --c2:#5cc3da; --c3:#7b9cff; --c4:#a88cf0; --c5:#f0ac45; --c6:#f07a52; --c7:#f0587a;
+  --good:#3cc48f; --bad:#f0587a; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.65 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+.wrap{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(2rem,6vw,3rem);letter-spacing:-.02em}
+h2{font-size:1.6rem;letter-spacing:-.01em}
+h3{font-size:1.15rem}
+p{margin:0}
+section{display:flex;flex-direction:column;gap:16px}
+.eyebrow{font:600 .75rem/1 var(--f-mono);text-transform:uppercase;letter-spacing:.12em;color:var(--accent)}
+.lead{font-size:1.15rem;color:var(--muted);max-width:62ch}
+code{font-family:var(--f-mono);font-size:.88em;background:var(--code-bg);padding:.1em .35em;border-radius:4px}
+pre{font:13.5px/1.6 var(--f-mono);background:var(--code-bg);padding:14px 16px;border-radius:8px;margin:0;overflow-x:auto}
+pre code{background:none;padding:0;font-size:inherit}
+.c{color:var(--comment)}
+.k{color:var(--accent);font-weight:600}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.big{font-family:var(--f-mono);font-weight:600}
+.callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:14px 16px;border-radius:0 8px 8px 0}
+
+/* growth lab */
+.lab{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:16px}
+.lab-head{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:end;justify-content:space-between}
+.lab label{font:600 .8rem var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.nval{font:700 2rem/1 var(--f-display);font-variant-numeric:tabular-nums}
+.presets{display:flex;flex-wrap:wrap;gap:6px}
+.presets button{font:500 .8rem var(--f-mono);border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:4px 10px;cursor:pointer}
+.presets button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.rows{display:grid;grid-template-columns:auto 1fr auto;gap:8px 12px;align-items:center;font-variant-numeric:tabular-nums}
+.rows .name{font:600 .9rem var(--f-mono);white-space:nowrap}
+.bar{height:14px;background:var(--code-bg);border-radius:3px;overflow:hidden}
+.bar span{display:block;height:100%;border-radius:3px;transition:width .25s}
+.rows .val{font:.82rem var(--f-mono);color:var(--muted);text-align:right;min-width:9.5em}
+.rows .val b{color:var(--ink);font-weight:600}
+.note{font-size:.85rem;color:var(--muted)}
+
+/* class cards */
+.classes{display:flex;flex-direction:column;gap:20px}
+.cls{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;display:grid;gap:14px}
+.cls-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+.cls-top .big{font-size:1.5rem}
+.cls-top .nick{color:var(--muted);font-weight:500}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.duo>div{min-width:0;display:flex;flex-direction:column;gap:6px}
+.tag{font:600 .7rem var(--f-mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+@media (max-width:640px){.duo{grid-template-columns:1fr}}
+
+/* tables */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{padding:9px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 .75rem var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);background:var(--bg)}
+tr:last-child td{border-bottom:none}
+td code{white-space:nowrap}
+.pill{display:inline-block;font:600 .78rem var(--f-mono);padding:2px 8px;border-radius:999px;color:var(--surface);white-space:nowrap}
+
+/* rules */
+.rules{display:grid;gap:12px;counter-reset:r}
+.rule{display:grid;grid-template-columns:2.2rem 1fr;gap:12px;align-items:start}
+.rule::before{counter-increment:r;content:counter(r);font:700 1rem/2.2rem var(--f-display);text-align:center;background:var(--accent-soft);color:var(--accent);border-radius:8px;height:2.2rem}
+.rule>div{min-width:0;display:flex;flex-direction:column;gap:6px}
+
+/* walkthrough */
+.steps{display:grid;gap:10px}
+.step{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:12px;align-items:start}
+.step .why{font-size:.92rem;color:var(--muted);padding-top:12px}
+@media (max-width:640px){.step{grid-template-columns:1fr}.step .why{padding-top:0}}
+
+/* quiz */
+.quiz{display:grid;gap:16px}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:12px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opts button{font:600 .85rem var(--f-mono);padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.opts button.right{background:var(--good);border-color:var(--good);color:var(--surface)}
+.opts button.wrong{border-color:var(--bad);color:var(--bad)}
+.explain{font-size:.93rem;border-top:1px dashed var(--line);padding-top:10px}
+.score{font:600 .95rem var(--f-mono);color:var(--muted)}
+ul{margin:0;padding-left:1.2em;display:grid;gap:6px}
+@media (prefers-reduced-motion:reduce){.bar span{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header style="display:flex;flex-direction:column;gap:14px">
+  <span class="eyebrow">Week 0 · Day 1 · Thu, Nov 12</span>
+  <h1>Big-O: how your code scales</h1>
+  <p class="lead">Big-O answers one question: when the input gets 10× bigger, how much more work does my code do? Every Google interviewer will ask you for it after you code, so it's the first thing to master.</p>
+</header>
+
+<section>
+  <span class="eyebrow">The idea</span>
+  <h2>It measures growth, not speed</h2>
+  <p>Big-O ignores your laptop, your language, and small constant costs. It only describes the <em>shape</em> of the work as the input size <code>n</code> grows.</p>
+  <p><strong>Real-life example:</strong> you need to find your friend Priya in a building.</p>
+  <ul>
+    <li>If you know her room number, you walk straight there. It takes the same time whether the building has 10 rooms or 10,000. That's <span class="big">O(1)</span>.</li>
+    <li>If you knock on every door until you find her, a building with 10× the rooms takes about 10× the time. That's <span class="big">O(n)</span>.</li>
+    <li>If, for every room, you also check every other room to compare notes, 10× the rooms means 100× the work. That's <span class="big">O(n²)</span>.</li>
+  </ul>
+  <div class="callout">Big-O usually describes the <strong>worst case</strong>: Priya is in the last room you check. Interviewers expect worst case unless you say otherwise.</div>
+</section>
+
+<section>
+  <span class="eyebrow">Interactive</span>
+  <h2>Watch the classes pull apart</h2>
+  <p>Drag <code>n</code> and see how many steps each class takes. The time column assumes about 10 million simple operations per second, which is roughly what Python does.</p>
+  <div class="lab">
+    <div class="lab-head">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label for="n">Input size n</label>
+        <span class="nval" id="nOut">20</span>
+      </div>
+      <div class="presets" id="presets" role="group" aria-label="Preset sizes"></div>
+    </div>
+    <input type="range" id="n" min="0" max="100" step="1" value="32" aria-label="Input size n">
+    <div class="rows" id="rows"></div>
+    <p class="note">Bars use a log scale (each tick is 10× more work), otherwise O(1) and O(log n) would be invisible next to the rest.</p>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">The seven classes</span>
+  <h2>Every complexity you'll meet, fastest to slowest</h2>
+  <div class="classes" id="classes">
+
+    <article class="cls">
+      <div class="cls-top"><span class="big" style="color:var(--c1)">O(1)</span><span class="nick">Constant</span></div>
+      <p>The work doesn't depend on <code>n</code> at all. One step or fifty steps, as long as it's a fixed number.</p>
+      <div class="duo">
+        <div><span class="tag">Real life</span><p>Grabbing your coat from a coat check with ticket #47. The attendant goes straight to hook 47, no matter how many coats are stored.</p></div>
+        <div><span class="tag">In code</span>
+<pre><code>arr[47]          <span class="c"># index into a list</span>
+d["priya"]       <span class="c"># dict lookup (average)</span>
+x in my_set      <span class="c"># set membership</span>
+stack.append(5)  <span class="c"># push onto a list</span></code></pre></div>
+      </div>
+      <p class="note">Why a dict is O(1): the key is hashed straight to a slot, like the ticket number points to a hook.</p>
+    </article>
+
+    <article class="cls">
+      <div class="cls-top"><span class="big" style="color:var(--c2)">O(log n)</span><span class="nick">Logarithmic</span></div>
+      <p>Each step throws away half (or some fixed fraction) of what's left. Doubling <code>n</code> adds only <em>one</em> more step. For a million items, that's about 20 steps.</p>
+      <div class="duo">
+        <div><span class="tag">Real life</span><p>Guessing a number from 1 to 1,000 when someone says "higher" or "lower." Always guess the middle: 500, 250, 375… You never need more than 10 guesses.</p></div>
+        <div><span class="tag">In code</span>
+<pre><code><span class="k">def</span> binary_search(arr, target):
+    lo, hi = 0, len(arr) - 1
+    <span class="k">while</span> lo &lt;= hi:
+        mid = (lo + hi) // 2
+        <span class="k">if</span> arr[mid] == target: <span class="k">return</span> mid
+        <span class="k">if</span> arr[mid] &lt; target: lo = mid + 1
+        <span class="k">else</span>: hi = mid - 1  <span class="c"># half gone</span>
+    <span class="k">return</span> -1</code></pre></div>
+      </div>
+      <p class="note">Also O(log n): <code>heapq.heappush</code>, lookups in a balanced tree, and any loop like <code>while n &gt; 1: n //= 2</code>.</p>
+    </article>
+
+    <article class="cls">
+      <div class="cls-top"><span class="big" style="color:var(--c3)">O(n)</span><span class="nick">Linear</span></div>
+      <p>You touch each item a constant number of times. Twice the input, twice the work. Most good interview solutions land here.</p>
+      <div class="duo">
+        <div><span class="tag">Real life</span><p>A teacher reading the attendance list out loud. 30 students, 30 names. 300 students, 300 names.</p></div>
+        <div><span class="tag">In code</span>
+<pre><code><span class="k">def</span> find_max(nums):
+    best = nums[0]
+    <span class="k">for</span> x <span class="k">in</span> nums:      <span class="c"># n steps</span>
+        best = max(best, x)
+    <span class="k">return</span> best</code></pre></div>
+      </div>
+      <p class="note">Two separate loops over the list are still O(n): 2n steps, and constants get dropped.</p>
+    </article>
+
+    <article class="cls">
+      <div class="cls-top"><span class="big" style="color:var(--c4)">O(n log n)</span><span class="nick">Linearithmic</span></div>
+      <p>The cost of good sorting. You do O(log n) rounds, and each round touches all n items.</p>
+      <div class="duo">
+        <div><span class="tag">Real life</span><p>Sorting a stack of exam papers alphabetically by splitting it in half, sorting each half, and merging. Each "level" of merging handles every paper once, and there are about log n levels.</p></div>
+        <div><span class="tag">In code</span>
+<pre><code>nums.sort()          <span class="c"># Timsort: O(n log n)</span>
+sorted(words)
+
+<span class="c"># common pattern: sort first, then scan</span>
+nums.sort()                    <span class="c"># n log n</span>
+<span class="k">for</span> i <span class="k">in</span> range(1, len(nums)):  <span class="c"># n</span>
+    ...
+<span class="c"># total: O(n log n)</span></code></pre></div>
+      </div>
+      <p class="note">Interview signal: if your idea starts with "sort the array," your floor is O(n log n). Ask yourself whether a hashmap could get you to O(n).</p>
+    </article>
+
+    <article class="cls">
+      <div class="cls-top"><span class="big" style="color:var(--c5)">O(n²)</span><span class="nick">Quadratic</span></div>
+      <p>For every item, you look at every other item. Usually a nested loop. Fine for n in the low thousands, too slow beyond that.</p>
+      <div class="duo">
+        <div><span class="tag">Real life</span><p>Everyone at a party shakes hands with everyone else. 10 people make 45 handshakes. 100 people make 4,950. The party doesn't get 10× longer, it gets about 100× longer.</p></div>
+        <div><span class="tag">In code</span>
+<pre><code><span class="c"># brute-force Two Sum</span>
+<span class="k">for</span> i <span class="k">in</span> range(n):
+    <span class="k">for</span> j <span class="k">in</span> range(i + 1, n):
+        <span class="k">if</span> nums[i] + nums[j] == t:
+            <span class="k">return</span> [i, j]</code></pre></div>
+      </div>
+      <p class="note">The inner loop runs n−1, n−2, … 1 times. That adds up to n(n−1)/2, which is still O(n²). Starting at <code>i + 1</code> halves the work but doesn't change the class.</p>
+    </article>
+
+    <article class="cls">
+      <div class="cls-top"><span class="big" style="color:var(--c6)">O(2ⁿ)</span><span class="nick">Exponential</span></div>
+      <p>Each extra item <em>doubles</em> the work. Shows up when every item is a yes/no choice, or when recursion branches twice and recomputes the same things.</p>
+      <div class="duo">
+        <div><span class="tag">Real life</span><p>Packing for a trip with 20 items and trying every possible combination of what to bring. Each item is in or out, so that's 2²⁰ ≈ 1 million combinations. Add 10 more items and it's a billion.</p></div>
+        <div><span class="tag">In code</span>
+<pre><code><span class="k">def</span> fib(n):
+    <span class="k">if</span> n &lt; 2: <span class="k">return</span> n
+    <span class="k">return</span> fib(n-1) + fib(n-2)
+<span class="c"># 2 branches per call, depth n</span>
+<span class="c"># → O(2ⁿ). fib(40) takes ~1 min</span></code></pre></div>
+      </div>
+      <p class="note">Fix: memoization (cache each <code>fib(k)</code>) turns this into O(n). That's the core idea of dynamic programming, which you'll meet in Week 7.</p>
+    </article>
+
+    <article class="cls">
+      <div class="cls-top"><span class="big" style="color:var(--c7)">O(n!)</span><span class="nick">Factorial</span></div>
+      <p>Trying every possible <em>ordering</em>. Only usable for tiny n (about 10 or less).</p>
+      <div class="duo">
+        <div><span class="tag">Real life</span><p>A delivery driver with 12 stops trying every possible route order to find the shortest. That's 479 million routes. With 20 stops, it's more routes than there are grains of sand on Earth.</p></div>
+        <div><span class="tag">In code</span>
+<pre><code><span class="k">from</span> itertools <span class="k">import</span> permutations
+<span class="k">for</span> route <span class="k">in</span> permutations(stops):
+    check(route)   <span class="c"># n! routes</span></code></pre></div>
+      </div>
+      <p class="note">You'll see this in backtracking problems like Permutations (Week 7), where listing every ordering <em>is</em> the task.</p>
+    </article>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">How to analyze any code</span>
+  <h2>Seven rules that cover almost everything</h2>
+  <div class="rules">
+    <div class="rule"><div><h3>Drop constants</h3><p><code>O(2n)</code>, <code>O(n + 100)</code>, and <code>O(n/2)</code> are all <strong>O(n)</strong>. Big-O is about shape, not exact counts.</p></div></div>
+    <div class="rule"><div><h3>Keep only the biggest term</h3><p><code>O(n² + n)</code> becomes <strong>O(n²)</strong>. When n is a million, the extra n is a rounding error.</p></div></div>
+    <div class="rule"><div><h3>Steps one after another: add</h3>
+<pre><code><span class="k">for</span> x <span class="k">in</span> a: ...   <span class="c"># O(n)</span>
+<span class="k">for</span> y <span class="k">in</span> a: ...   <span class="c"># O(n)   → O(n + n) = O(n)</span></code></pre></div></div>
+    <div class="rule"><div><h3>Steps inside each other: multiply</h3>
+<pre><code><span class="k">for</span> x <span class="k">in</span> a:        <span class="c"># n times</span>
+    <span class="k">for</span> y <span class="k">in</span> a: ... <span class="c"># n times each → O(n · n) = O(n²)</span></code></pre></div></div>
+    <div class="rule"><div><h3>Different inputs get different letters</h3><p>Looping over list <code>a</code> then list <code>b</code> is <strong>O(a + b)</strong>. Nesting them is <strong>O(a · b)</strong>, not O(n²). Interviewers check for this.</p></div></div>
+    <div class="rule"><div><h3>Halving means log</h3><p>Any loop that cuts the problem in half each time (<code>n //= 2</code>, binary search, going down a balanced tree) runs <strong>O(log n)</strong> times.</p></div></div>
+    <div class="rule"><div><h3>Recursion: branches<sup>depth</sup></h3><p>A function that calls itself <em>b</em> times and goes <em>d</em> levels deep does about <strong>O(b<sup>d</sup>)</strong> calls. <code>fib</code> has 2 branches and depth n, so O(2ⁿ).</p></div></div>
+  </div>
+  <div class="callout"><strong>Hidden loops count too.</strong> <code>x in my_list</code>, <code>my_list.index(x)</code>, <code>my_list.insert(0, x)</code>, slicing <code>s[a:b]</code>, and <code>"".join(...)</code> each take O(n) on their own. A "single" loop that uses one of them is often secretly O(n²).</div>
+</section>
+
+<section>
+  <span class="eyebrow">Worked example</span>
+  <h2>Analyzing a function line by line</h2>
+  <p>Does a list contain two numbers that add up to <code>target</code>? Here are two versions with the same answer and very different costs.</p>
+  <h3>Version A: brute force</h3>
+  <div class="steps">
+    <div class="step"><pre><code><span class="k">for</span> i <span class="k">in</span> range(len(nums)):</code></pre><p class="why">Outer loop runs n times.</p></div>
+    <div class="step"><pre><code>    <span class="k">for</span> j <span class="k">in</span> range(i+1, len(nums)):</code></pre><p class="why">Inner loop runs up to n times for each i. Nested, so multiply.</p></div>
+    <div class="step"><pre><code>        <span class="k">if</span> nums[i]+nums[j]==target:</code></pre><p class="why">Constant work, O(1).</p></div>
+  </div>
+  <p><strong>Time O(n²), space O(1).</strong> For 100,000 numbers that's about 5 billion checks, roughly 8 minutes in Python.</p>
+  <h3>Version B: hash set</h3>
+  <div class="steps">
+    <div class="step"><pre><code>seen = set()</code></pre><p class="why">Extra memory that can grow to n items.</p></div>
+    <div class="step"><pre><code><span class="k">for</span> x <span class="k">in</span> nums:</code></pre><p class="why">One pass: n times.</p></div>
+    <div class="step"><pre><code>    <span class="k">if</span> target - x <span class="k">in</span> seen: <span class="k">return</span> True</code></pre><p class="why">Set lookup is O(1) on average.</p></div>
+    <div class="step"><pre><code>    seen.add(x)</code></pre><p class="why">Also O(1).</p></div>
+  </div>
+  <p><strong>Time O(n), space O(n).</strong> Same 100,000 numbers: about 0.01 seconds. You traded memory for speed, which is the single most common trade-off in interviews. Say it out loud when you make it.</p>
+</section>
+
+<section>
+  <span class="eyebrow">Space complexity</span>
+  <h2>Memory follows the same rules</h2>
+  <p>Space complexity counts the <em>extra</em> memory your code uses as n grows, not counting the input itself.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Code</th><th>Extra space</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Two pointers on the input list</td><td><span class="pill" style="background:var(--c1)">O(1)</span></td><td>A few variables, no matter the size.</td></tr>
+      <tr><td><code>seen = set()</code> filled in a loop</td><td><span class="pill" style="background:var(--c3)">O(n)</span></td><td>Can end up holding every item.</td></tr>
+      <tr><td>Recursion n levels deep</td><td><span class="pill" style="background:var(--c3)">O(n)</span></td><td>Each waiting call sits on the call stack. People forget this one.</td></tr>
+      <tr><td>Recursive binary search</td><td><span class="pill" style="background:var(--c2)">O(log n)</span></td><td>The stack is only log n calls deep.</td></tr>
+      <tr><td>An n × n grid of results (2D DP)</td><td><span class="pill" style="background:var(--c5)">O(n²)</span></td><td>n² cells stored.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Python's recursion limit is 1,000 by default, so deep recursion can crash on big inputs even when the Big-O looks fine.</p>
+</section>
+
+<section>
+  <span class="eyebrow">Cheat sheet</span>
+  <h2>What Python operations actually cost</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Operation</th><th>Cost</th><th>Watch out</th></tr></thead>
+    <tbody>
+      <tr><td><code>lst[i]</code>, <code>lst.append(x)</code>, <code>lst.pop()</code></td><td><span class="pill" style="background:var(--c1)">O(1)</span></td><td>Append is O(1) on average; the list occasionally resizes.</td></tr>
+      <tr><td><code>lst.pop(0)</code>, <code>lst.insert(0, x)</code></td><td><span class="pill" style="background:var(--c3)">O(n)</span></td><td>Shifts every element. Use <code>collections.deque</code> for queues.</td></tr>
+      <tr><td><code>x in lst</code>, <code>lst.index(x)</code>, <code>lst.count(x)</code></td><td><span class="pill" style="background:var(--c3)">O(n)</span></td><td>A scan. Convert to a set if you check often.</td></tr>
+      <tr><td><code>x in s</code>, <code>s.add(x)</code> (set)</td><td><span class="pill" style="background:var(--c1)">O(1)</span></td><td>Average case.</td></tr>
+      <tr><td><code>d[k]</code>, <code>d[k] = v</code>, <code>k in d</code></td><td><span class="pill" style="background:var(--c1)">O(1)</span></td><td>Average case.</td></tr>
+      <tr><td><code>deque.append</code> / <code>popleft</code></td><td><span class="pill" style="background:var(--c1)">O(1)</span></td><td>The right tool for BFS queues.</td></tr>
+      <tr><td><code>heapq.heappush</code> / <code>heappop</code></td><td><span class="pill" style="background:var(--c2)">O(log n)</span></td><td><code>heapify(lst)</code> is O(n).</td></tr>
+      <tr><td><code>bisect.bisect_left</code></td><td><span class="pill" style="background:var(--c2)">O(log n)</span></td><td>List must be sorted.</td></tr>
+      <tr><td><code>lst[a:b]</code>, <code>lst.copy()</code></td><td><span class="pill" style="background:var(--c3)">O(k)</span></td><td>Slicing copies; k is the slice length.</td></tr>
+      <tr><td><code>lst.sort()</code>, <code>sorted(lst)</code></td><td><span class="pill" style="background:var(--c4)">O(n log n)</span></td><td>Sort once outside loops, never inside.</td></tr>
+      <tr><td><code>s += c</code> in a loop (strings)</td><td><span class="pill" style="background:var(--c5)">O(n²)</span></td><td>Strings are immutable. Collect in a list and <code>"".join()</code> once.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <span class="eyebrow">Interview trick</span>
+  <h2>Read the constraints to guess the target</h2>
+  <p>LeetCode problems list the maximum input size. Working backwards from roughly 10⁷–10⁸ operations per second tells you which complexity the interviewer is expecting before you write a line.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>If n is up to</th><th>Aim for</th><th>Typical approach</th></tr></thead>
+    <tbody>
+      <tr><td>~10</td><td><span class="pill" style="background:var(--c7)">O(n!)</span></td><td>Try every ordering (permutations)</td></tr>
+      <tr><td>~20</td><td><span class="pill" style="background:var(--c6)">O(2ⁿ)</span></td><td>Try every subset, backtracking</td></tr>
+      <tr><td>~500</td><td><span class="pill" style="background:var(--c5)">O(n³)</span></td><td>Triple loops, some DP</td></tr>
+      <tr><td>~5,000</td><td><span class="pill" style="background:var(--c5)">O(n²)</span></td><td>Nested loops, 2D DP</td></tr>
+      <tr><td>~10⁵ to 10⁶</td><td><span class="pill" style="background:var(--c4)">O(n log n)</span> or <span class="pill" style="background:var(--c3)">O(n)</span></td><td>Sorting, heaps, hashmap, two pointers, sliding window</td></tr>
+      <tr><td>10⁹ or more</td><td><span class="pill" style="background:var(--c2)">O(log n)</span> or <span class="pill" style="background:var(--c1)">O(1)</span></td><td>Binary search, math</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><strong>What to say in the interview:</strong> "The brute force is O(n²) because of the nested loop. With n up to 10⁵ that's too slow, so I'll use a hashmap to get O(n) time at the cost of O(n) space." That one sentence shows everything they grade.</div>
+</section>
+
+<section>
+  <span class="eyebrow">Tonight's exercise</span>
+  <h2>Practice: name the Big-O</h2>
+  <p>Work out each answer before clicking. Say why out loud, as you would in an interview.</p>
+  <div class="quiz" id="quiz"></div>
+  <p class="score" id="score" aria-live="polite"></p>
+</section>
+
+<section>
+  <span class="eyebrow">Avoid these</span>
+  <h2>Common mistakes</h2>
+  <ul>
+    <li>Calling a loop with <code>x in some_list</code> inside it O(n). It's O(n²).</li>
+    <li>Saying O(n²) when two <em>different</em> lists are nested. It's O(a · b).</li>
+    <li>Forgetting the call stack when giving space complexity for recursion.</li>
+    <li>Saying O(n) for a sort-based solution. Sorting alone is O(n log n).</li>
+    <li>Only giving time complexity. Always give time <em>and</em> space.</li>
+    <li>Mixing up average and worst case for hashmaps. Say "O(1) average" if asked to be precise.</li>
+  </ul>
+  <p>Go deeper: <a href="https://www.bigocheatsheet.com/" target="_blank" rel="noopener">Big-O Cheat Sheet</a> · <a href="https://wiki.python.org/moin/TimeComplexity" target="_blank" rel="noopener">Python TimeComplexity wiki</a> · <a href="https://www.techinterviewhandbook.org/algorithms/study-cheatsheet/" target="_blank" rel="noopener">Tech Interview Handbook</a></p>
+</section>
+
+</div>
+
+<script>
+(function(){
+  const classes=[
+    {name:"O(1)",col:"--c1",f:n=>1},
+    {name:"O(log n)",col:"--c2",f:n=>Math.max(1,Math.log2(n))},
+    {name:"O(n)",col:"--c3",f:n=>n},
+    {name:"O(n log n)",col:"--c4",f:n=>n*Math.max(1,Math.log2(n))},
+    {name:"O(n²)",col:"--c5",f:n=>n*n},
+    {name:"O(2ⁿ)",col:"--c6",f:n=>Math.pow(2,n)},
+    {name:"O(n!)",col:"--c7",f:n=>{let r=1;for(let i=2;i<=n;i++){r*=i;if(!isFinite(r))return Infinity}return r}}
+  ];
+  // slider 0..100 maps to n on a log scale 1..1,000,000
+  const toN=v=>Math.max(1,Math.round(Math.pow(10,v/100*6)));
+  const fromN=n=>Math.round(Math.log10(n)/6*100);
+  const presets=[10,20,100,1000,100000,1000000];
+  const OPS=1e7, MAXLOG=30;
+  const rows=document.getElementById('rows'), nOut=document.getElementById('nOut'), slider=document.getElementById('n'), pre=document.getElementById('presets');
+  const fmt=x=>{ if(!isFinite(x)||x>1e30) return "> 10³⁰";
+    if(x<1e6) return Math.round(x).toLocaleString();
+    const e=Math.floor(Math.log10(x)), m=x/Math.pow(10,e);
+    const sup=String(e).split('').map(d=>"⁰¹²³⁴⁵⁶⁷⁸⁹"[d]).join('');
+    return m.toFixed(1)+" × 10"+sup; };
+  const time=x=>{ if(!isFinite(x)) return "forever"; const s=x/OPS;
+    if(s<1e-3) return "instant"; if(s<1) return (s*1000).toFixed(0)+" ms"; if(s<60) return s.toFixed(1)+" s";
+    if(s<3600) return (s/60).toFixed(1)+" min"; if(s<86400) return (s/3600).toFixed(1)+" hours";
+    if(s<3.15e7) return (s/86400).toFixed(0)+" days"; const y=s/3.15e7;
+    if(y<1e6) return Math.round(y).toLocaleString()+" years"; if(y>1e30) return "longer than the universe"; return fmt(y)+" years"; };
+  presets.forEach(p=>{const b=document.createElement('button');b.type='button';b.textContent='n = '+p.toLocaleString();b.dataset.n=p;
+    b.addEventListener('click',()=>{slider.value=fromN(p);render(p)});pre.appendChild(b)});
+  function render(forced){
+    const n=forced||toN(+slider.value);
+    nOut.textContent=n.toLocaleString();
+    pre.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.n===n)));
+    rows.innerHTML='';
+    classes.forEach(c=>{
+      const v=c.f(n); const lg=isFinite(v)?Math.log10(Math.max(v,1)):MAXLOG+1;
+      const pct=Math.min(100,Math.max(1.5,lg/MAXLOG*100));
+      const name=document.createElement('span');name.className='name';name.textContent=c.name;name.style.color=`var(${c.col})`;
+      const bar=document.createElement('div');bar.className='bar';const s=document.createElement('span');s.style.width=pct+'%';s.style.background=`var(${c.col})`;bar.appendChild(s);
+      const val=document.createElement('span');val.className='val';val.innerHTML='<b>'+fmt(v)+'</b> · '+time(v);
+      rows.append(name,bar,val);
+    });
+  }
+  slider.addEventListener('input',()=>render());
+  slider.value=fromN(20); render(20);
+
+  // quiz
+  const qs=[
+    {code:`def total(nums):
+    s = 0
+    for x in nums:
+        s += x
+    return s`,opts:["O(1)","O(n)","O(n²)"],a:1,why:"One pass over the list with constant work per item. Space is O(1): just one variable."},
+    {code:`def pairs(nums):
+    for a in nums:
+        for b in nums:
+            print(a, b)`,opts:["O(n)","O(n log n)","O(n²)"],a:2,why:"Nested loops over the same list: n × n prints."},
+    {code:`def halve(n):
+    steps = 0
+    while n > 1:
+        n //= 2
+        steps += 1
+    return steps`,opts:["O(log n)","O(n)","O(√n)"],a:0,why:"n is cut in half each iteration, so the loop runs about log₂ n times."},
+    {code:`def common(a, b):
+    out = []
+    for x in a:
+        if x in b:      # b is a list
+            out.append(x)
+    return out`,opts:["O(a + b)","O(a · b)","O(a)"],a:1,why:"The hidden loop: `x in b` scans list b each time. Convert b to a set first and it becomes O(a + b)."},
+    {code:`def has_dup(nums):
+    nums.sort()
+    for i in range(1, len(nums)):
+        if nums[i] == nums[i-1]:
+            return True
+    return False`,opts:["O(n)","O(n log n)","O(n²)"],a:1,why:"Sorting is O(n log n), the scan is O(n). Keep the bigger term: O(n log n). A set would make it O(n) time but O(n) space."},
+    {code:`def build(s):
+    out = ""
+    for ch in s:
+        out += ch.upper()
+    return out`,opts:["O(n)","O(n²)","O(1)"],a:1,why:"Strings are immutable, so each += copies the whole string so far. In practice CPython sometimes optimizes this, but in an interview call it O(n²) and fix it with a list plus \"\".join()."},
+    {code:`def subsets(nums):
+    if not nums:
+        return [[]]
+    rest = subsets(nums[1:])
+    return rest + [[nums[0]] + r for r in rest]`,opts:["O(n²)","O(2ⁿ)","O(n!)"],a:1,why:"Every element is either in or out, giving 2ⁿ subsets; the output alone is that big (times n to copy each list, so O(n · 2ⁿ) to be exact)."}
+  ];
+  const quiz=document.getElementById('quiz'), score=document.getElementById('score'); let right=0, done=0;
+  const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  qs.forEach((q,i)=>{
+    const el=document.createElement('div');el.className='q';
+    el.innerHTML=`<span class="tag">Question ${i+1} of ${qs.length}</span><pre><code>${esc(q.code)}</code></pre><div class="opts"></div><p class="explain" hidden></p>`;
+    const opts=el.querySelector('.opts'), ex=el.querySelector('.explain'); let answered=false;
+    q.opts.forEach((o,j)=>{const b=document.createElement('button');b.type='button';b.id=`q${i}o${j}`;b.textContent=o;
+      b.addEventListener('click',()=>{ if(answered) return; answered=true; done++;
+        if(j===q.a){b.classList.add('right');right++;ex.innerHTML='<strong>Correct.</strong> '+esc(q.why)}
+        else{b.classList.add('wrong');opts.children[q.a].classList.add('right');ex.innerHTML='<strong>Answer: '+q.opts[q.a]+'.</strong> '+esc(q.why)}
+        ex.hidden=false; score.textContent=`Score: ${right} / ${done} answered`+(done===qs.length?(right>=6?' · Ready for Day 2.':' · Re-read the seven rules, then try again tomorrow.'):'');
+      });opts.appendChild(b)});
+    quiz.appendChild(el);
+  });
+})();
+</script>
+
+</body>
+</html>
