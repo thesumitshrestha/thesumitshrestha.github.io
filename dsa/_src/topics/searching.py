@@ -1,0 +1,202 @@
+META = dict(
+    title="Searching", page_title="Binary Search · DSA Field Guide", week="Week 12", group="Algorithms",
+    h1="Binary search",
+    lead="Binary search is more than finding a number in a sorted array. Its real power is \"binary search on the answer\": whenever a yes/no check flips from false to true exactly once, you can find the flip point in O(log n).",
+    blurb="Classic search, boundaries, rotated arrays, searching on the answer.",
+)
+
+BODY = r"""
+<section id="idea">
+  <span class="eyebrow">The idea</span>
+  <h2>Opening a dictionary to the right page</h2>
+  <div class="real big-real">
+    <p>Looking up "kangaroo" in a paper dictionary, you open near the middle, see "M," and know it's in the first half. You open the middle of that half, and so on. A 1,000-page dictionary takes at most 10 openings. That halving is binary search, and it only works because the words are sorted.</p>
+  </div>
+  <figure class="anim" data-anim="search-binary"><figcaption>Finding 23 among ten sorted numbers</figcaption></figure>
+  <div class="tbl"><table>
+    <thead><tr><th>n</th><th>Linear search (worst)</th><th>Binary search (worst)</th></tr></thead>
+    <tbody>
+      <tr><td>1,000</td><td>1,000 checks</td><td>10 checks</td></tr>
+      <tr><td>1,000,000</td><td>1,000,000 checks</td><td>20 checks</td></tr>
+      <tr><td>1,000,000,000</td><td>1,000,000,000 checks</td><td>30 checks</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="patterns">
+  <span class="eyebrow">Patterns</span>
+  <h2>Five binary search patterns</h2>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>1. Exact match</h3><span class="cx">O(log n)</span></div>
+    <div class="real"><p>Guessing a number between 1 and 100 when the host says "higher" or "lower." Always guess the middle of what's left.</p></div>
+    <p class="when"><b>Use when</b>you just need to know whether (and where) a value is in a sorted array.</p>
+<pre><code><span class="k">def</span> search(nums, target):
+    lo, hi = 0, len(nums) - 1
+    <span class="k">while</span> lo &lt;= hi:                      <span class="c"># closed range [lo, hi]</span>
+        mid = (lo + hi) // 2
+        <span class="k">if</span> nums[mid] == target: <span class="k">return</span> mid
+        <span class="k">if</span> nums[mid] &lt; target: lo = mid + 1
+        <span class="k">else</span>: hi = mid - 1
+    <span class="k">return</span> -1</code></pre>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>2. First true (lower bound)</h3><span class="cx">O(log n)</span></div>
+    <div class="real"><p>Finding the first bad software release with <code>git bisect</code>: releases go good, good, good, bad, bad. You test the middle release; if it's bad, the first bad one is here or earlier, otherwise later. This is the template you should memorize.</p></div>
+    <p class="when"><b>Use when</b>you want the <em>first</em> position where a condition becomes true: insert position, first/last occurrence, first bad version.</p>
+<pre><code><span class="k">def</span> first_true(lo, hi, ok):            <span class="c"># ok(x) is False...False True...True</span>
+    <span class="k">while</span> lo &lt; hi:                        <span class="c"># half-open: answer in [lo, hi]</span>
+        mid = (lo + hi) // 2
+        <span class="k">if</span> ok(mid): hi = mid                <span class="c"># mid might be the answer: keep it</span>
+        <span class="k">else</span>: lo = mid + 1                  <span class="c"># mid is too early: drop it</span>
+    <span class="k">return</span> lo
+
+<span class="c"># Search Insert Position = first index with nums[i] &gt;= target</span>
+first_true(0, len(nums), <span class="k">lambda</span> i: nums[i] &gt;= target)
+<span class="c"># Same thing, built in:</span>
+<span class="k">import</span> bisect
+bisect.bisect_left(nums, target)        <span class="c"># first i with nums[i] &gt;= target</span>
+bisect.bisect_right(nums, target)       <span class="c"># first i with nums[i] &gt;  target</span></code></pre>
+    <p class="note">First and Last Position of an element = <code>bisect_left</code> and <code>bisect_right − 1</code>, checking the element exists.</p>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>3. Rotated sorted array</h3><span class="cx">O(log n)</span></div>
+    <div class="real"><p>A clock face starting at 4 instead of 12: 4, 5, … 11, 12, 1, 2, 3. Pick any point and at least one side of it still counts up normally. Check which side is "normal," and see if your target is in it.</p></div>
+    <p class="when"><b>Use when</b>a sorted array has been rotated (Search in Rotated Sorted Array, Find Minimum).</p>
+<pre><code><span class="k">def</span> search_rotated(nums, target):
+    lo, hi = 0, len(nums) - 1
+    <span class="k">while</span> lo &lt;= hi:
+        mid = (lo + hi) // 2
+        <span class="k">if</span> nums[mid] == target: <span class="k">return</span> mid
+        <span class="k">if</span> nums[lo] &lt;= nums[mid]:                    <span class="c"># left half sorted</span>
+            <span class="k">if</span> nums[lo] &lt;= target &lt; nums[mid]: hi = mid - 1
+            <span class="k">else</span>: lo = mid + 1
+        <span class="k">else</span>:                                         <span class="c"># right half sorted</span>
+            <span class="k">if</span> nums[mid] &lt; target &lt;= nums[hi]: lo = mid + 1
+            <span class="k">else</span>: hi = mid - 1
+    <span class="k">return</span> -1
+
+<span class="k">def</span> find_min(nums):
+    lo, hi = 0, len(nums) - 1
+    <span class="k">while</span> lo &lt; hi:
+        mid = (lo + hi) // 2
+        <span class="k">if</span> nums[mid] &gt; nums[hi]: lo = mid + 1          <span class="c"># min is right of mid</span>
+        <span class="k">else</span>: hi = mid
+    <span class="k">return</span> nums[lo]</code></pre>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>4. Binary search on the answer</h3><span class="cx">O(log range × check cost)</span></div>
+    <div class="real"><p>Choosing the slowest reading speed that still finishes a stack of books before your exam. Reading faster always helps, so if speed 20 pages/hour works, 21 works too. Binary search the speed itself, and at each guess just check "do I finish in time?"</p></div>
+    <p class="when"><b>Use when</b>the problem asks for a min or max value, and you can write a yes/no check that is monotonic: Koko Eating Bananas, Split Array Largest Sum, Capacity to Ship Packages, minimum days.</p>
+<pre><code><span class="k">import</span> math
+<span class="k">def</span> min_eating_speed(piles, h):
+    <span class="k">def</span> ok(k):                                   <span class="c"># can finish at speed k?</span>
+        <span class="k">return</span> sum(math.ceil(p / k) <span class="k">for</span> p <span class="k">in</span> piles) &lt;= h
+    lo, hi = 1, max(piles)
+    <span class="k">while</span> lo &lt; hi:
+        mid = (lo + hi) // 2
+        <span class="k">if</span> ok(mid): hi = mid
+        <span class="k">else</span>: lo = mid + 1
+    <span class="k">return</span> lo</code></pre>
+    <figure class="anim" data-anim="search-answer"><figcaption>Searching over speeds, not array positions</figcaption></figure>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>5. Peak finding (search on a slope)</h3><span class="cx">O(log n)</span></div>
+    <div class="real"><p>Hiking in fog toward a summit: you can't see the top, but you can feel which way is uphill. Always step uphill and you're guaranteed to reach some peak.</p></div>
+    <p class="when"><b>Use when</b>the array isn't sorted but comparing neighbors tells you which half must contain an answer (Find Peak Element).</p>
+<pre><code><span class="k">def</span> find_peak(nums):
+    lo, hi = 0, len(nums) - 1
+    <span class="k">while</span> lo &lt; hi:
+        mid = (lo + hi) // 2
+        <span class="k">if</span> nums[mid] &lt; nums[mid + 1]: lo = mid + 1    <span class="c"># uphill to the right</span>
+        <span class="k">else</span>: hi = mid
+    <span class="k">return</span> lo</code></pre>
+  </article>
+</section>
+
+<section id="deep">
+  <span class="eyebrow">Deep analysis</span>
+  <h2>Split Array Largest Sum</h2>
+  <div class="real"><p>Splitting a 10-episode podcast season across k days of listening, keeping episodes in order, so that your longest day is as short as possible. Guess a daily limit; walk through episodes greedily starting a new day when the limit would be exceeded; if that takes more than k days, the limit is too low.</p></div>
+  <div class="trace">
+    <div><p><strong>Range:</strong> the answer is at least <code>max(nums)</code> (a day must hold the biggest episode) and at most <code>sum(nums)</code> (one day holds everything).</p></div>
+    <div><p><strong>Check:</strong> given a limit, greedily count how many groups you need. That's O(n).</p></div>
+    <div><p><strong>Monotonic:</strong> a bigger limit never needs more groups. So "groups ≤ k" goes False…False True…True: first-true binary search.</p></div>
+  </div>
+<pre><code><span class="k">def</span> split_array(nums, k):
+    <span class="k">def</span> groups(limit):
+        count, cur = 1, 0
+        <span class="k">for</span> x <span class="k">in</span> nums:
+            <span class="k">if</span> cur + x &gt; limit: count += 1; cur = 0
+            cur += x
+        <span class="k">return</span> count
+    lo, hi = max(nums), sum(nums)
+    <span class="k">while</span> lo &lt; hi:
+        mid = (lo + hi) // 2
+        <span class="k">if</span> groups(mid) &lt;= k: hi = mid
+        <span class="k">else</span>: lo = mid + 1
+    <span class="k">return</span> lo</code></pre>
+  <p><strong>Complexity:</strong> O(n log(sum)). The DP alternative is O(n² · k).</p>
+  <div class="google"><p>Phrases like "minimize the maximum" or "maximize the minimum" are strong hints for binary search on the answer. Saying so early impresses interviewers.</p></div>
+</section>
+
+<section id="edge">
+  <span class="eyebrow">Before you say "done"</span>
+  <h2>Avoiding the classic bugs</h2>
+  <div class="real"><p>Two people trying to pass in a narrow corridor and both stepping the same way forever: an off-by-one in binary search makes <code>lo</code> and <code>hi</code> stop moving and loop forever.</p></div>
+  <ul>
+    <li>Pick one template and stick with it. With <code>while lo &lt; hi</code>, use <code>hi = mid</code> and <code>lo = mid + 1</code>, never <code>lo = mid</code> (infinite loop when hi = lo + 1).</li>
+    <li>If you need <code>lo = mid</code> (searching for the last true), use <code>mid = (lo + hi + 1) // 2</code>.</li>
+    <li>Test arrays of length 0, 1 and 2, and targets smaller than everything and larger than everything.</li>
+    <li>In Java/C++, write <code>lo + (hi - lo) / 2</code> to avoid overflow; mention it even in Python.</li>
+    <li>Rotated arrays with duplicates make the worst case O(n); mention it if asked.</li>
+  </ul>
+</section>
+"""
+
+PROBLEMS = [
+    ("Binary Search", "binary-search", "easy", "Exact match template"),
+    ("Search Insert Position", "search-insert-position", "easy", "First index ≥ target"),
+    ("First Bad Version", "first-bad-version", "easy", "First true"),
+    ("Search in Rotated Sorted Array", "search-in-rotated-sorted-array", "medium", "Find the sorted half"),
+    ("Find Minimum in Rotated Sorted Array", "find-minimum-in-rotated-sorted-array", "medium", "Compare mid with hi"),
+    ("Search a 2D Matrix", "search-a-2d-matrix", "medium", "Treat as one sorted array: r = i // cols"),
+    ("Koko Eating Bananas", "koko-eating-bananas", "medium", "Binary search on speed"),
+    ("Find First and Last Position of Element in Sorted Array", "find-first-and-last-position-of-element-in-sorted-array", "medium", "bisect_left and bisect_right"),
+    ("Find Peak Element", "find-peak-element", "medium", "Walk uphill"),
+    ("Time Based Key-Value Store", "time-based-key-value-store", "medium", "Per-key timestamps + bisect_right"),
+    ("Median of Two Sorted Arrays", "median-of-two-sorted-arrays", "hard", "Binary search the partition of the shorter array"),
+    ("Split Array Largest Sum", "split-array-largest-sum", "hard", "Binary search on the max sum"),
+]
+
+QUIZ = [
+    dict(lvl="easy", q="Binary search requires the input to be:",
+         opts=["Unique", "Sorted (or monotonic in some yes/no condition)", "Small", "Integers only"], a=1, why="Halving only works if one side can be ruled out by a single comparison."),
+    dict(lvl="easy", q="Maximum checks to binary search 1,000,000 items?",
+         opts=["About 20", "About 1,000", "About 100", "1,000,000"], a=0, why="2²⁰ ≈ 1,048,576."),
+    dict(lvl="easy", q="`bisect.bisect_left([1, 3, 3, 5], 3)` returns:",
+         opts=["0", "1", "2", "3"], a=1, why="The first index whose value is ≥ 3. bisect_right would return 3."),
+    dict(lvl="medium", q="With `while lo < hi` and `lo = mid`, why can the loop run forever?",
+         opts=["It can't", "When hi = lo + 1, mid = lo, so lo never changes", "Python rounds up", "Only with negative numbers"], a=1,
+         why="Floor division makes mid equal lo. Use `lo = mid + 1`, or round mid up if you must keep `lo = mid`."),
+    dict(lvl="medium", q="Find Minimum in Rotated `[4, 5, 6, 7, 0, 1, 2]`. Why compare `nums[mid]` with `nums[hi]` and not `nums[lo]`?",
+         opts=["Either works", "If nums[mid] > nums[hi], the drop (the minimum) must be to the right of mid; nums[lo] can't tell you that in an unrotated array", "To avoid index errors", "Because hi is larger"], a=1,
+         why="Comparing with the right end works whether or not the array is rotated."),
+    dict(lvl="medium", q="Koko: piles `[3, 6, 7, 11]`, h = 8. Is speed 4 enough?",
+         opts=["Yes: 1 + 2 + 2 + 3 = 8 hours", "No: 9 hours", "Yes: 7 hours", "No: 10 hours"], a=0, why="ceil(3/4) + ceil(6/4) + ceil(7/4) + ceil(11/4) = 1 + 2 + 2 + 3 = 8 ≤ 8."),
+    dict(lvl="medium", q="Search a 2D Matrix (each row sorted, rows in order). Map index i of a virtual 1D array to a cell:",
+         opts=["(i % rows, i // rows)", "(i // cols, i % cols)", "(i, i)", "(cols // i, i)"], a=1, why="Row = i // cols, column = i % cols."),
+    dict(lvl="hard", q="Which phrase most strongly hints \"binary search on the answer\"?",
+         opts=["\"Return all subsets\"", "\"Minimize the largest sum\"", "\"Count the islands\"", "\"Reverse the list\""], a=1,
+         why="Min-max / max-min objectives with a monotonic feasibility check are the classic setup."),
+    dict(lvl="hard", q="Median of Two Sorted Arrays in O(log(min(m, n))). What is binary searched?",
+         opts=["The median value", "How many elements to take from the shorter array for the left half", "The merged array", "Both arrays together"], a=1,
+         why="Choose i from A and j = half − i from B so every left element ≤ every right element; adjust i by binary search."),
+    dict(lvl="hard", q="Time Based Key-Value Store: `get(key, t)` returns the value with the largest timestamp ≤ t. With sorted timestamps per key, which call?",
+         opts=["`bisect_left(times, t)`", "`bisect_right(times, t) - 1`", "`bisect_right(times, t)`", "`times.index(t)`"], a=1,
+         why="bisect_right gives the first index with time > t, so one before it is the last ≤ t (if ≥ 0)."),
+]

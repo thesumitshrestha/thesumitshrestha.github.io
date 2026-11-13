@@ -1,0 +1,130 @@
+META = dict(
+    title="Python for interviews", page_title="Interview Python · DSA Field Guide", week="Use anytime", group="Interview prep",
+    h1="Python for coding interviews",
+    lead="The standard library pieces that save the most time in a 45-minute round, plus the Python gotchas that silently break solutions.",
+    blurb="collections, heapq, bisect, itertools, sorting keys, and common gotchas.",
+    needs_anim=False,
+)
+
+BODY = r"""
+<section id="idea">
+  <span class="eyebrow">The idea</span>
+  <h2>Know your toolbox before the job</h2>
+  <div class="real big-real">
+    <p>A carpenter doesn't build a hammer on the job site. In an interview, writing your own counter or queue costs minutes you need for the actual problem. Knowing that <code>Counter</code>, <code>deque</code>, <code>heapq</code> and <code>bisect</code> exist is like arriving with a full toolbox.</p>
+  </div>
+</section>
+
+<section id="collections">
+  <span class="eyebrow">collections</span>
+  <h2>The four you'll use weekly</h2>
+<pre><code><span class="k">from</span> collections <span class="k">import</span> Counter, defaultdict, deque, OrderedDict
+
+Counter("banana")              <span class="c"># {'a': 3, 'n': 2, 'b': 1}</span>
+Counter(a) == Counter(b)       <span class="c"># anagram check</span>
+cnt.most_common(2)             <span class="c"># [('a', 3), ('n', 2)]</span>
+cnt["z"]                       <span class="c"># 0, no KeyError</span>
+
+g = defaultdict(list)          <span class="c"># graph / grouping</span>
+g[u].append(v)
+
+q = deque([start])             <span class="c"># BFS queue</span>
+q.append(x); q.popleft()       <span class="c"># both O(1)</span>
+q.appendleft(x); q.pop()       <span class="c"># deque works at both ends</span>
+
+od = OrderedDict()             <span class="c"># LRU cache helper</span>
+od.move_to_end(k); od.popitem(last=False)</code></pre>
+  <div class="real"><p><code>defaultdict</code> is like a filing cabinet that creates an empty folder the moment you ask for a name that isn't there, instead of telling you "no such folder."</p></div>
+</section>
+
+<section id="heap-bisect">
+  <span class="eyebrow">heapq and bisect</span>
+  <h2>Priority queues and sorted lookups</h2>
+<pre><code><span class="k">import</span> heapq, bisect
+h = []
+heapq.heappush(h, (priority, i, item))   <span class="c"># tuples sort by first field, i breaks ties</span>
+heapq.heappop(h)                         <span class="c"># smallest</span>
+heapq.heapify(lst)                       <span class="c"># O(n)</span>
+heapq.heappush(h, -x)                    <span class="c"># max-heap via negation</span>
+heapq.nlargest(k, nums, key=f)           <span class="c"># top k</span>
+
+bisect.bisect_left(a, x)                 <span class="c"># first i with a[i] &gt;= x</span>
+bisect.bisect_right(a, x)                <span class="c"># first i with a[i] &gt;  x</span>
+bisect.insort(a, x)                      <span class="c"># insert keeping order (O(n) shift)</span></code></pre>
+</section>
+
+<section id="everyday">
+  <span class="eyebrow">Everyday idioms</span>
+  <h2>Short idioms worth memorizing</h2>
+<pre><code><span class="c"># loops</span>
+<span class="k">for</span> i, x <span class="k">in</span> enumerate(nums): ...
+<span class="k">for</span> a, b <span class="k">in</span> zip(s, t): ...
+<span class="k">for</span> i <span class="k">in</span> range(n - 1, -1, -1): ...     <span class="c"># backwards</span>
+
+<span class="c"># sorting</span>
+pts.sort(key=<span class="k">lambda</span> p: p[0]**2 + p[1]**2)
+words.sort(key=<span class="k">lambda</span> w: (-freq[w], w))  <span class="c"># desc count, then alphabetical</span>
+
+<span class="c"># infinity and grids</span>
+INF = float('inf')
+grid = [[0] * cols <span class="k">for</span> _ <span class="k">in</span> range(rows)]   <span class="c"># NOT [[0]*cols]*rows</span>
+DIRS = ((1, 0), (-1, 0), (0, 1), (0, -1))
+
+<span class="c"># strings</span>
+s.isalnum(), s.isdigit(), s.lower(), s.split(), " ".join(words)
+ord('a'), chr(97), s[::-1]
+
+<span class="c"># memoization and combinatorics</span>
+<span class="k">from</span> functools <span class="k">import</span> cache
+<span class="k">from</span> itertools <span class="k">import</span> permutations, combinations, accumulate
+list(accumulate([1, 2, 3]))                <span class="c"># [1, 3, 6] prefix sums</span>
+
+<span class="c"># integer math</span>
+7 // 2 == 3;  -7 // 2 == -4;  int(-7 / 2) == -3
+divmod(17, 5) == (3, 2)
+math.gcd(12, 18) == 6;  math.ceil(7 / 2) == 4</code></pre>
+</section>
+
+<section id="gotchas">
+  <span class="eyebrow">Gotchas</span>
+  <h2>Bugs that look like correct code</h2>
+  <div class="real"><p>Like photocopying one key and handing the copies to five roommates, then being surprised that changing the lock affects everyone. Several Python bugs come from sharing one object when you meant to make copies.</p></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Bug</th><th>What happens</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td><code>grid = [[0]*3]*3</code></td><td>All rows are the same list; editing one edits all</td><td><code>[[0]*3 for _ in range(3)]</code></td></tr>
+      <tr><td><code>def f(x, seen=[])</code></td><td>The default list is shared across calls</td><td><code>seen=None</code>, then create inside</td></tr>
+      <tr><td><code>res.append(path)</code> in backtracking</td><td>Every result is the same (later emptied) list</td><td><code>res.append(path[:])</code></td></tr>
+      <tr><td><code>lst.pop(0)</code> as a queue</td><td>O(n) per pop</td><td><code>deque.popleft()</code></td></tr>
+      <tr><td>Deep recursion (n &gt; 1000)</td><td><code>RecursionError</code></td><td>Iterative version, or <code>sys.setrecursionlimit</code></td></tr>
+      <tr><td><code>x &amp; 1 == 0</code></td><td>Precedence: evaluates <code>x &amp; (1 == 0)</code></td><td><code>(x &amp; 1) == 0</code></td></tr>
+      <tr><td>Changing a dict while looping over it</td><td><code>RuntimeError</code></td><td>Loop over <code>list(d)</code></td></tr>
+      <tr><td><code>a.sort()</code> used as a value</td><td>Returns <code>None</code></td><td><code>sorted(a)</code></td></tr>
+    </tbody>
+  </table></div>
+  <div class="google"><p>Google interviews usually use a plain shared document with no autocomplete or run button. Practice typing these idioms without an IDE so they come out right the first time.</p></div>
+</section>
+"""
+
+QUIZ = [
+    dict(lvl="easy", q="What does `Counter('aab')['z']` return?", opts=["KeyError", "0", "None", "-1"], a=1, why="Counter returns 0 for missing keys."),
+    dict(lvl="easy", q="Which gives an O(1) pop from the front?", opts=["`list.pop(0)`", "`deque.popleft()`", "`list.remove(x)`", "`heapq.heappop`"], a=1, why="deque is a double-ended queue built for this."),
+    dict(lvl="easy", q="What is `-7 // 2`?", opts=["-3", "-4", "-3.5", "3"], a=1, why="`//` floors toward negative infinity."),
+    dict(lvl="medium", q="What does this print?", code="grid = [[0] * 2] * 2\ngrid[0][0] = 1\nprint(grid)",
+         opts=["[[1, 0], [0, 0]]", "[[1, 0], [1, 0]]", "[[1, 1], [1, 1]]", "Error"], a=1, why="Both rows are the same list object."),
+    dict(lvl="medium", q="What does this print after two calls?", code="def add(x, items=[]):\n    items.append(x)\n    return items\nadd(1)\nprint(add(2))",
+         opts=["[2]", "[1, 2]", "[1]", "Error"], a=1, why="The default list is created once when the function is defined and shared by every call."),
+    dict(lvl="medium", q="`sorted(['bb', 'a', 'ccc', 'dd'], key=lambda w: (-len(w), w))` gives:",
+         opts=["['a', 'bb', 'dd', 'ccc']", "['ccc', 'bb', 'dd', 'a']", "['ccc', 'dd', 'bb', 'a']", "['a', 'ccc', 'bb', 'dd']"], a=1,
+         why="Longest first; ties ('bb', 'dd') alphabetical."),
+    dict(lvl="medium", q="`list(accumulate([3, 1, 4]))` gives:", opts=["[3, 1, 4]", "[3, 4, 8]", "[8]", "[4, 1, 3]"], a=1, why="Running totals: prefix sums in one call."),
+    dict(lvl="hard", q="Why might `heapq.heappush(h, (dist, node))` crash where `node` is a custom object?",
+         opts=["Heaps can't hold tuples", "Equal `dist` values make Python compare the nodes, which may not support `<`", "dist must be an int", "It doesn't crash"], a=1,
+         why="Insert a unique counter as a tiebreaker: `(dist, count, node)`."),
+    dict(lvl="hard", q="A recursive DFS on a 10⁵-node path graph fails with RecursionError. Best interview response?",
+         opts=["Ignore it", "Convert to an iterative stack/BFS, and mention `sys.setrecursionlimit` as a quick workaround", "Switch languages", "Use a heap"], a=1,
+         why="Python's default limit is about 1,000 frames. Iterative traversal avoids it entirely."),
+    dict(lvl="hard", q="What does `@cache` require of a function's arguments?",
+         opts=["They must be integers", "They must be hashable (no lists or dicts)", "Exactly one argument", "Nothing"], a=1,
+         why="Arguments become dictionary keys. Pass tuples instead of lists, or index into an outer list."),
+]

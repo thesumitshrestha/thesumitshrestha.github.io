@@ -1,0 +1,263 @@
+META = dict(
+    title="Graphs", page_title="Graphs · DSA Field Guide", week="Week 6", group="Algorithms",
+    h1="Graphs",
+    lead="Graphs are Google's single most common interview topic. Learn three templates (BFS, DFS, union-find) plus topological sort and Dijkstra, and most graph problems become \"which template?\"",
+    blurb="Representation, BFS, DFS, topological sort, union-find, Dijkstra.",
+)
+
+BODY = r"""
+<section id="idea">
+  <span class="eyebrow">The idea</span>
+  <h2>Cities and roads</h2>
+  <div class="real big-real">
+    <p>Google Maps is a graph: intersections are <strong>nodes</strong> (vertices), roads are <strong>edges</strong>. One-way streets are <strong>directed</strong> edges; travel times are edge <strong>weights</strong>. Friend networks, flight routes, course prerequisites, and web links are all graphs too. A tree is just a graph with no cycles where every node has one parent.</p>
+  </div>
+<pre class="diagram">  0 ─── 1            adjacency list (most common in interviews)
+  │     │            graph = {0: [1, 2],
+  2 ─── 3 ─── 4               1: [0, 3],
+                              2: [0, 3],
+                              3: [1, 2, 4],
+                              4: [3]}</pre>
+<pre><code><span class="k">from</span> collections <span class="k">import</span> defaultdict
+graph = defaultdict(list)
+<span class="k">for</span> a, b <span class="k">in</span> edges:          <span class="c"># undirected: add both directions</span>
+    graph[a].append(b)
+    graph[b].append(a)</code></pre>
+  <div class="callout"><p><strong>Grids are graphs too.</strong> Each cell is a node; its up/down/left/right neighbors are edges. You don't build a list; you compute neighbors with <code>for dr, dc in ((1,0),(-1,0),(0,1),(0,-1))</code>.</p></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Representation</th><th>Space</th><th>Check edge (a,b)</th><th>List neighbors</th><th>Use when</th></tr></thead>
+    <tbody>
+      <tr><td>Adjacency list</td><td>O(V + E)</td><td>O(degree)</td><td>O(degree)</td><td>Almost always</td></tr>
+      <tr><td>Adjacency matrix</td><td>O(V²)</td><td>O(1)</td><td>O(V)</td><td>Dense graphs, small V</td></tr>
+      <tr><td>Edge list</td><td>O(E)</td><td>O(E)</td><td>O(E)</td><td>Union-find, Kruskal's</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="patterns">
+  <span class="eyebrow">Patterns</span>
+  <h2>Six graph templates</h2>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>1. BFS (shortest path, unweighted)</h3><span class="cx">O(V + E)</span></div>
+    <div class="real"><p>Spreading news through friends: day 1 your friends hear it, day 2 their friends, and so on. The first day someone hears it is their shortest distance from you. BFS explores in exactly these rings.</p></div>
+    <p class="when"><b>Use when</b>"shortest," "minimum steps," or "nearest" in an unweighted graph or grid.</p>
+<pre><code><span class="k">from</span> collections <span class="k">import</span> deque
+<span class="k">def</span> bfs(start, graph):
+    dist = {start: 0}
+    q = deque([start])
+    <span class="k">while</span> q:
+        u = q.popleft()
+        <span class="k">for</span> v <span class="k">in</span> graph[u]:
+            <span class="k">if</span> v <span class="k">not in</span> dist:               <span class="c"># mark when QUEUED, not when popped</span>
+                dist[v] = dist[u] + 1
+                q.append(v)
+    <span class="k">return</span> dist</code></pre>
+    <figure class="anim" data-anim="graphs-islands"><figcaption>BFS flood fill counting islands</figcaption></figure>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>2. DFS (explore everything reachable)</h3><span class="cx">O(V + E)</span></div>
+    <div class="real"><p>Exploring a cave system with a ball of string: follow one tunnel as deep as it goes, back up to the last junction, try the next tunnel. The string (recursion stack) lets you find your way back.</p></div>
+    <p class="when"><b>Use when</b>counting components, flood fill, cloning, path existence, cycle detection.</p>
+<pre><code><span class="k">def</span> num_islands(grid):
+    R, C = len(grid), len(grid[0])
+    <span class="k">def</span> sink(r, c):
+        <span class="k">if not</span> (0 &lt;= r &lt; R <span class="k">and</span> 0 &lt;= c &lt; C) <span class="k">or</span> grid[r][c] != '1':
+            <span class="k">return</span>
+        grid[r][c] = '0'                     <span class="c"># mark visited</span>
+        sink(r+1, c); sink(r-1, c); sink(r, c+1); sink(r, c-1)
+    count = 0
+    <span class="k">for</span> r <span class="k">in</span> range(R):
+        <span class="k">for</span> c <span class="k">in</span> range(C):
+            <span class="k">if</span> grid[r][c] == '1':
+                count += 1; sink(r, c)
+    <span class="k">return</span> count</code></pre>
+    <p class="note">Ask before mutating the input grid. If not allowed, use a <code>visited</code> set. For huge grids, iterative BFS avoids Python's recursion limit.</p>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>3. Multi-source BFS</h3><span class="cx">O(V + E)</span></div>
+    <div class="real"><p>Several fires start at once in a forest. Each minute every fire spreads one tree further. Instead of simulating each fire separately, you light them all at minute 0 by putting every source in the queue together.</p></div>
+    <p class="when"><b>Use when</b>several starting points spread simultaneously (Rotting Oranges, Walls and Gates, distance to nearest X).</p>
+<pre><code><span class="k">def</span> oranges_rotting(grid):
+    R, C = len(grid), len(grid[0])
+    q = deque((r, c) <span class="k">for</span> r <span class="k">in</span> range(R) <span class="k">for</span> c <span class="k">in</span> range(C) <span class="k">if</span> grid[r][c] == 2)
+    fresh = sum(row.count(1) <span class="k">for</span> row <span class="k">in</span> grid)
+    minutes = 0
+    <span class="k">while</span> q <span class="k">and</span> fresh:
+        <span class="k">for</span> _ <span class="k">in</span> range(len(q)):                <span class="c"># one minute = one level</span>
+            r, c = q.popleft()
+            <span class="k">for</span> nr, nc <span class="k">in</span> ((r+1,c),(r-1,c),(r,c+1),(r,c-1)):
+                <span class="k">if</span> 0 &lt;= nr &lt; R <span class="k">and</span> 0 &lt;= nc &lt; C <span class="k">and</span> grid[nr][nc] == 1:
+                    grid[nr][nc] = 2; fresh -= 1; q.append((nr, nc))
+        minutes += 1
+    <span class="k">return</span> minutes <span class="k">if</span> fresh == 0 <span class="k">else</span> -1</code></pre>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>4. Topological sort</h3><span class="cx">O(V + E)</span></div>
+    <div class="real"><p>Getting dressed: socks before shoes, shirt before jacket, but socks and shirt in any order. A topological order is any valid dressing sequence. If the rules say "shoes before socks" and "socks before shoes," there's a cycle and no valid order exists.</p></div>
+    <p class="when"><b>Use when</b>there are dependencies/prerequisites: course schedules, build order, alien dictionary.</p>
+<pre><code><span class="k">def</span> can_finish(n, prereqs):
+    graph, indeg = defaultdict(list), [0] * n
+    <span class="k">for</span> course, pre <span class="k">in</span> prereqs:
+        graph[pre].append(course); indeg[course] += 1
+    q = deque(i <span class="k">for</span> i <span class="k">in</span> range(n) <span class="k">if</span> indeg[i] == 0)
+    taken = 0
+    <span class="k">while</span> q:
+        u = q.popleft(); taken += 1
+        <span class="k">for</span> v <span class="k">in</span> graph[u]:
+            indeg[v] -= 1
+            <span class="k">if</span> indeg[v] == 0: q.append(v)
+    <span class="k">return</span> taken == n          <span class="c"># fewer means a cycle</span></code></pre>
+    <figure class="anim" data-anim="graphs-topo"><figcaption>Kahn's algorithm ordering five tasks</figcaption></figure>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>5. Union-find (disjoint set union)</h3><span class="cx">≈ O(1) per operation</span></div>
+    <div class="real"><p>Merging companies. Every company has a CEO. When two companies merge, one CEO reports to the other. To check whether two employees now work for the same group, follow each one's chain of bosses to the top and compare. Path compression is every employee learning the top CEO's name directly so the next lookup is one step.</p></div>
+    <p class="when"><b>Use when</b>edges arrive one by one and you ask "are these connected?" or "does this edge make a cycle?" (Redundant Connection, Number of Connected Components, Kruskal's MST).</p>
+<pre><code><span class="k">class</span> DSU:
+    <span class="k">def</span> __init__(self, n):
+        self.parent, self.size = list(range(n)), [1] * n
+    <span class="k">def</span> find(self, x):
+        <span class="k">while</span> self.parent[x] != x:
+            self.parent[x] = self.parent[self.parent[x]]   <span class="c"># path compression</span>
+            x = self.parent[x]
+        <span class="k">return</span> x
+    <span class="k">def</span> union(self, a, b):
+        ra, rb = self.find(a), self.find(b)
+        <span class="k">if</span> ra == rb: <span class="k">return</span> False                     <span class="c"># already connected → cycle</span>
+        <span class="k">if</span> self.size[ra] &lt; self.size[rb]: ra, rb = rb, ra
+        self.parent[rb] = ra; self.size[ra] += self.size[rb]  <span class="c"># union by size</span>
+        <span class="k">return</span> True</code></pre>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>6. Dijkstra (shortest path, weighted)</h3><span class="cx">O((V + E) log V)</span></div>
+    <div class="real"><p>Planning the fastest drive home. You always extend the closest unexplored intersection first, the way water flowing from your house would reach the nearest corners first. Once an intersection is reached the first time, that's its fastest time, as long as no road has negative travel time.</p></div>
+    <p class="when"><b>Use when</b>edges have non-negative weights and you need the cheapest/fastest path (Network Delay Time, Cheapest Flights, Swim in Rising Water).</p>
+<pre><code><span class="k">import</span> heapq
+<span class="k">def</span> dijkstra(src, graph):                <span class="c"># graph[u] = [(v, w), ...]</span>
+    dist = {src: 0}
+    pq = [(0, src)]
+    <span class="k">while</span> pq:
+        d, u = heapq.heappop(pq)
+        <span class="k">if</span> d &gt; dist.get(u, float('inf')): <span class="k">continue</span>   <span class="c"># stale entry</span>
+        <span class="k">for</span> v, w <span class="k">in</span> graph[u]:
+            nd = d + w
+            <span class="k">if</span> nd &lt; dist.get(v, float('inf')):
+                dist[v] = nd
+                heapq.heappush(pq, (nd, v))
+    <span class="k">return</span> dist</code></pre>
+  </article>
+</section>
+
+<section id="choose">
+  <span class="eyebrow">Choosing</span>
+  <h2>Which template?</h2>
+  <div class="real"><p>Like choosing transport: walking for a short trip, a train for a fixed route, a plane for long distances. Match the template to what the question asks.</p></div>
+  <div class="tbl"><table>
+    <thead><tr><th>The question asks…</th><th>Use</th></tr></thead>
+    <tbody>
+      <tr><td>Fewest steps, unweighted</td><td>BFS</td></tr>
+      <tr><td>Count regions / is it connected / clone it</td><td>DFS or BFS</td></tr>
+      <tr><td>Everything spreads from many starts at once</td><td>Multi-source BFS</td></tr>
+      <tr><td>Order with prerequisites, or detect a cycle in a directed graph</td><td>Topological sort</td></tr>
+      <tr><td>Edges added over time, "connected?" or "creates a cycle?"</td><td>Union-find</td></tr>
+      <tr><td>Cheapest path with non-negative weights</td><td>Dijkstra</td></tr>
+      <tr><td>Weights 0 or 1 only</td><td>0-1 BFS (deque: front for 0, back for 1)</td></tr>
+      <tr><td>Transform word/state into another, fewest moves</td><td>BFS over states (Word Ladder)</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="deep">
+  <span class="eyebrow">Deep analysis</span>
+  <h2>Word Ladder: BFS where the graph is hidden</h2>
+  <div class="real"><p>A word game where you change one letter at a time and every step must be a real word: COLD → CORD → CARD → WARD → WARM. You don't get a map; you discover neighbors as you go.</p></div>
+  <div class="trace">
+    <div><p><strong>Spot the graph.</strong> Each word is a node; two words connect if they differ by one letter. "Fewest transformations" = shortest path in an unweighted graph = BFS.</p></div>
+    <div><p><strong>Don't build all edges.</strong> Comparing every pair is O(N² · L). Instead, for each word generate its L × 25 one-letter variations and check them against a set: O(N · L · 26).</p></div>
+    <div><p><strong>Remove words from the set when queued</strong> so nobody visits them again (same as marking visited).</p></div>
+    <div><p><strong>Optional speed-up:</strong> bidirectional BFS from both ends, always expanding the smaller frontier. Mention it; you rarely need to code it.</p></div>
+  </div>
+<pre><code><span class="k">def</span> ladder_length(begin, end, word_list):
+    words = set(word_list)
+    <span class="k">if</span> end <span class="k">not in</span> words: <span class="k">return</span> 0
+    q, steps = deque([begin]), 1
+    <span class="k">while</span> q:
+        <span class="k">for</span> _ <span class="k">in</span> range(len(q)):
+            w = q.popleft()
+            <span class="k">if</span> w == end: <span class="k">return</span> steps
+            <span class="k">for</span> i <span class="k">in</span> range(len(w)):
+                <span class="k">for</span> ch <span class="k">in</span> 'abcdefghijklmnopqrstuvwxyz':
+                    nxt = w[:i] + ch + w[i+1:]
+                    <span class="k">if</span> nxt <span class="k">in</span> words:
+                        words.remove(nxt); q.append(nxt)
+        steps += 1
+    <span class="k">return</span> 0</code></pre>
+  <div class="google"><p>Google loves graphs that aren't drawn for you: words, board states, lock combinations. Say "I'll model this as a graph where nodes are… and edges are…" before anything else.</p></div>
+</section>
+
+<section id="edge">
+  <span class="eyebrow">Before you say "done"</span>
+  <h2>Edge cases to test</h2>
+  <div class="real"><p>A delivery driver's route planner has to cope with an address on an island with no road, and with a one-way loop that never ends.</p></div>
+  <ul>
+    <li>Disconnected graph: loop over all nodes, not just node 0.</li>
+    <li>Cycles: always track visited, or you loop forever.</li>
+    <li>Self-loops and duplicate edges.</li>
+    <li>Directed vs undirected: ask. Adding both directions to a directed graph is a classic bug.</li>
+    <li>Grid boundaries: check bounds <em>before</em> indexing.</li>
+    <li>Unreachable target: return -1 or infinity as the problem says.</li>
+  </ul>
+</section>
+"""
+
+PROBLEMS = [
+    ("Flood Fill", "flood-fill", "easy", "DFS from the start cell"),
+    ("Find if Path Exists in Graph", "find-if-path-exists-in-graph", "easy", "BFS/DFS or union-find"),
+    ("Number of Islands", "number-of-islands", "medium", "DFS/BFS flood fill per island"),
+    ("Clone Graph", "clone-graph", "medium", "DFS + old→new map"),
+    ("Rotting Oranges", "rotting-oranges", "medium", "Multi-source BFS"),
+    ("Course Schedule", "course-schedule", "medium", "Topological sort / cycle check"),
+    ("Pacific Atlantic Water Flow", "pacific-atlantic-water-flow", "medium", "Reverse flow: BFS from each ocean"),
+    ("Number of Connected Components in an Undirected Graph", "number-of-connected-components-in-an-undirected-graph", "medium", "Union-find or DFS"),
+    ("Redundant Connection", "redundant-connection", "medium", "Union-find: first edge that joins same set"),
+    ("Network Delay Time", "network-delay-time", "medium", "Dijkstra"),
+    ("Word Ladder", "word-ladder", "hard", "BFS over one-letter variations"),
+    ("Swim in Rising Water", "swim-in-rising-water", "hard", "Dijkstra on max-so-far"),
+]
+
+QUIZ = [
+    dict(lvl="easy", q="Which traversal finds the shortest path in an unweighted graph?",
+         opts=["DFS", "BFS", "Inorder", "Any of them"], a=1, why="BFS visits nodes in order of distance, so the first visit is the shortest."),
+    dict(lvl="easy", q="Time complexity of BFS on a graph with V nodes and E edges (adjacency list)?",
+         opts=["O(V)", "O(E)", "O(V + E)", "O(V · E)"], a=2, why="Each node is dequeued once and each edge examined once (twice if undirected)."),
+    dict(lvl="easy", q="In a grid, what are a cell's neighbors usually?",
+         opts=["Every other cell", "Up, down, left, right (sometimes diagonals)", "Only the cell to the right", "Cells with the same value"], a=1,
+         why="Generate them with direction pairs and bounds checks."),
+    dict(lvl="medium", q="Why mark a node visited when you *enqueue* it, not when you dequeue it?",
+         opts=["No difference", "Otherwise the same node can be queued many times, blowing up time and memory", "It changes the shortest distance", "Queues require it"], a=1,
+         why="Marking late lets every neighbor add it again before it's processed."),
+    dict(lvl="medium", q="Course Schedule: 3 courses, prereqs [[1,0],[2,1],[0,2]]. Can you finish?",
+         opts=["Yes", "No, there's a cycle 0→1→2→0", "Only course 0", "Not enough information"], a=1,
+         why="No course has in-degree 0, so Kahn's queue starts empty and processes 0 of 3 courses."),
+    dict(lvl="medium", q="Pacific Atlantic Water Flow: why BFS from the oceans inward?",
+         opts=["It's the only correct way", "Running uphill from the two oceans once each is O(R·C), instead of a search from every cell", "Oceans are always smaller", "To avoid recursion"], a=1,
+         why="Reverse the question: which cells can each ocean reach going uphill? Intersect the two sets."),
+    dict(lvl="medium", q="Redundant Connection: which tool directly answers \"does this edge create a cycle?\"",
+         opts=["Heap", "Union-find: if both ends already share a root, the edge is redundant", "Topological sort", "Binary search"], a=1,
+         why="Process edges in order; the first union() that returns False is the answer."),
+    dict(lvl="hard", q="Why does Dijkstra fail with negative edge weights?",
+         opts=["Heaps can't hold negatives", "A node marked final might later be reached more cheaply through a negative edge", "It runs forever", "It doesn't fail"], a=1,
+         why="Dijkstra assumes the first time it pops a node, nothing cheaper can come. Negative edges break that. Use Bellman-Ford."),
+    dict(lvl="hard", q="Union-find with path compression and union by size: cost per operation?",
+         opts=["O(log n) worst case always", "Nearly O(1) amortized (inverse Ackermann)", "O(n)", "O(√n)"], a=1,
+         why="α(n) is at most 4 for any realistic n, so treat it as constant and say \"amortized nearly constant.\""),
+    dict(lvl="hard", q="Word Ladder with N words of length L. Generating neighbors by changing letters costs about:",
+         opts=["O(N²·L)", "O(N·L·26) neighbor checks (times L to build each string)", "O(26^L)", "O(N log N)"], a=1,
+         why="Each word tries L positions × 26 letters with O(1) set checks (plus O(L) to build each candidate)."),
+]

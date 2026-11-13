@@ -1,0 +1,211 @@
+META = dict(
+    title="Strings", page_title="Strings · DSA Field Guide", week="Week 2", group="Data structures",
+    h1="Strings",
+    lead="Strings are arrays of characters with one twist: in Python they can't be changed in place. Most string problems are sliding windows, frequency counts, or palindromes.",
+    blurb="Frequency counting, sliding window, palindromes, anagrams, parsing.",
+)
+
+BODY = r"""
+<section id="idea">
+  <span class="eyebrow">The idea</span>
+  <h2>Beads on a string that's been glued shut</h2>
+  <div class="real big-real">
+    <p>A Python string is like a printed name badge. You can read any letter instantly, but you can't change a letter; you print a whole new badge. That's why <code>s += "x"</code> inside a loop is slow: each time, a brand-new badge is printed with every letter copied over.</p>
+  </div>
+<pre class="diagram">s = "google"
+ index:  0   1   2   3   4   5
+        ┌───┬───┬───┬───┬───┬───┐
+        │ g │ o │ o │ g │ l │ e │      s[2] → 'o'  (O(1))
+        └───┴───┴───┴───┴───┴───┘      s[2] = 'x' → TypeError (immutable)</pre>
+  <div class="callout"><p><strong>Rule:</strong> to build a string piece by piece, append pieces to a list and call <code>"".join(parts)</code> once at the end. That's O(n) instead of O(n²).</p></div>
+</section>
+
+<section id="ops">
+  <span class="eyebrow">Costs</span>
+  <h2>String operations and their costs</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Operation</th><th>Python</th><th>Time</th></tr></thead>
+    <tbody>
+      <tr><td>Index a character</td><td><code>s[i]</code></td><td><span class="pill o1">O(1)</span></td></tr>
+      <tr><td>Length</td><td><code>len(s)</code></td><td><span class="pill o1">O(1)</span></td></tr>
+      <tr><td>Slice, copy, reverse</td><td><code>s[l:r]</code>, <code>s[::-1]</code></td><td><span class="pill on">O(k)</span></td></tr>
+      <tr><td>Substring search</td><td><code>sub in s</code>, <code>s.find(sub)</code></td><td><span class="pill on">O(n·m)</span> worst</td></tr>
+      <tr><td>Compare two strings</td><td><code>a == b</code></td><td><span class="pill on">O(n)</span></td></tr>
+      <tr><td>Join list of parts</td><td><code>"".join(parts)</code></td><td><span class="pill on">O(total)</span></td></tr>
+      <tr><td>Count characters</td><td><code>Counter(s)</code></td><td><span class="pill on">O(n)</span></td></tr>
+      <tr><td>Char ↔ code</td><td><code>ord('a')</code>, <code>chr(97)</code></td><td><span class="pill o1">O(1)</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Hashing a string (using it as a dict key) is O(length). Interviewers rarely care, but it's a nice detail to mention for very long keys.</p>
+</section>
+
+<section id="patterns">
+  <span class="eyebrow">Patterns</span>
+  <h2>Five string patterns</h2>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>1. Frequency counting</h3><span class="cx">O(n) time · O(k) space, k = alphabet size</span></div>
+    <div class="real"><p>Two Scrabble players claim they have the same tiles. Instead of comparing racks letter by letter in order, each tips their tiles into piles by letter and compares pile sizes. Order stops mattering.</p></div>
+    <p class="when"><b>Use when</b>the problem is about which characters appear and how often: anagrams, permutations of a word, "can I build X from Y."</p>
+<pre><code><span class="k">from</span> collections <span class="k">import</span> Counter
+<span class="k">def</span> is_anagram(s, t):
+    <span class="k">return</span> Counter(s) == Counter(t)
+
+<span class="c"># Faster with a fixed alphabet: 26 counters</span>
+<span class="k">def</span> key(word):
+    cnt = [0] * 26
+    <span class="k">for</span> ch <span class="k">in</span> word: cnt[ord(ch) - ord('a')] += 1
+    <span class="k">return</span> tuple(cnt)          <span class="c"># hashable → Group Anagrams key</span></code></pre>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>2. Variable sliding window</h3><span class="cx">O(n) time · O(k) space</span></div>
+    <div class="real"><p>A caterpillar inching along a branch. Its head moves forward to eat; when its body holds something it doesn't want (a repeated leaf), its tail pulls forward until the problem is gone. Head and tail each travel the branch once.</p></div>
+    <p class="when"><b>Use when</b>you want the longest/shortest <em>contiguous</em> substring meeting a condition.</p>
+<pre><code><span class="k">def</span> longest_unique(s):
+    last = {}                 <span class="c"># char -> last index seen</span>
+    left = best = 0
+    <span class="k">for</span> right, ch <span class="k">in</span> enumerate(s):
+        <span class="k">if</span> ch <span class="k">in</span> last <span class="k">and</span> last[ch] &gt;= left:
+            left = last[ch] + 1    <span class="c"># jump the tail past the repeat</span>
+        last[ch] = right
+        best = max(best, right - left + 1)
+    <span class="k">return</span> best</code></pre>
+  <figure class="anim" data-anim="strings-window"><figcaption>Sliding window on "abcabcbb"</figcaption></figure>
+    <p class="note">General template
+: expand <code>right</code> every step; <code>while</code> the window is invalid, shrink <code>left</code>; record the answer. Minimum Window Substring uses the same skeleton with a "how many characters still needed" counter.</p>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>3. Two pointers for palindromes</h3><span class="cx">O(n) time · O(1) space</span></div>
+    <div class="real"><p>Checking a folded paper cut-out: you look at the two outer edges, then the next two in, and so on. If every matching pair agrees, the shape is symmetric.</p></div>
+    <p class="when"><b>Use when</b>checking whether a string reads the same both ways, often while skipping punctuation.</p>
+<pre><code><span class="k">def</span> is_pal(s):
+    l, r = 0, len(s) - 1
+    <span class="k">while</span> l &lt; r:
+        <span class="k">while</span> l &lt; r <span class="k">and not</span> s[l].isalnum(): l += 1
+        <span class="k">while</span> l &lt; r <span class="k">and not</span> s[r].isalnum(): r -= 1
+        <span class="k">if</span> s[l].lower() != s[r].lower(): <span class="k">return</span> False
+        l, r = l + 1, r - 1
+    <span class="k">return</span> True</code></pre>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>4. Expand around center</h3><span class="cx">O(n²) time · O(1) space</span></div>
+    <div class="real"><p>Dropping a pebble in a pond: ripples spread out evenly from the center. Every palindrome has a center, so drop a pebble at each position (and between each pair of letters) and let it spread while both sides match.</p></div>
+    <p class="when"><b>Use when</b>finding or counting palindromic substrings.</p>
+<pre><code><span class="k">def</span> longest_pal(s):
+    best = ""
+    <span class="k">def</span> grow(l, r):
+        <span class="k">while</span> l &gt;= 0 <span class="k">and</span> r &lt; len(s) <span class="k">and</span> s[l] == s[r]:
+            l, r = l - 1, r + 1
+        <span class="k">return</span> s[l + 1:r]
+    <span class="k">for</span> i <span class="k">in</span> range(len(s)):
+        <span class="k">for</span> cand <span class="k">in</span> (grow(i, i), grow(i, i + 1)):   <span class="c"># odd, even</span>
+            <span class="k">if</span> len(cand) &gt; len(best): best = cand
+    <span class="k">return</span> best</code></pre>
+  <figure class="anim" data-anim="strings-center"><figcaption>Growing a palindrome from its center</figcaption></figure>
+    <p class="note">Forgetting the even-length center (<code>i, i + 1</code>) misses palindromes like "abba". Manacher's algorithm does this in O(n), but it's rarely expected.</p>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>5. Careful parsing</h3><span class="cx">O(n)</span></div>
+    <div class="real"><p>A bank teller reading a handwritten cheque amount: skip the leading spaces, note a minus sign, read digits until something that isn't a digit, and refuse anything larger than the account limit. String to Integer (atoi) is exactly this.</p></div>
+    <p class="when"><b>Use when</b>the problem is mostly about handling messy input step by step.</p>
+<pre><code><span class="k">def</span> atoi(s):
+    i, n, sign, num = 0, len(s), 1, 0
+    <span class="k">while</span> i &lt; n <span class="k">and</span> s[i] == ' ': i += 1
+    <span class="k">if</span> i &lt; n <span class="k">and</span> s[i] <span class="k">in</span> '+-':
+        sign = -1 <span class="k">if</span> s[i] == '-' <span class="k">else</span> 1; i += 1
+    <span class="k">while</span> i &lt; n <span class="k">and</span> s[i].isdigit():
+        num = num * 10 + int(s[i]); i += 1
+    <span class="k">return</span> max(-2**31, min(2**31 - 1, sign * num))</code></pre>
+    <div class="google"><p>On parsing problems, list the cases out loud before coding (spaces, sign, junk after digits, overflow). Interviewers grade the questions you ask as much as the code.</p></div>
+  </article>
+</section>
+
+<section id="deep">
+  <span class="eyebrow">Deep analysis</span>
+  <h2>Minimum Window Substring, step by step</h2>
+  <div class="real"><p>You're shopping with a list: 1 apple, 1 banana, 1 cherry. You walk down a long market aisle grabbing stalls into your basket. As soon as the basket covers the list, you try dropping stalls from the back of the line to see how short your trip could be, then keep walking to look for an even shorter trip.</p></div>
+  <p>Find the smallest window of <code>s</code> containing every character of <code>t</code> (with counts).</p>
+  <div class="trace">
+    <div><p>Count what you need: <code>need = Counter(t)</code>, and <code>missing = len(t)</code>.</p></div>
+    <div><p>Move <code>right</code> forward. If <code>need[ch] &gt; 0</code>, this character was still missing, so <code>missing -= 1</code>. Always do <code>need[ch] -= 1</code> (negative means a spare).</p></div>
+    <div><p>When <code>missing == 0</code>, the window is valid. Shrink from the left while the leftmost char is a spare (<code>need[s[left]] &lt; 0</code>), restoring its count.</p></div>
+    <div><p>Record the window if it's the shortest. Then give up the leftmost character on purpose (<code>need[...] += 1; missing += 1; left += 1</code>) and keep scanning.</p></div>
+  </div>
+<pre><code><span class="k">from</span> collections <span class="k">import</span> Counter
+<span class="k">def</span> min_window(s, t):
+    need, missing = Counter(t), len(t)
+    left, best = 0, (0, float('inf'))
+    <span class="k">for</span> right, ch <span class="k">in</span> enumerate(s):
+        <span class="k">if</span> need[ch] &gt; 0: missing -= 1
+        need[ch] -= 1
+        <span class="k">if</span> missing == 0:
+            <span class="k">while</span> need[s[left]] &lt; 0:        <span class="c"># drop spares</span>
+                need[s[left]] += 1; left += 1
+            <span class="k">if</span> right - left &lt; best[1] - best[0]:
+                best = (left, right)
+            need[s[left]] += 1; missing += 1; left += 1
+    <span class="k">return</span> "" <span class="k">if</span> best[1] == float('inf') <span class="k">else</span> s[best[0]:best[1] + 1]</code></pre>
+  <p><strong>Complexity:</strong> each pointer moves at most n times, so O(n + m) time and O(k) space for the counter.</p>
+</section>
+
+<section id="edge">
+  <span class="eyebrow">Before you say "done"</span>
+  <h2>Edge cases to test</h2>
+  <div class="real"><p>Like a form validator on a sign-up page, test the inputs real users actually type: blank, one letter, spaces, capitals, and emoji.</p></div>
+  <ul>
+    <li>Empty string and single character.</li>
+    <li>Upper vs lower case (ask whether "A" equals "a").</li>
+    <li>Spaces and punctuation (Valid Palindrome ignores them).</li>
+    <li>Only lowercase a–z, or any Unicode? This decides whether a 26-slot array works.</li>
+    <li>All characters identical ("aaaa") for window problems.</li>
+  </ul>
+</section>
+"""
+
+PROBLEMS = [
+    ("Valid Anagram", "valid-anagram", "easy", "Frequency count"),
+    ("Valid Palindrome", "valid-palindrome", "easy", "Two pointers, skip non-alphanumerics"),
+    ("Longest Common Prefix", "longest-common-prefix", "easy", "Compare column by column"),
+    ("Longest Substring Without Repeating Characters", "longest-substring-without-repeating-characters", "medium", "Sliding window + last-seen map"),
+    ("Group Anagrams", "group-anagrams", "medium", "Count tuple or sorted word as key"),
+    ("Longest Repeating Character Replacement", "longest-repeating-character-replacement", "medium", "Window valid while len - maxFreq ≤ k"),
+    ("Longest Palindromic Substring", "longest-palindromic-substring", "medium", "Expand around center"),
+    ("Palindromic Substrings", "palindromic-substrings", "medium", "Expand around center, count"),
+    ("String to Integer (atoi)", "string-to-integer-atoi", "medium", "Careful parsing + clamp"),
+    ("Minimum Window Substring", "minimum-window-substring", "hard", "Window with 'missing' counter"),
+    ("Edit Distance", "edit-distance", "hard", "2D DP (see the DP page)"),
+]
+
+QUIZ = [
+    dict(lvl="easy", q="Why is building a string with `s += c` in a loop O(n²)?",
+         opts=["Python strings are linked lists", "Strings are immutable, so each += copies everything built so far", "`+=` sorts the string", "It isn't; it's always O(n)"], a=1,
+         why="Each step creates a new string of growing length: 1 + 2 + … + n copies. Collect parts in a list and `\"\".join()` once."),
+    dict(lvl="easy", q="Which is the best dict key for Group Anagrams?",
+         opts=["The word itself", "`sorted(word)` as a list", "`tuple(sorted(word))` or a 26-count tuple", "`len(word)`"], a=2,
+         why="Keys must be hashable (lists aren't) and identical for anagrams. A count tuple is O(L) to build vs O(L log L) for sorting."),
+    dict(lvl="easy", q="What does `ord('c') - ord('a')` give?",
+         opts=["2", "3", "99", "'c'"], a=0, why="It maps 'a'..'z' to 0..25, the index trick for 26-slot count arrays."),
+    dict(lvl="medium", q="Longest Substring Without Repeating Characters on \"abba\". What's the bug if you set `left = last[ch] + 1` without checking `last[ch] >= left`?",
+         opts=["No bug", "left can jump backwards, re-including a duplicate", "It crashes on 'a'", "It becomes O(n²)"], a=1,
+         why="At the final 'a', last['a'] = 0, so left would move back from 2 to 1, making the window 'bba' look valid. Only jump forward."),
+    dict(lvl="medium", q="Longest Repeating Character Replacement with k changes allowed. When is a window valid?",
+         opts=["When all characters are the same", "When window length − count of its most frequent char ≤ k", "When window length ≤ k", "When it has no duplicates"], a=1,
+         why="You keep the most common letter and change the rest. The rest is length − maxFreq, which must fit within k changes."),
+    dict(lvl="medium", q="Expand around center checks how many centers for a string of length n?",
+         opts=["n", "n − 1", "2n − 1", "n²"], a=2, why="n single-character centers (odd lengths) plus n − 1 gaps between letters (even lengths)."),
+    dict(lvl="medium", q="What does this print?", code='parts = []\nfor w in "a b c".split():\n    parts.append(w.upper())\nprint("-".join(parts))',
+         opts=["ABC", "A-B-C", "a-b-c", "A B C"], a=1, why="split() gives ['a','b','c'], each is uppercased, and join puts '-' between them."),
+    dict(lvl="hard", q="Minimum Window Substring: why can `need[ch]` go negative, and why is that useful?",
+         opts=["It's a bug", "Negative means the window holds spares of that char, so the left side can drop them safely", "It marks characters not in t as invalid", "To avoid a second Counter"], a=1,
+         why="When shrinking, you drop s[left] while need[s[left]] < 0, i.e. it's a surplus. The window stays valid."),
+    dict(lvl="hard", q="Interviewer: \"Your solution uses a 26-slot array. What changes if input can be any Unicode?\"",
+         opts=["Nothing", "Use a dict/Counter instead; space becomes O(distinct chars)", "Use a 256-slot array", "Unicode isn't allowed in Python"], a=1,
+         why="A fixed array only works for a known small alphabet. A hashmap handles any character set; mention this trade-off unprompted."),
+    dict(lvl="hard", q="Palindromic Substrings counts all palindromic substrings. Best time without Manacher's?",
+         opts=["O(n)", "O(n log n)", "O(n²)", "O(n³)"], a=2,
+         why="2n − 1 centers, each expanding up to O(n). The brute force (check every substring) is O(n³)."),
+]
