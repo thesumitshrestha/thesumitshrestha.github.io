@@ -14,7 +14,7 @@ ORDER = ["big-o", "arrays", "strings", "linked-lists", "trees", "stacks-queues",
          "dp", "heaps", "hashing", "bits", "sorting", "searching",
          "patterns", "python", "interview",
          "sd-basics", "sd-scaling", "sd-caching", "sd-data", "sd-async", "sd-reliability",
-         "sd-cases-1", "sd-cases-2", "sd-interview"]
+         "sd-cases-1", "sd-cases-2", "sd-interview", "resources"]
 STATIC = {"big-o": {"slug": "big-o", "title": "Big-O", "week": "Week 0",
                     "blurb": "How code scales: the seven complexity classes, analysis rules, Python costs.",
                     "group": "Foundations"}}
@@ -108,6 +108,28 @@ def problems_html(mod):
     return block, ids
 
 
+KIND = {"video": "Video", "course": "Course", "read": "Read", "visual": "Visualizer",
+        "practice": "Practice", "book": "Book", "paper": "Paper"}
+
+
+def learn_html(slug):
+    from learn import LEARN
+    items = LEARN.get(slug, [])
+    if not items:
+        return ""
+    rows = "".join(
+        f'<li><span class="kind k-{k}">{KIND[k]}</span><span class="lt"><a href="{html.escape(u)}" target="_blank" rel="noopener">{html.escape(t)}</a>'
+        f'<span class="hint">{html.escape(w)}</span></span></li>' for k, t, u, w in items)
+    return f"""
+<section id="learn">
+  <span class="eyebrow">Go deeper</span>
+  <h2>Learn more</h2>
+  <div class="real"><p>Hearing the same idea from a second teacher often makes it click, the way a friend's directions can make sense after the map didn't. Try the problem first, then use these.</p></div>
+  <ul class="learn">{rows}</ul>
+  <p class="note">More channels, books and courses on the <a href="resources.html">Resources</a> page.</p>
+</section>"""
+
+
 def quiz_html(mod):
     quiz = getattr(mod, "QUIZ", [])
     if not quiz:
@@ -149,7 +171,8 @@ def page(mod, metas):
     slug = m["slug"]
     probs, ids = problems_html(mod)
     qz = quiz_html(mod)
-    sections = toc(mod.BODY + probs + qz)
+    lrn = learn_html(slug)
+    sections = toc(mod.BODY + lrn + probs + qz)
     toc_html = '<nav class="toc" aria-label="On this page">' + "".join(
         f'<a href="#{sid}">{t}</a>' for sid, t in sections) + "</nav>"
     chips = [f'<span class="chip">{m["week"]}</span>']
@@ -169,6 +192,7 @@ def page(mod, metas):
   {toc_html}
 </header>
 {mod.BODY}
+{lrn}
 {probs}
 {qz}
 <footer>{nav_footer(slug, metas)}</footer>

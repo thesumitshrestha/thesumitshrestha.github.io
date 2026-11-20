@@ -19,7 +19,7 @@
   <h1>Caching</h1>
   <p class="lead">A cache keeps a copy of popular data somewhere faster than its source. It's the single biggest performance win in most designs, and its two hard problems are keeping copies fresh and deciding what to throw away.</p>
   <div class="meta"><span class="chip">System design · Core</span><span class="chip">10 quiz questions</span></div>
-  <nav class="toc" aria-label="On this page"><a href="#idea">The fridge, the pantry, and the supermarket</a><a href="#patterns">Five caching strategies</a><a href="#eviction">What to throw out when the cache is full</a><a href="#hard">Invalidation, stampedes, and hot keys</a><a href="#deep">How much does a cache help?</a><a href="#quiz">Quiz</a></nav>
+  <nav class="toc" aria-label="On this page"><a href="#idea">The fridge, the pantry, and the supermarket</a><a href="#patterns">Five caching strategies</a><a href="#eviction">What to throw out when the cache is full</a><a href="#hard">Invalidation, stampedes, and hot keys</a><a href="#deep">How much does a cache help?</a><a href="#learn">Learn more</a><a href="#quiz">Quiz</a></nav>
 </header>
 
 <section id="idea">
@@ -135,6 +135,14 @@
   <div class="google"><p>When you add a cache in an interview, say four things: what's cached and its key, the strategy (usually cache-aside), the TTL, and how writes invalidate it. Then mention stampede protection. That's a complete answer.</p></div>
 </section>
 
+
+<section id="learn">
+  <span class="eyebrow">Go deeper</span>
+  <h2>Learn more</h2>
+  <div class="real"><p>Hearing the same idea from a second teacher often makes it click, the way a friend's directions can make sense after the map didn't. Try the problem first, then use these.</p></div>
+  <ul class="learn"><li><span class="kind k-video">Video</span><span class="lt"><a href="https://www.youtube.com/results?search_query=ByteByteGo+cache+strategies" target="_blank" rel="noopener">ByteByteGo: caching explained (YouTube search)</a><span class="hint">Cache-aside vs write-through animated</span></span></li><li><span class="kind k-read">Read</span><span class="lt"><a href="https://github.com/donnemartin/system-design-primer#cache" target="_blank" rel="noopener">System Design Primer: cache</a><span class="hint">Every caching layer and update strategy</span></span></li><li><span class="kind k-read">Read</span><span class="lt"><a href="https://redis.io/docs/latest/" target="_blank" rel="noopener">Redis documentation</a><span class="hint">The cache most designs use</span></span></li></ul>
+  <p class="note">More channels, books and courses on the <a href="resources.html">Resources</a> page.</p>
+</section>
 
 
 <section id="quiz">

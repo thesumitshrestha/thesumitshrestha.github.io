@@ -19,7 +19,7 @@
   <h1>APIs, queues, and rate limiting</h1>
   <p class="lead">How the pieces talk to each other. APIs are the front door; queues and pub/sub let slow work happen in the background; real-time channels push updates; rate limiters protect everything from overload.</p>
   <div class="meta"><span class="chip">System design · Core</span><span class="chip">10 quiz questions</span></div>
-  <nav class="toc" aria-label="On this page"><a href="#idea">A restaurant's order rail</a><a href="#api">Designing the front door</a><a href="#patterns">Six ways services talk</a><a href="#deep">Video upload: sync where it matters, async everywhere else</a><a href="#quiz">Quiz</a></nav>
+  <nav class="toc" aria-label="On this page"><a href="#idea">A restaurant's order rail</a><a href="#api">Designing the front door</a><a href="#patterns">Six ways services talk</a><a href="#deep">Video upload: sync where it matters, async everywhere else</a><a href="#learn">Learn more</a><a href="#quiz">Quiz</a></nav>
 </header>
 
 <section id="idea">
@@ -152,6 +152,14 @@ DELETE /v1/posts/99                                  → 204
   <div class="google"><p>Say which steps are synchronous and which are async, and why. "The user only waits for the upload; transcoding happens through a queue so spikes don't affect the site" is exactly the reasoning interviewers listen for.</p></div>
 </section>
 
+
+<section id="learn">
+  <span class="eyebrow">Go deeper</span>
+  <h2>Learn more</h2>
+  <div class="real"><p>Hearing the same idea from a second teacher often makes it click, the way a friend's directions can make sense after the map didn't. Try the problem first, then use these.</p></div>
+  <ul class="learn"><li><span class="kind k-video">Video</span><span class="lt"><a href="https://www.youtube.com/results?search_query=ByteByteGo+message+queue+kafka+REST+gRPC" target="_blank" rel="noopener">ByteByteGo: message queues, Kafka, API styles (YouTube search)</a><span class="hint">Visual comparisons</span></span></li><li><span class="kind k-read">Read</span><span class="lt"><a href="https://github.com/donnemartin/system-design-primer#asynchronism" target="_blank" rel="noopener">System Design Primer: asynchronism and communication</a><span class="hint">Queues, back pressure, REST vs RPC</span></span></li><li><span class="kind k-read">Read</span><span class="lt"><a href="https://github.com/ByteByteGoHq/system-design-101" target="_blank" rel="noopener">ByteByteGo: System Design 101 (GitHub)</a><span class="hint">Hundreds of free diagrams on APIs, protocols and more</span></span></li></ul>
+  <p class="note">More channels, books and courses on the <a href="resources.html">Resources</a> page.</p>
+</section>
 
 
 <section id="quiz">

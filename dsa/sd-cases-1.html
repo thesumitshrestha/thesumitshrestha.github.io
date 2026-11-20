@@ -19,7 +19,7 @@
   <h1>Design walkthroughs I: URL shortener, rate limiter, web crawler</h1>
   <p class="lead">Three classic interview designs, worked end to end with the same steps you'll use in the interview: requirements, estimates, API, data model, high-level design, deep dives, and trade-offs.</p>
   <div class="meta"><span class="chip">System design · Practice</span><span class="chip">5 problems</span><span class="chip">10 quiz questions</span></div>
-  <nav class="toc" aria-label="On this page"><a href="#idea">Practice like a pilot in a simulator</a><a href="#url">Design a URL shortener (like bit.ly)</a><a href="#ratelimit">Design a distributed rate limiter</a><a href="#crawler">Design a web crawler</a><a href="#problems">Practice these designs</a><a href="#quiz">Quiz</a></nav>
+  <nav class="toc" aria-label="On this page"><a href="#idea">Practice like a pilot in a simulator</a><a href="#url">Design a URL shortener (like bit.ly)</a><a href="#ratelimit">Design a distributed rate limiter</a><a href="#crawler">Design a web crawler</a><a href="#learn">Learn more</a><a href="#problems">Practice these designs</a><a href="#quiz">Quiz</a></nav>
 </header>
 
 <section id="idea">
@@ -138,6 +138,14 @@ GET  /{code}   → 301 or 302 Location: https://...   (404 if unknown or expired
   <div class="google"><p>This is Google's origin story, so interviewers may push on politeness, dedup and prioritization. Mention BFS over the link graph, a Bloom filter for seen URLs, and per-host queues, and you've covered the core.</p></div>
 </section>
 
+
+<section id="learn">
+  <span class="eyebrow">Go deeper</span>
+  <h2>Learn more</h2>
+  <div class="real"><p>Hearing the same idea from a second teacher often makes it click, the way a friend's directions can make sense after the map didn't. Try the problem first, then use these.</p></div>
+  <ul class="learn"><li><span class="kind k-video">Video</span><span class="lt"><a href="https://www.youtube.com/results?search_query=system+design+URL+shortener+rate+limiter+interview" target="_blank" rel="noopener">Gaurav Sen and ByteByteGo: URL shortener and rate limiter (YouTube search)</a><span class="hint">Compare other people&#x27;s designs with yours</span></span></li><li><span class="kind k-read">Read</span><span class="lt"><a href="https://hellointerview.com/learn/system-design" target="_blank" rel="noopener">Hello Interview: Bit.ly and web crawler breakdowns</a><span class="hint">Detailed written answers with follow-up questions</span></span></li><li><span class="kind k-read">Read</span><span class="lt"><a href="https://github.com/donnemartin/system-design-primer#system-design-interview-questions-with-solutions" target="_blank" rel="noopener">System Design Primer: interview questions with solutions</a><span class="hint">Pastebin, web crawler and more</span></span></li></ul>
+  <p class="note">More channels, books and courses on the <a href="resources.html">Resources</a> page.</p>
+</section>
 
 <section id="problems">
   <span class="eyebrow">Your checklist</span>

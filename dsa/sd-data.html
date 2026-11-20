@@ -19,7 +19,7 @@
   <h1>Databases and data at scale</h1>
   <p class="lead">The database is usually the hardest part to scale, because it holds the truth. This page covers choosing SQL vs NoSQL, indexes, replication, sharding, consistent hashing, and the CAP trade-off.</p>
   <div class="meta"><span class="chip">System design · Core</span><span class="chip">10 quiz questions</span></div>
-  <nav class="toc" aria-label="On this page"><a href="#idea">A library that keeps growing</a><a href="#choose">SQL vs NoSQL</a><a href="#patterns">Six techniques for data at scale</a><a href="#cap">CAP theorem and consistency models</a><a href="#deep">Designing storage for a chat app's messages</a><a href="#quiz">Quiz</a></nav>
+  <nav class="toc" aria-label="On this page"><a href="#idea">A library that keeps growing</a><a href="#choose">SQL vs NoSQL</a><a href="#patterns">Six techniques for data at scale</a><a href="#cap">CAP theorem and consistency models</a><a href="#deep">Designing storage for a chat app's messages</a><a href="#learn">Learn more</a><a href="#quiz">Quiz</a></nav>
 </header>
 
 <section id="idea">
@@ -149,6 +149,14 @@ SELECT * FROM posts WHERE user_id = 42 ORDER BY created_at DESC LIMIT 20;</code>
   <div class="google"><p>Google built Bigtable, Spanner and Colossus, so interviewers like hearing why you'd pick a wide-column store vs a globally consistent SQL database. Justify the choice from the access pattern, not the brand name.</p></div>
 </section>
 
+
+<section id="learn">
+  <span class="eyebrow">Go deeper</span>
+  <h2>Learn more</h2>
+  <div class="real"><p>Hearing the same idea from a second teacher often makes it click, the way a friend's directions can make sense after the map didn't. Try the problem first, then use these.</p></div>
+  <ul class="learn"><li><span class="kind k-video">Video</span><span class="lt"><a href="https://www.youtube.com/results?search_query=Gaurav+Sen+consistent+hashing+database+sharding" target="_blank" rel="noopener">Gaurav Sen: consistent hashing and sharding (YouTube search)</a><span class="hint">The classic intuitive explanation</span></span></li><li><span class="kind k-video">Video</span><span class="lt"><a href="https://www.youtube.com/results?search_query=ByteByteGo+database+sharding+CAP+theorem" target="_blank" rel="noopener">ByteByteGo: SQL vs NoSQL, sharding, CAP (YouTube search)</a><span class="hint">Short animated explainers</span></span></li><li><span class="kind k-book">Book</span><span class="lt"><a href="https://www.oreilly.com/library/view/designing-data-intensive-applications/9781098119058/" target="_blank" rel="noopener">Designing Data-Intensive Applications, 2nd edition (Kleppmann)</a><span class="hint">The best book on databases, replication and partitioning</span></span></li><li><span class="kind k-paper">Paper</span><span class="lt"><a href="https://research.google.com/archive/bigtable-osdi06.pdf" target="_blank" rel="noopener">Bigtable paper (Google, 2006)</a><span class="hint">How Google&#x27;s wide-column store works</span></span></li><li><span class="kind k-read">Read</span><span class="lt"><a href="https://github.com/donnemartin/system-design-primer#database" target="_blank" rel="noopener">System Design Primer: database</a><span class="hint">Replication, federation, sharding, denormalization</span></span></li></ul>
+  <p class="note">More channels, books and courses on the <a href="resources.html">Resources</a> page.</p>
+</section>
 
 
 <section id="quiz">

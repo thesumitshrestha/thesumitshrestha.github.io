@@ -204,3 +204,13 @@ footer{font-size:.85rem;color:var(--muted);border-top:1px solid var(--line);padd
 .a-node.o4 circle{fill:color-mix(in srgb,var(--c2) 30%,var(--bg));stroke:var(--c2)}
 .a-node.srv circle{stroke-width:4}
 .a-node.moved circle{stroke:var(--accent);stroke-width:4;stroke-dasharray:3 3}
+
+/* learn more lists */
+.learn{list-style:none;padding:0;display:grid;gap:6px}
+.learn li{display:grid;grid-template-columns:6.5rem 1fr;gap:12px;align-items:start;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.learn .lt{min-width:0;display:flex;flex-direction:column;gap:2px}
+.learn .hint{font-size:.85rem;color:var(--muted)}
+.kind{font:700 .68rem var(--f-mono);text-transform:uppercase;letter-spacing:.08em;padding:3px 6px;border-radius:5px;text-align:center;border:1px solid currentColor;margin-top:2px}
+.k-video{color:var(--hard)}.k-course{color:var(--c4)}.k-read{color:var(--accent)}.k-visual{color:var(--c2)}
+.k-practice{color:var(--easy)}.k-book{color:var(--medium)}.k-paper{color:var(--muted)}
+@media (max-width:480px){.learn li{grid-template-columns:1fr;gap:6px}.kind{justify-self:start}}

@@ -19,7 +19,7 @@
   <h1>Design walkthroughs II: news feed, chat, autocomplete</h1>
   <p class="lead">Three product designs that test fan-out, real-time delivery and precomputation. Each follows the same interview steps so you can practice the routine, not memorize answers.</p>
   <div class="meta"><span class="chip">System design · Practice</span><span class="chip">8 problems</span><span class="chip">10 quiz questions</span></div>
-  <nav class="toc" aria-label="On this page"><a href="#idea">Same recipe, different dishes</a><a href="#feed">Design a news feed (like Instagram or X)</a><a href="#chat">Design a chat app (like WhatsApp or Google Chat)</a><a href="#autocomplete">Design search autocomplete (typeahead)</a><a href="#problems">Practice these designs</a><a href="#quiz">Quiz</a></nav>
+  <nav class="toc" aria-label="On this page"><a href="#idea">Same recipe, different dishes</a><a href="#feed">Design a news feed (like Instagram or X)</a><a href="#chat">Design a chat app (like WhatsApp or Google Chat)</a><a href="#autocomplete">Design search autocomplete (typeahead)</a><a href="#learn">Learn more</a><a href="#problems">Practice these designs</a><a href="#quiz">Quiz</a></nav>
 </header>
 
 <section id="idea">
@@ -139,6 +139,14 @@ build path:  search logs ─▶ aggregation job (counts per query, time-decayed)
   <div class="google"><p>Interviewers want the key insight: precompute top-k at every trie node so serving is a lookup, and rebuild offline from logs. Then show you can shard it and keep it fast with client-side debouncing and caching.</p></div>
 </section>
 
+
+<section id="learn">
+  <span class="eyebrow">Go deeper</span>
+  <h2>Learn more</h2>
+  <div class="real"><p>Hearing the same idea from a second teacher often makes it click, the way a friend's directions can make sense after the map didn't. Try the problem first, then use these.</p></div>
+  <ul class="learn"><li><span class="kind k-video">Video</span><span class="lt"><a href="https://www.youtube.com/@jordanhasnolife5163" target="_blank" rel="noopener">Jordan has no life: news feed, chat and more designs</a><span class="hint">Deep, detailed design videos by an ex-Google engineer</span></span></li><li><span class="kind k-video">Video</span><span class="lt"><a href="https://www.youtube.com/results?search_query=ByteByteGo+design+chat+system+news+feed" target="_blank" rel="noopener">ByteByteGo: design a chat system / news feed (YouTube search)</a><span class="hint">Animated case studies</span></span></li><li><span class="kind k-read">Read</span><span class="lt"><a href="https://hellointerview.com/learn/system-design" target="_blank" rel="noopener">Hello Interview: product design breakdowns</a><span class="hint">News feed, WhatsApp, typeahead and more</span></span></li></ul>
+  <p class="note">More channels, books and courses on the <a href="resources.html">Resources</a> page.</p>
+</section>
 
 <section id="problems">
   <span class="eyebrow">Your checklist</span>
