@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>System Design Basics · DSA + System Design Guide</title>
+<meta name="description" content="What system design is, the life of a request, requirements, latency, availability, back-of-envelope math.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="assets/dsa.css">
+</head>
+<body>
+<nav class="topbar" aria-label="Guide navigation"><div class="topbar-in"><a class="home" href="index.html">DSA + System Design Guide</a><span class="pn"><a href="interview.html">← Interview playbook</a><a href="sd-scaling.html">SD 2: Scaling →</a></span></div></nav>
+<main class="wrap">
+<header class="hero">
+  <span class="eyebrow">System design</span>
+  <h1>System design basics</h1>
+  <p class="lead">System design is planning how a whole product works once millions of people use it: which machines, which storage, and how data moves between them. This page gives you the vocabulary and the math every later page builds on.</p>
+  <div class="meta"><span class="chip">System design · Beginner</span><span class="chip">10 quiz questions</span></div>
+  <nav class="toc" aria-label="On this page"><a href="#idea">From a food truck to a restaurant chain</a><a href="#request">What happens when you open an app</a><a href="#requirements">Functional vs non-functional</a><a href="#metrics">Latency, throughput, availability</a><a href="#numbers">How fast things are</a><a href="#estimation">Estimating scale in two minutes</a><a href="#tradeoffs">Everything is a trade-off</a><a href="#quiz">Quiz</a></nav>
+</header>
+
+<section id="idea">
+  <span class="eyebrow">The idea</span>
+  <h2>From a food truck to a restaurant chain</h2>
+  <div class="real big-real">
+    <p>A food truck with one cook works fine for 50 customers a day. At 5,000 a day you need more cooks (more servers), a host who seats people (a load balancer), prepped ingredients by the stove (a cache), a pantry and a warehouse (databases and storage), and order tickets so cooks aren't interrupted (queues). At 5 million a day across many cities you need copies of the restaurant everywhere (data centers and CDNs) and a plan for when a kitchen catches fire (redundancy).</p>
+    <p>System design is deciding which of those pieces you need, how big they are, and how they talk to each other. Coding interviews ask "can you write the recipe?" System design interviews ask "can you run the kitchen?"</p>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>Restaurant</th><th>Software system</th><th>Page</th></tr></thead>
+    <tbody>
+      <tr><td>Cooks</td><td>Application servers</td><td><a href="sd-scaling.html">Scaling</a></td></tr>
+      <tr><td>Host seating guests</td><td>Load balancer</td><td><a href="sd-scaling.html#patterns">Scaling</a></td></tr>
+      <tr><td>Prepped ingredients at the stove</td><td>Cache</td><td><a href="sd-caching.html">Caching</a></td></tr>
+      <tr><td>Pantry, warehouse, recipe book</td><td>Databases, object storage</td><td><a href="sd-data.html">Data</a></td></tr>
+      <tr><td>Order tickets on a rail</td><td>Message queue</td><td><a href="sd-async.html">Async</a></td></tr>
+      <tr><td>Branches in many cities</td><td>Data centers, CDN</td><td><a href="sd-scaling.html#patterns">Scaling</a></td></tr>
+      <tr><td>Fire drills and backup generators</td><td>Replication, failover, monitoring</td><td><a href="sd-reliability.html">Reliability</a></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="request">
+  <span class="eyebrow">The life of a request</span>
+  <h2>What happens when you open an app</h2>
+  <div class="real"><p>Mailing a letter: you look up the address (DNS), the post office routes it to the right sorting center (load balancer), a clerk handles it (app server), and checks a quick-reference card before digging through the archive (cache, then database).</p></div>
+  <figure class="anim" data-anim="sd-request"><figcaption>One request, seven parts</figcaption></figure>
+  <ul>
+    <li><strong>Client:</strong> the browser or phone app. It speaks HTTP(S) to the backend.</li>
+    <li><strong>DNS:</strong> turns a name into an IP address. Results are cached for minutes to hours.</li>
+    <li><strong>CDN:</strong> servers close to users that hold copies of static files (images, video, JS).</li>
+    <li><strong>Load balancer:</strong> spreads requests across many servers and skips broken ones.</li>
+    <li><strong>App servers:</strong> run your code. Kept <em>stateless</em> so any one can serve any request.</li>
+    <li><strong>Cache:</strong> a fast in-memory copy of hot data (Redis, Memcached).</li>
+    <li><strong>Database:</strong> the durable source of truth.</li>
+  </ul>
+</section>
+
+<section id="requirements">
+  <span class="eyebrow">Requirements</span>
+  <h2>Functional vs non-functional</h2>
+  <div class="real"><p>Building a house: "3 bedrooms and a kitchen" is functional (what it does). "Survives an earthquake, warm in winter, built in 6 months" is non-functional (how well it does it). Two houses with identical rooms can need totally different foundations.</p></div>
+  <div class="duo">
+    <div class="pattern">
+      <h3>Functional: what users can do</h3>
+      <ul>
+        <li>Shorten a URL; open a short URL</li>
+        <li>Post a photo; see a feed</li>
+        <li>Send a message; see read receipts</li>
+      </ul>
+    </div>
+    <div class="pattern">
+      <h3>Non-functional: how well</h3>
+      <ul>
+        <li><strong>Scale:</strong> users, requests per second, data size</li>
+        <li><strong>Latency:</strong> e.g. feed loads in &lt; 200 ms</li>
+        <li><strong>Availability:</strong> e.g. 99.99% uptime</li>
+        <li><strong>Consistency:</strong> must every reader see the newest data?</li>
+        <li><strong>Durability:</strong> never lose a message</li>
+      </ul>
+    </div>
+  </div>
+  <div class="google"><p>The first 5 minutes of every system design interview is agreeing on both lists. Candidates who skip this design the wrong system confidently, and that's the most common reason for a weak score.</p></div>
+</section>
+
+<section id="metrics">
+  <span class="eyebrow">Vocabulary</span>
+  <h2>Latency, throughput, availability</h2>
+  <div class="real"><p>A highway. <strong>Latency</strong> is how long one car takes to drive from A to B. <strong>Throughput</strong> is how many cars pass per hour. Adding lanes raises throughput but doesn't make any single car faster. Availability is how often the highway is open.</p></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Term</th><th>Meaning</th><th>Typical unit</th></tr></thead>
+    <tbody>
+      <tr><td>Latency</td><td>Time for one request</td><td>ms; quote p50 and p99 (the slowest 1%)</td></tr>
+      <tr><td>Throughput</td><td>Work done per unit time</td><td>QPS / RPS (queries per second)</td></tr>
+      <tr><td>Availability</td><td>Fraction of time the system works</td><td>"nines": 99.9%, 99.99%</td></tr>
+      <tr><td>Durability</td><td>Chance stored data is never lost</td><td>e.g. 11 nines for object storage</td></tr>
+      <tr><td>Bandwidth</td><td>Data moved per second</td><td>MB/s, Gbps</td></tr>
+    </tbody>
+  </table></div>
+  <h3>The nines</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Availability</th><th>Downtime per year</th><th>Per month</th></tr></thead>
+    <tbody>
+      <tr><td>99% (two nines)</td><td>3.65 days</td><td>~7.3 hours</td></tr>
+      <tr><td>99.9%</td><td>8.8 hours</td><td>~44 minutes</td></tr>
+      <tr><td>99.99%</td><td>53 minutes</td><td>~4.4 minutes</td></tr>
+      <tr><td>99.999%</td><td>5.3 minutes</td><td>~26 seconds</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Parts in a chain multiply: two services at 99.9% each give 99.9% × 99.9% ≈ 99.8% together. Redundant copies in parallel do the opposite: two independent 99% servers where either one is enough give 1 − 0.01² = 99.99%.</p>
+</section>
+
+<section id="numbers">
+  <span class="eyebrow">Numbers to know</span>
+  <h2>How fast things are</h2>
+  <div class="real"><p>If reading from memory took 1 second, reading from an SSD would take about 15 minutes, and a round trip from California to Europe would take about 5 years. That's why caches and nearby servers matter so much.</p></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Operation</th><th>Approx. time</th></tr></thead>
+    <tbody>
+      <tr><td>Read from CPU cache</td><td>~1 ns</td></tr>
+      <tr><td>Read from main memory (RAM)</td><td>~100 ns</td></tr>
+      <tr><td>Read 1 MB sequentially from RAM</td><td>~10–250 µs</td></tr>
+      <tr><td>SSD random read</td><td>~16–100 µs</td></tr>
+      <tr><td>Round trip inside one data center</td><td>~0.5 ms</td></tr>
+      <tr><td>Redis/Memcached get (over network)</td><td>~0.5–1 ms</td></tr>
+      <tr><td>Simple indexed database query</td><td>~1–10 ms</td></tr>
+      <tr><td>Hard disk seek</td><td>~10 ms</td></tr>
+      <tr><td>Round trip California ↔ Europe</td><td>~150 ms</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Exact numbers vary by hardware. Interviewers want the order of magnitude: memory ≪ SSD ≪ network across the world.</p>
+</section>
+
+<section id="estimation">
+  <span class="eyebrow">Back-of-envelope math</span>
+  <h2>Estimating scale in two minutes</h2>
+  <div class="real"><p>Planning a wedding: 200 guests × 1.5 drinks each × 4 hours tells you how many bartenders to hire. Rough numbers are enough to avoid hiring one bartender or fifty. System estimates do the same for servers and storage.</p></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Shortcut</th><th>Value</th></tr></thead>
+    <tbody>
+      <tr><td>Seconds per day</td><td>86,400 ≈ <strong>10⁵</strong></td></tr>
+      <tr><td>1 million requests/day</td><td>≈ 12 per second (use ~10)</td></tr>
+      <tr><td>Peak traffic</td><td>≈ 2–3× average</td></tr>
+      <tr><td>1 KB × 1 million</td><td>1 GB</td></tr>
+      <tr><td>1 MB × 1 million</td><td>1 TB</td></tr>
+      <tr><td>One app server</td><td>~hundreds to a few thousand simple requests/s</td></tr>
+      <tr><td>One cache node</td><td>~100,000 gets/s, tens of GB of RAM</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Worked example: a photo-sharing app</h3>
+  <div class="trace">
+    <div><p><strong>Users:</strong> 100 million daily active users (DAU).</p></div>
+    <div><p><strong>Writes:</strong> 10% upload 1 photo/day → 10 M photos/day ÷ 10⁵ s ≈ <strong>100 uploads/s</strong>, ~300/s at peak.</p></div>
+    <div><p><strong>Reads:</strong> each user views 50 photos/day → 5 B views/day ≈ <strong>50,000 views/s</strong>. Reads outnumber writes 500 : 1, so caching and a CDN are essential.</p></div>
+    <div><p><strong>Storage:</strong> 10 M photos × 2 MB = 20 TB/day ≈ <strong>7 PB/year</strong>. That's object storage (like Google Cloud Storage or S3), not a database.</p></div>
+    <div><p><strong>Metadata:</strong> 10 M rows × ~1 KB = 10 GB/day, about 3.7 TB/year. One big database could hold a year, but you'll plan to shard.</p></div>
+  </div>
+  <div class="google"><p>Say your assumptions out loud and round aggressively (86,400 → 10⁵). The interviewer cares that your numbers lead to decisions ("reads dominate, so cache"), not that they're precise.</p></div>
+</section>
+
+<section id="tradeoffs">
+  <span class="eyebrow">Mindset</span>
+  <h2>Everything is a trade-off</h2>
+  <div class="real"><p>Buying a car: fast, cheap, or reliable. You can usually pick two. Every design choice gives something up, and naming what you give up is the skill being tested.</p></div>
+  <div class="tbl"><table>
+    <thead><tr><th>You gain</th><th>You usually pay with</th></tr></thead>
+    <tbody>
+      <tr><td>Speed (cache)</td><td>Possibly stale data, more memory</td></tr>
+      <tr><td>Availability (replicas)</td><td>Consistency, cost</td></tr>
+      <tr><td>Strong consistency</td><td>Latency, availability during network failures</td></tr>
+      <tr><td>Scale (sharding)</td><td>Complexity, harder joins and transactions</td></tr>
+      <tr><td>Decoupling (queues)</td><td>Delay before work finishes, harder debugging</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+
+
+<section id="quiz">
+  <span class="eyebrow">Test yourself</span>
+  <h2>Quiz</h2>
+  <p>Answer before you click. Filter by level; hard questions are the kind of follow-ups Google interviewers ask.</p>
+  <div class="qbar"><div class="filters" id="filters" role="group" aria-label="Filter by difficulty"></div><button class="btn" type="button" id="quiz-reset">Reset quiz</button></div>
+  <div class="quiz" id="quiz"></div>
+  <p class="score" id="score" aria-live="polite"></p>
+  <script type="application/json" id="quiz-data">[{"lvl": "easy", "q": "Which is a *non-functional* requirement?", "opts": ["Users can upload a photo", "Users can follow others", "The feed loads in under 200 ms for 99% of requests", "Users can delete a comment"], "a": 2, "why": "Functional = what it does. Non-functional = how well: speed, scale, availability, durability."}, {"lvl": "easy", "q": "What does DNS do?", "opts": ["Stores user passwords", "Turns a domain name into an IP address", "Balances load across servers", "Compresses images"], "a": 1, "why": "It's the phone book of the internet."}, {"lvl": "easy", "q": "About how many seconds are in a day, for quick estimates?", "opts": ["10³", "10⁵", "10⁷", "10⁹"], "a": 1, "why": "86,400 ≈ 10⁵. So 1 million requests/day ≈ 10 per second."}, {"lvl": "medium", "q": "99.99% availability allows roughly how much downtime per year?", "opts": ["5 minutes", "53 minutes", "8.8 hours", "3.65 days"], "a": 1, "why": "0.01% of 525,600 minutes ≈ 53 minutes."}, {"lvl": "medium", "q": "A request passes through 3 services, each 99.9% available. Combined availability is about:", "opts": ["99.9%", "99.7%", "99.99%", "97%"], "a": 1, "why": "Chained dependencies multiply: 0.999³ ≈ 0.997."}, {"lvl": "medium", "q": "An app has 500 reads for every write. What's the most useful first idea?", "opts": ["Faster disks for writes", "Caching and read replicas", "A message queue for writes", "Bigger write batches"], "a": 1, "why": "Read-heavy workloads benefit most from serving reads cheaply: caches, CDNs, replicas."}, {"lvl": "medium", "q": "Latency vs throughput: adding more servers mainly improves…", "opts": ["The latency of each request", "Throughput (requests handled per second)", "Neither", "DNS speed"], "a": 1, "why": "More lanes = more cars per hour; each car's trip isn't shorter. Latency improves with caching, locality, and less work per request."}, {"lvl": "hard", "q": "10 M photos/day at 2 MB each. Storage per year?", "opts": ["~7 TB", "~70 TB", "~7 PB", "~70 PB"], "a": 2, "why": "20 TB/day × 365 ≈ 7.3 PB."}, {"lvl": "hard", "q": "Why do designers quote p99 latency rather than only the average?", "opts": ["It's always smaller", "Averages hide the slow tail; at scale, 1% slow requests hit many users, and a page making 100 calls usually hits one", "p99 is easier to compute", "Google requires it"], "a": 1, "why": "Tail latency dominates user experience when a page fans out to many backend calls."}, {"lvl": "hard", "q": "Two independent servers, each 99% available, behind a load balancer where either can serve traffic. Ignoring the LB, availability is about:", "opts": ["98%", "99%", "99.99%", "100%"], "a": 2, "why": "Both must fail: 0.01 × 0.01 = 0.0001 → 99.99%. Redundancy in parallel multiplies the failure chances."}]</script>
+</section>
+<footer><a href="index.html">All topics</a> · Next: <a href="sd-scaling.html">SD 2: Scaling</a></footer>
+</main>
+<script src="assets/dsa.js"></script>
+<script src="assets/anim.js"></script>
+</body>
+</html>

@@ -59,8 +59,9 @@
   // nodes: {id:{v,x,y}}, edges: [[a,b,label?]], directed?: bool
   function rGraph(f) {
     const xs = Object.values(f.nodes).map(n => n.x), ys = Object.values(f.nodes).map(n => n.y);
-    const W = Math.max(...xs) + 40, H = Math.max(...ys) + 40;
-    let s = '<svg class="a-svg" viewBox="0 0 ' + W + " " + H + '" width="' + W + '" role="img" aria-label="diagram">';
+    const W = Math.max(...xs) + 44, H = Math.max(...ys) + 48;
+    let s = '<svg class="a-svg" viewBox="0 0 ' + W + " " + H + '" style="max-width:' + W + 'px" role="img" aria-label="diagram">';
+    if (f.ring) s += '<circle class="a-ring" cx="' + f.ring.cx + '" cy="' + f.ring.cy + '" r="' + f.ring.r + '"/>';
     s += '<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="a-ah"/></marker></defs>';
     (f.edges || []).forEach(([a, b, lab]) => {
       const A = f.nodes[a], B = f.nodes[b];
@@ -439,6 +440,169 @@
     }
     const f = mk(lo, "lo = hi = " + lo + ": the slowest speed that finishes in " + h + " hours."); f.cls[lo - 1] = "hit"; fr.push(f);
     return fr;
+  };
+
+
+  // ================= system design =================
+  const SDN = (v, x, y, tag) => ({ v, x, y, tag });
+
+  G["sd-request"] = () => {
+    const nodes = { U: SDN("You", 34, 100, "browser"), D: SDN("DNS", 124, 30, "DNS"), C: SDN("CDN", 124, 180, "CDN"), L: SDN("LB", 214, 100, "load bal."), S: SDN("App", 304, 100, "app"), K: SDN("$", 394, 30, "cache"), B: SDN("DB", 394, 180, "database") };
+    const edges = [["U", "D"], ["U", "C"], ["U", "L"], ["L", "S"], ["S", "K"], ["S", "B"]];
+    const st = (on, cls, note) => ({ type: "graph", directed: true, nodes, edges, cls, ecls: Object.fromEntries(on.map(e => [e, "on"])), note });
+    return [
+      st([], { U: "cur" }, "You type youtube.com and press Enter. Seven parts work together to answer you in under a second."),
+      st(["U-D"], { U: "done", D: "cur" }, "DNS is the internet's phone book: it turns the name youtube.com into an IP address, usually cached on your laptop or router."),
+      st(["U-C"], { U: "done", C: "cur" }, "Images, videos and JavaScript come from a CDN server near you, so they travel a few miles instead of across the ocean."),
+      st(["U-L"], { U: "done", L: "cur" }, "Your API request (\"get my home feed\") reaches a load balancer, which spreads traffic over many identical servers."),
+      st(["U-L", "L-S"], { L: "done", S: "cur" }, "The load balancer forwards it to a healthy app server, which runs the business logic."),
+      st(["L-S", "S-K"], { S: "done", K: "bad" }, "The server checks the cache first (~1 ms). Miss: this feed isn't cached yet."),
+      st(["S-B"], { S: "done", B: "cur" }, "So it reads the database (~10 ms or more) and saves the result in the cache for next time."),
+      st(["S-K"], { S: "done", K: "hit" }, "The next request for the same feed is a cache hit: no database work at all. The response flows back the way it came.")
+    ];
+  };
+
+  G["sd-lb"] = () => {
+    const base = { L: SDN("LB", 40, 115, "load bal."), A: SDN("S1", 240, 30), B: SDN("S2", 240, 115), C: SDN("S3", 240, 200) };
+    const cnt = { A: 0, B: 0, C: 0 }, fr = [], order = ["A", "B", "C"];
+    let down = false, rr = 0;
+    const mk = (target, note) => {
+      const nodes = clone(base); order.forEach(k => nodes[k].tag = (k === "B" && down ? "DOWN" : cnt[k] + " req"));
+      const cls = { L: "done" }; if (down) cls.B = "bad"; if (target) cls[target] = "cur";
+      return { type: "graph", directed: true, nodes, edges: [["L", "A"], ["L", "B"], ["L", "C"]], cls, ecls: target ? { ["L-" + target]: "on" } : {}, note };
+    };
+    fr.push(mk(null, "Round robin: the load balancer hands requests to S1, S2, S3 in turn, like a host seating diners at tables in rotation."));
+    for (let r = 1; r <= 8; r++) {
+      if (r === 5) { down = true; fr.push(mk(null, "S2 crashes. Its health check (a ping every few seconds) fails, so the load balancer takes it out of rotation.")); }
+      let t; do { t = order[rr++ % 3]; } while (down && t === "B");
+      cnt[t]++;
+      fr.push(mk(t, "Request " + r + " → " + base[t].v + "." + (down ? " S2 is skipped; users never notice the crash." : "")));
+    }
+    fr[fr.length - 1].note += " This is why servers should be stateless: any server can handle any request.";
+    return fr;
+  };
+
+  G["sd-cache"] = () => {
+    const cap = 3, reqs = ["A", "B", "C", "A", "D", "B", "E", "A"], cache = [], fr = [];
+    let hits = 0, miss = 0;
+    const cells = () => { const c = cache.slice(); while (c.length < cap) c.push("·"); return c; };
+    fr.push({ type: "array", cells: cells(), noIdx: true, cls: {}, vars: [["capacity", cap], ["requests", reqs.join(" ")]], note: "LRU cache with room for 3 items. Left = most recently used, right = least recently used (next to be evicted)." });
+    reqs.forEach((k, i) => {
+      const at = cache.indexOf(k); let note;
+      if (at >= 0) { hits++; cache.splice(at, 1); cache.unshift(k); note = "Get " + k + ": HIT (~1 ms). Move it to the front because it was just used."; }
+      else {
+        miss++; let ev = "";
+        if (cache.length === cap) ev = " Cache is full, so evict " + cache.pop() + ", the least recently used.";
+        cache.unshift(k); note = "Get " + k + ": MISS. Read the database (~10 ms), then store it." + ev;
+      }
+      fr.push({ type: "array", cells: cells(), noIdx: true, cls: { 0: at >= 0 ? "hit" : "cur" }, vars: [["request", (i + 1) + " of " + reqs.length], ["hits", hits], ["misses", miss], ["hit rate", Math.round(100 * hits / (hits + miss)) + "%"]], note });
+    });
+    fr[fr.length - 1].note += " Real caches hold millions of items and often reach 90%+ hit rates on popular data.";
+    return fr;
+  };
+
+  G["sd-replication"] = () => {
+    const nodes = (l, f1, f2) => ({ W: SDN("App", 40, 110, "client"), L: SDN("L", 210, 110, "leader " + l), F: SDN("F1", 380, 40, "follower " + f1), G: SDN("F2", 380, 180, "follower " + f2) });
+    const edges = [["W", "L"], ["L", "F"], ["L", "G"]];
+    const g = (n, cls, on, note) => ({ type: "graph", directed: true, nodes: n, edges, cls, ecls: Object.fromEntries(on.map(e => [e, "on"])), note });
+    return [
+      g(nodes("x=4", "x=4", "x=4"), {}, [], "Leader–follower replication. All three copies hold x = 4. Writes go to the leader; reads can go to any copy."),
+      g(nodes("x=5", "x=4", "x=4"), { L: "cur" }, ["W-L"], "The app writes x = 5. Only the leader accepts writes, so there's one source of truth."),
+      g(nodes("x=5", "x=5", "x=4"), { L: "done", F: "cur" }, ["L-F"], "The leader streams the change to its followers. F1 has applied it."),
+      g(nodes("x=5", "x=5", "x=4"), { G: "bad" }, ["W-G"].filter(Boolean), "A read lands on F2 before the change arrives: it returns x = 4. This is replication lag, and it's why replicas are \"eventually consistent.\""),
+      g(nodes("x=5", "x=5", "x=5"), { L: "done", F: "done", G: "done" }, ["L-G"], "F2 catches up a few milliseconds later. Fix for stale reads that matter: read your own writes from the leader."),
+      g(nodes("down", "x=5", "x=5"), { L: "bad", F: "hit" }, [], "If the leader dies, a follower is promoted (failover). Data survives because it existed on more than one machine.")
+    ];
+  };
+
+  G["sd-hashring"] = () => {
+    const cx = 170, cy = 160, R = 120, pos = deg => ({ x: Math.round(cx + R * Math.sin(deg * Math.PI / 180)), y: Math.round(cy - R * Math.cos(deg * Math.PI / 180)) });
+    const servers = { A: 60, B: 180, C: 300 }, keys = { k1: 15, k2: 95, k3: 135, k4: 205, k5: 260, k6: 340 };
+    const colorOf = { A: "o1", B: "o2", C: "o3", D: "o4" };
+    const owner = (deg, sv) => { const s = Object.entries(sv).sort((a, b) => a[1] - b[1]); const hit = s.find(([, d]) => d >= deg); return (hit || s[0])[0]; };
+    const frame = (sv, moved, note, showOwner) => {
+      const nodes = {}, cls = {};
+      Object.entries(sv).forEach(([k, d]) => { const p = pos(d); nodes[k] = SDN(k, p.x, p.y, "server"); cls[k] = colorOf[k] + " srv"; });
+      Object.entries(keys).forEach(([k, d]) => { const p = pos(d), o = owner(d, sv); nodes[k] = SDN(k, p.x, p.y, showOwner ? "→" + o : ""); if (showOwner) cls[k] = colorOf[o]; if (moved.includes(k)) cls[k] += " moved"; });
+      return { type: "graph", ring: { cx, cy, r: R }, nodes, edges: [], cls, note };
+    };
+    return [
+      frame(servers, [], "Consistent hashing puts servers and keys on the same circle (hash value 0 → max wraps around). Three servers: A, B, C.", false),
+      frame(servers, [], "Each key walks clockwise to the first server it meets. k1 → A; k2, k3 → B; k4, k5 → C; k6 wraps past the top → A.", true),
+      frame(Object.assign({}, servers, { D: 230 }), ["k4"], "Add server D between B and C. Only k4 (between B and D) moves. Everything else stays put.", true),
+      frame(Object.assign({}, servers, { D: 230 }), ["k4"], "With plain hash(key) % N, going from 3 to 4 servers moves about 75% of keys and floods the database. Here only ~1/N move. Real systems add \"virtual nodes\" so load stays even.", true)
+    ];
+  };
+
+  G["sd-queue"] = () => {
+    const fr = [], q = [], done = [];
+    let n = 0;
+    const mk = (note, cls) => ({ panels: [{ type: "array", cells: q.length ? q.slice() : ["empty"], noIdx: true, cls: cls || {} }], vars: [["queue length", q.length], ["emails sent", done.length ? done.join(", ") : "none"]], note });
+    fr.push(mk("A shop's \"order confirmed\" emails go through a message queue. The website adds a job and replies to the shopper right away; a worker sends emails at its own pace."));
+    [3, 2].forEach(burst => {
+      for (let i = 0; i < burst; i++) q.push("#" + (++n));
+      fr.push(mk("Flash sale: " + burst + " orders arrive at once. They join the back of the queue. Shoppers already saw \"Order placed!\" in ~50 ms.", Object.fromEntries(q.map((_, i) => [i, i >= q.length - burst ? "cur" : ""]))));
+      for (let i = 0; i < 2 && q.length; i++) { const j = q.shift(); done.push(j); fr.push(mk("Worker takes " + j + " from the front and sends its email (~1 s each).", {})); }
+    });
+    while (q.length) { const j = q.shift(); done.push(j); fr.push(mk("Worker takes " + j + ". The spike is absorbed without the website slowing down.", {})); }
+    fr[fr.length - 1].note += " If emails pile up, add more workers; if a worker crashes mid-job, the unacknowledged job is retried.";
+    return fr;
+  };
+
+  G["sd-token"] = () => {
+    const cap = 4, per = [3, 0, 4, 1, 0, 0, 2], fr = [];
+    let tokens = cap, ok = 0, no = 0;
+    const bucket = () => Array.from({ length: cap }, (_, i) => i < tokens ? "●" : "·");
+    fr.push({ panels: [{ type: "array", cells: bucket(), noIdx: true, cls: {} }], vars: [["capacity", cap], ["refill", "1 token / second"]], note: "Token bucket rate limiter. Each request spends one token. The bucket refills 1 token per second, up to 4. Bursts are allowed; sustained floods aren't." });
+    per.forEach((r, t) => {
+      if (t > 0 && tokens < cap) tokens++;
+      const res = [];
+      for (let i = 0; i < r; i++) { if (tokens > 0) { tokens--; ok++; res.push("200 ✓"); } else { no++; res.push("429 ✗"); } }
+      const cls = {}; res.forEach((x, i) => cls[i] = x[0] === "2" ? "done" : "bad");
+      fr.push({ panels: [{ type: "array", cells: bucket(), noIdx: true, cls: {} }, { type: "array", cells: res.length ? res : ["no requests"], noIdx: true, cls }], vars: [["second", t], ["allowed", ok], ["rejected", no]], note: "Second " + t + (t ? ": +1 token refilled. " : ": bucket starts full. ") + (r ? r + " request" + (r > 1 ? "s" : "") + " arrive." : "Quiet second; tokens build back up.") + (res.includes("429 ✗") ? " Out of tokens → HTTP 429 Too Many Requests." : "") });
+    });
+    return fr;
+  };
+
+  G["sd-circuit"] = () => {
+    const out = [], fr = [];
+    let state = "CLOSED", fails = 0;
+    const push = (cell, cls, note) => { out.push(cell); const c = {}; out.forEach((x, i) => c[i] = x === "✓" ? "done" : x === "⚡" ? "dim" : "bad"); c[out.length - 1] += " cur"; fr.push({ type: "array", cells: out.slice(), noIdx: true, cls: c, vars: [["breaker", state], ["failures in a row", fails]], note }); };
+    fr.push({ type: "array", cells: ["…"], noIdx: true, cls: {}, vars: [["breaker", state]], note: "Circuit breaker around a payment service, like the breaker in your home's fuse box. CLOSED means calls go through normally." });
+    push("✓", "", "Call 1 succeeds.");
+    ["Payment service is overloaded: call times out after 2 s.", "Fails again.", "Third failure in a row."].forEach((t, i) => { fails++; if (fails === 3) state = "OPEN"; push("✗", "", t + (fails === 3 ? " Threshold reached: the breaker trips OPEN." : "")); });
+    for (let i = 0; i < 3; i++) push("⚡", "", "OPEN: fail instantly (\"payments are busy, try again shortly\") instead of waiting 2 s. The struggling service gets room to recover.");
+    state = "HALF-OPEN"; push("✓", "", "After a 30 s cool-down the breaker goes HALF-OPEN and lets one trial call through. It succeeds.");
+    state = "CLOSED"; fails = 0; push("✓", "", "Trial worked, so the breaker CLOSES and traffic flows normally again. Without it, every user would have waited for timeouts and piled more load on.");
+    return fr;
+  };
+
+  G["sd-base62"] = () => {
+    const A = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", id0 = 11157, fr = [], digits = [];
+    let n = id0;
+    fr.push({ type: "array", cells: ["?"], noIdx: true, cls: {}, vars: [["database id", id0], ["alphabet", "0-9 a-z A-Z (62 chars)"]], note: "URL shortener: the database gives each new link a unique number. Base-62 turns that number into a short code, the same way base 10 turns a count into digits." });
+    while (n > 0) {
+      const r = n % 62, q = Math.floor(n / 62);
+      digits.unshift(A[r]);
+      fr.push({ type: "array", cells: digits.slice(), noIdx: true, cls: { 0: "cur" }, vars: [["n", n], ["n % 62", r + " → '" + A[r] + "'"], ["n // 62", q]], note: n + " ÷ 62 = " + q + " remainder " + r + ". Remainder " + r + " is the character '" + A[r] + "'; keep going with " + q + "." });
+      n = q;
+    }
+    fr.push({ type: "array", cells: digits.slice(), noIdx: true, cls: Object.fromEntries(digits.map((_, i) => [i, "done"])), vars: [["short URL", "sho.rt/" + digits.join("")]], note: "id " + id0 + " → \"" + digits.join("") + "\". Seven characters give 62⁷ ≈ 3.5 trillion codes, enough for decades. Decoding is the reverse, so no lookup table is needed." });
+    return fr;
+  };
+
+  G["sd-fanout"] = () => {
+    const nodes = { P: SDN("Ana", 46, 60, "posts"), S: SDN("★", 46, 220, "celebrity"), F1: SDN("F1", 300, 20, "feed"), F2: SDN("F2", 300, 100, "feed"), F3: SDN("F3", 300, 180, "feed"), F4: SDN("F4", 300, 260, "feed") };
+    const edges = [["P", "F1"], ["P", "F2"], ["P", "F3"], ["P", "F4"], ["S", "F3"]];
+    const g = (cls, on, note) => ({ type: "graph", directed: true, nodes, edges, cls, ecls: Object.fromEntries(on.map(e => [e, "on"])), note });
+    return [
+      g({}, [], "News feed. Ana has 4 followers. Each follower has a precomputed feed list in a cache, so opening the app is one fast read."),
+      g({ P: "cur" }, [], "Ana posts a photo. The post is saved once in the posts table."),
+      g({ P: "done", F1: "hit", F2: "hit", F3: "hit", F4: "hit" }, ["P-F1", "P-F2", "P-F3", "P-F4"], "Fan-out on write (push): a background worker inserts the post ID into all 4 followers' feeds. Reading a feed is now instant."),
+      g({ S: "bad" }, [], "Problem: a celebrity with 100 million followers would need 100 million inserts per post. That's far too slow and expensive."),
+      g({ S: "done", F3: "cur" }, ["S-F3"], "Fan-out on read (pull) for celebrities: when F3 opens the app, fetch the few celebrities they follow at read time and merge with their precomputed feed."),
+      g({ P: "done", S: "done", F3: "hit" }, ["P-F3", "S-F3"], "Hybrid: push for normal users, pull for celebrities. This is the standard interview answer, and roughly how large social apps work.")
+    ];
   };
 
   // ---------- player ----------

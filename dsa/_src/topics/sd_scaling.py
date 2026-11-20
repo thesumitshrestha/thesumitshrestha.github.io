@@ -1,0 +1,157 @@
+META = dict(
+    title="SD 2: Scaling", page_title="Scaling · DSA + System Design Guide", week="System design · Beginner", group="System design",
+    h1="Scaling: from one server to millions of users",
+    lead="Scaling means handling more users without getting slower or falling over. The core moves are: make servers stateless, add more of them behind a load balancer, push static content to a CDN, and remove every single point of failure.",
+    blurb="Vertical vs horizontal scaling, stateless servers, load balancers, CDNs, autoscaling.",
+)
+
+BODY = r"""
+<section id="idea">
+  <span class="eyebrow">The idea</span>
+  <h2>A bigger oven or more ovens</h2>
+  <div class="real big-real">
+    <p>A bakery that can't keep up has two options. Buy a bigger oven (<strong>vertical scaling</strong>): easy, but ovens only get so big, and if that one oven breaks, there's no bread. Or buy more ovens (<strong>horizontal scaling</strong>): almost no upper limit, and one broken oven just means slightly slower service, but now you need someone to split orders between ovens and every baker must follow the same recipe card.</p>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th>Vertical (scale up)</th><th>Horizontal (scale out)</th></tr></thead>
+    <tbody>
+      <tr><td>How</td><td>More CPU/RAM on one machine</td><td>More machines</td></tr>
+      <tr><td>Limit</td><td>Biggest machine you can buy</td><td>Practically none</td></tr>
+      <tr><td>Failure</td><td>One machine = single point of failure</td><td>Survives losing machines</td></tr>
+      <tr><td>Complexity</td><td>Low: no code changes</td><td>Higher: load balancing, shared state</td></tr>
+      <tr><td>Good for</td><td>Early stage, databases at first</td><td>Web/app tiers, anything big</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="journey">
+  <span class="eyebrow">The journey</span>
+  <h2>Growing an app step by step</h2>
+  <div class="real"><p>A lemonade stand becoming a chain: first one stand, then a separate storeroom, then more sellers, then a cooler of pre-made cups, then branches in other towns. Each step fixes the bottleneck the previous step created.</p></div>
+  <div class="trace">
+    <div><p><strong>1 server, ~100 users.</strong> Web app and database on one machine. Simple and fine.</p></div>
+    <div><p><strong>Split the database out, ~1,000s of users.</strong> App and DB stop fighting for CPU and memory; each can be sized separately.</p></div>
+    <div><p><strong>Load balancer + several app servers, ~100,000s.</strong> Requires stateless servers (sessions move to a cache or database).</p></div>
+    <div><p><strong>Cache + read replicas.</strong> The database becomes the bottleneck; take reads off it.</p></div>
+    <div><p><strong>CDN for static files.</strong> Images and video stop hitting your servers at all.</p></div>
+    <div><p><strong>Queues for slow work.</strong> Emails, video processing, notifications run in the background.</p></div>
+    <div><p><strong>Shard the database, millions+.</strong> Split data across many database machines.</p></div>
+    <div><p><strong>Multiple regions.</strong> Copies of the system on several continents for speed and disaster recovery.</p></div>
+  </div>
+</section>
+
+<section id="patterns">
+  <span class="eyebrow">Building blocks</span>
+  <h2>Six building blocks for scale</h2>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>1. Stateless servers</h3><span class="cx">Prerequisite for scaling out</span></div>
+    <div class="real"><p>A bank where any teller can help you because your account lives in the bank's central system, not in one teller's notebook. If tellers kept private notebooks, you'd have to queue for the same teller every time, and if they went home sick, your records would be gone.</p></div>
+    <p class="when"><b>Means</b>no user data lives in a server's memory between requests. Sessions, carts and uploads go to a shared store (Redis, a database, object storage).</p>
+<pre class="diagram">Stateful (bad for scale)         Stateless (good)
+user → server 2 (has cart)       user → any server → shared Redis (has cart)
+server 2 dies → cart lost        any server dies → nothing lost</pre>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>2. Load balancer</h3><span class="cx">Spreads traffic, hides failures</span></div>
+    <div class="real"><p>A restaurant host who seats each new party at the next free table and stops seating people at a table whose waiter has gone home.</p></div>
+    <p class="when"><b>Does</b>distributes requests, runs health checks, removes dead servers, terminates TLS (HTTPS), and gives clients one address to call.</p>
+    <figure class="anim" data-anim="sd-lb"><figcaption>Round robin, then surviving a crash</figcaption></figure>
+    <div class="tbl"><table>
+      <thead><tr><th>Algorithm</th><th>How it picks</th><th>Good when</th></tr></thead>
+      <tbody>
+        <tr><td>Round robin</td><td>Each server in turn</td><td>Servers and requests are similar</td></tr>
+        <tr><td>Weighted round robin</td><td>Bigger servers get more turns</td><td>Mixed machine sizes</td></tr>
+        <tr><td>Least connections</td><td>Server with fewest active requests</td><td>Requests vary in length (uploads, websockets)</td></tr>
+        <tr><td>IP / consistent hash</td><td>Same client → same server</td><td>You need stickiness or cache locality</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note"><strong>Layer 4</strong> balancers route by IP and port only (very fast). <strong>Layer 7</strong> balancers read the HTTP request, so they can route <code>/api/video</code> and <code>/api/chat</code> to different services. The balancer itself is run as a redundant pair so it isn't a single point of failure.</p>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>3. CDN (content delivery network)</h3><span class="cx">Static content near users</span></div>
+    <div class="real"><p>A soft-drink company doesn't ship every can from one factory to each buyer; it stocks corner shops in every neighborhood. A CDN stocks copies of your images, videos and scripts in hundreds of cities.</p></div>
+    <p class="when"><b>Use for</b>images, video, CSS/JS, downloads, and even cacheable API responses. Cuts latency from ~150 ms to ~10–20 ms and removes most traffic from your servers.</p>
+    <ul>
+      <li><strong>Pull CDN:</strong> on the first request in a city, the CDN fetches from your server and caches it. Simple; first user is slower.</li>
+      <li><strong>Push CDN:</strong> you upload files to the CDN ahead of time. Good for big, predictable content like a new movie.</li>
+      <li>Invalidate by changing the file name (<code>app.v42.js</code>) rather than waiting for a timeout.</li>
+    </ul>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>4. Reverse proxy and API gateway</h3><span class="cx">One front door</span></div>
+    <div class="real"><p>A hotel front desk. Guests don't wander to the kitchen or laundry directly; the desk checks who they are, answers simple questions, and sends requests to the right department.</p></div>
+    <p class="when"><b>Does</b>authentication, rate limiting, routing to the right microservice, request logging, compression, and TLS, so each service doesn't reimplement them.</p>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>5. Autoscaling</h3><span class="cx">Capacity that follows demand</span></div>
+    <div class="real"><p>A supermarket opening more checkout lanes when queues get long on Saturday, and closing them at night so cashiers aren't paid to stand around.</p></div>
+    <p class="when"><b>Does</b>adds servers when CPU or request rate passes a threshold, removes them when traffic falls. Needs stateless servers and fast startup. Keep a minimum count for sudden spikes, since new machines take a minute or more to boot.</p>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>6. Removing single points of failure</h3><span class="cx">Redundancy at every layer</span></div>
+    <div class="real"><p>A plane has two engines, two pilots, and backup hydraulics. Any one part can fail and the plane still lands.</p></div>
+    <p class="when"><b>Check</b>every box in your diagram and ask "what if this dies?" Then add: two load balancers, many app servers, database replicas with automatic failover, multiple availability zones (separate buildings), and eventually multiple regions.</p>
+<pre class="diagram">          ┌── LB (active) ──┐        zone A: app ×3, DB leader
+users ───▶│                 │──▶
+          └── LB (standby) ─┘        zone B: app ×3, DB replica (auto-failover)</pre>
+  </article>
+</section>
+
+<section id="deep">
+  <span class="eyebrow">Deep analysis</span>
+  <h2>Sizing a service: how many servers?</h2>
+  <div class="real"><p>Hiring staff for a concert: 20,000 fans arriving in one hour at the gates, each ticket check taking 10 seconds, tells you how many gates to open, plus a few extra in case of a jammed scanner.</p></div>
+  <div class="trace">
+    <div><p><strong>Traffic:</strong> 50 M DAU × 20 requests/day = 1 B/day ÷ 10⁵ ≈ <strong>10,000 requests/s</strong> average, ~30,000/s at peak.</p></div>
+    <div><p><strong>Per-server capacity:</strong> measure, don't guess. Say one server handles <strong>1,000 requests/s</strong> at safe CPU (~60%).</p></div>
+    <div><p><strong>Servers:</strong> 30,000 ÷ 1,000 = 30 for peak. Add headroom for a zone failure (N+1 or +50%): about <strong>45 servers</strong> across 3 zones.</p></div>
+    <div><p><strong>Bottleneck check:</strong> 30,000 req/s each doing 2 database queries = 60,000 queries/s. One database can't do that, so cache (90% hit rate → 6,000 queries/s) and add read replicas.</p></div>
+  </div>
+  <div class="google"><p>The pattern interviewers want: estimate load → find the first component that breaks → add the cheapest fix (cache, replica, queue, shard) → repeat for the next bottleneck.</p></div>
+</section>
+
+<section id="pitfalls">
+  <span class="eyebrow">Avoid these</span>
+  <h2>Common scaling mistakes</h2>
+  <div class="real"><p>Widening one lane of a highway doesn't help if the bridge ahead is still one lane. Scaling the part that isn't the bottleneck changes nothing.</p></div>
+  <ul>
+    <li>Adding app servers when the database is the real bottleneck.</li>
+    <li>Sticky sessions that quietly make servers stateful again.</li>
+    <li>One load balancer, one database, one region: all single points of failure.</li>
+    <li>Scaling before measuring. Profile first; often one slow query is the whole problem.</li>
+    <li>Forgetting that autoscaling takes minutes; sudden spikes need headroom or a queue.</li>
+  </ul>
+</section>
+"""
+
+QUIZ = [
+    dict(lvl="easy", q="Adding more RAM and CPU to one machine is called:",
+         opts=["Horizontal scaling", "Vertical scaling", "Sharding", "Caching"], a=1, why="Scale up = bigger machine. Scale out = more machines."),
+    dict(lvl="easy", q="What does a load balancer do when a server fails its health check?",
+         opts=["Restarts the whole system", "Stops sending it traffic", "Sends it more traffic", "Deletes its data"], a=1, why="It routes around unhealthy servers until they recover."),
+    dict(lvl="easy", q="Which content is best served from a CDN?",
+         opts=["A user's bank balance", "Product images and JavaScript files", "Database writes", "Login passwords"], a=1, why="Static, widely shared files benefit most from copies near users."),
+    dict(lvl="medium", q="Why must app servers be stateless to scale horizontally?",
+         opts=["Stateless code is faster", "So any server can handle any request, and losing a server loses no user data", "To use less memory", "Load balancers require JSON"], a=1,
+         why="State in a server's memory ties users to that server and disappears when it dies."),
+    dict(lvl="medium", q="Requests vary a lot in duration (some are long uploads). Which balancing algorithm fits best?",
+         opts=["Round robin", "Least connections", "Random", "Alphabetical"], a=1, why="Least connections avoids piling new requests on a server that's busy with long ones."),
+    dict(lvl="medium", q="A layer 7 load balancer can do what a layer 4 one can't?",
+         opts=["Forward TCP packets", "Route by URL path or HTTP header", "Use IP addresses", "Run health checks"], a=1, why="Layer 7 understands HTTP, so it can route /video and /chat to different services."),
+    dict(lvl="medium", q="You deploy a new `app.js`, but users still get the old one from the CDN. Best fix?",
+         opts=["Wait a week", "Version the file name (app.v43.js) so it's a new URL", "Turn off the CDN", "Restart user browsers"], a=1, why="New name = new cache entry. Old cached copies are simply never requested again."),
+    dict(lvl="hard", q="Peak is 30,000 req/s, one server safely does 1,000 req/s, and you run in 3 zones and must survive losing one zone. Minimum servers?",
+         opts=["30", "45", "60", "90"], a=1, why="If any zone can disappear, the other two must carry 30,000: 15 per zone × 3 zones = 45."),
+    dict(lvl="hard", q="You added 10 more app servers but latency didn't improve. Most likely cause?",
+         opts=["Servers are too new", "The bottleneck is elsewhere, often the database or an external call", "Load balancer is too fast", "CDN is misconfigured"], a=1,
+         why="Scale the bottleneck. Measure where time is spent before adding capacity."),
+    dict(lvl="hard", q="Why keep a minimum number of servers even with autoscaling?",
+         opts=["It's cheaper", "New servers take time to boot, so sudden spikes would overwhelm the few running ones", "Autoscaling can't remove servers", "To keep logs"], a=1,
+         why="Autoscaling reacts in minutes; spikes arrive in seconds. Headroom or queues cover the gap."),
+]

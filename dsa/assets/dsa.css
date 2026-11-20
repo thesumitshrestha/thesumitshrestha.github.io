@@ -176,7 +176,7 @@ footer{font-size:.85rem;color:var(--muted);border-top:1px solid var(--line);padd
 .a-grid td.i4{background:color-mix(in srgb,var(--c2) 30%,var(--bg));border-color:var(--c2)}
 .a-grid td.i1.cur,.a-grid td.i2.cur,.a-grid td.i3.cur,.a-grid td.i4.cur{outline:3px solid var(--accent);outline-offset:-1px;color:var(--ink)}
 .a-svgwrap{overflow-x:auto}
-.a-svg{display:block;max-width:none;height:auto}
+.a-svg{display:block;width:100%;height:auto}
 .a-svg .a-edge{stroke:var(--muted);stroke-width:1.6}
 .a-svg .a-ah{fill:var(--muted)}
 .a-svg .a-elab,.a-svg .a-tag{font:600 11px var(--f-mono);fill:var(--muted);text-anchor:middle}
@@ -193,3 +193,14 @@ footer{font-size:.85rem;color:var(--muted);border-top:1px solid var(--line);padd
 .a-ctl .a-play{background:var(--accent);border-color:var(--accent);color:var(--surface);min-width:6.5em}
 .a-step{font:.8rem var(--f-mono);color:var(--muted);margin:0 4px}
 .a-speed{margin-left:auto}
+
+/* system design animation extras */
+.a-svg .a-edge.on{stroke:var(--accent);stroke-width:3}
+.a-svg .a-ring{fill:none;stroke:var(--line);stroke-width:2;stroke-dasharray:4 5}
+.a-node.bad circle{fill:var(--hard);stroke:var(--hard)}.a-node.bad>text:first-of-type{fill:var(--surface)}
+.a-node.o1 circle{fill:color-mix(in srgb,var(--c1) 30%,var(--bg));stroke:var(--c1)}
+.a-node.o2 circle{fill:color-mix(in srgb,var(--c4) 30%,var(--bg));stroke:var(--c4)}
+.a-node.o3 circle{fill:color-mix(in srgb,var(--c6) 30%,var(--bg));stroke:var(--c6)}
+.a-node.o4 circle{fill:color-mix(in srgb,var(--c2) 30%,var(--bg));stroke:var(--c2)}
+.a-node.srv circle{stroke-width:4}
+.a-node.moved circle{stroke:var(--accent);stroke-width:4;stroke-dasharray:3 3}

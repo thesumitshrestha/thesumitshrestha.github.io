@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>APIs, Queues and Rate Limits · DSA + System Design Guide</title>
+<meta name="description" content="REST, gRPC, websockets, pagination, message queues, pub/sub, delivery guarantees, idempotency, rate limiting.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="assets/dsa.css">
+</head>
+<body>
+<nav class="topbar" aria-label="Guide navigation"><div class="topbar-in"><a class="home" href="index.html">DSA + System Design Guide</a><span class="pn"><a href="sd-data.html">← SD 4: Databases</a><a href="sd-reliability.html">SD 6: Distributed systems →</a></span></div></nav>
+<main class="wrap">
+<header class="hero">
+  <span class="eyebrow">System design</span>
+  <h1>APIs, queues, and rate limiting</h1>
+  <p class="lead">How the pieces talk to each other. APIs are the front door; queues and pub/sub let slow work happen in the background; real-time channels push updates; rate limiters protect everything from overload.</p>
+  <div class="meta"><span class="chip">System design · Core</span><span class="chip">10 quiz questions</span></div>
+  <nav class="toc" aria-label="On this page"><a href="#idea">A restaurant's order rail</a><a href="#api">Designing the front door</a><a href="#patterns">Six ways services talk</a><a href="#deep">Video upload: sync where it matters, async everywhere else</a><a href="#quiz">Quiz</a></nav>
+</header>
+
+<section id="idea">
+  <span class="eyebrow">The idea</span>
+  <h2>A restaurant's order rail</h2>
+  <div class="real big-real">
+    <p>A waiter takes your order and clips the ticket to a rail. They don't stand in the kitchen waiting for your food; they go serve other tables. Cooks pull tickets in order at their own pace. That rail is a <strong>message queue</strong>: the waiter (your web server) replies fast, the cooks (workers) do the slow part, and a rush of orders just makes the rail longer instead of making the waiter freeze.</p>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th>Synchronous (call and wait)</th><th>Asynchronous (queue)</th></tr></thead>
+    <tbody>
+      <tr><td>Real life</td><td>A phone call</td><td>A text message or email</td></tr>
+      <tr><td>User waits for</td><td>The whole job</td><td>Only "accepted"</td></tr>
+      <tr><td>If the worker is down</td><td>Request fails</td><td>Jobs wait in the queue</td></tr>
+      <tr><td>Use for</td><td>Reads, anything the user needs now</td><td>Emails, video processing, notifications, analytics</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="api">
+  <span class="eyebrow">APIs</span>
+  <h2>Designing the front door</h2>
+  <div class="real"><p>A restaurant menu: it lists what you can order and how to ask for it, without showing how the kitchen works. An API is your service's menu.</p></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Style</th><th>How it looks</th><th>Best for</th></tr></thead>
+    <tbody>
+      <tr><td>REST over HTTP</td><td><code>GET /users/42/posts?limit=20</code></td><td>Public APIs, web and mobile clients</td></tr>
+      <tr><td>gRPC</td><td>Typed functions over HTTP/2 with Protocol Buffers</td><td>Fast service-to-service calls (common inside Google)</td></tr>
+      <tr><td>GraphQL</td><td>Client asks for exactly the fields it needs</td><td>Many screens needing different shapes of data</td></tr>
+    </tbody>
+  </table></div>
+<pre><code><span class="c"># REST basics for an interview</span>
+POST   /v1/urls                 {"long_url": "..."}   → 201 {"short": "2TX"}
+GET    /v1/urls/2TX                                  → 301 redirect
+GET    /v1/users/42/feed?cursor=abc&amp;limit=20         → 200 {"items": [...], "next_cursor": "def"}
+DELETE /v1/posts/99                                  → 204
+<span class="c"># status codes: 200 OK, 201 Created, 400 bad input, 401 not logged in,</span>
+<span class="c"># 403 forbidden, 404 not found, 429 too many requests, 500 server error, 503 unavailable</span></code></pre>
+  <h3>Pagination: offset vs cursor</h3>
+  <div class="real"><p>Offset pagination is "start reading at page 50." If someone inserts pages at the front while you read, you see repeats. Cursor pagination is a bookmark: "continue after this exact post," which stays correct while new posts arrive.</p></div>
+  <p>Use <strong>cursor</strong> pagination for feeds and anything that changes often: the cursor encodes the last item seen (e.g. its timestamp + ID), and the query is <code>WHERE id &lt; cursor ORDER BY id DESC LIMIT 20</code>, which uses an index instead of skipping rows.</p>
+</section>
+
+<section id="patterns">
+  <span class="eyebrow">Communication patterns</span>
+  <h2>Six ways services talk</h2>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>1. Message queue (point to point)</h3><span class="cx">Each job handled once</span></div>
+    <div class="real"><p>A deli's "take a number" machine. Each customer number is called once, by whichever clerk is free next.</p></div>
+    <p class="when"><b>Use for</b>background jobs: sending emails, resizing images, transcoding video. Add workers to go faster. Examples: Google Cloud Pub/Sub (with one subscription), Amazon SQS, RabbitMQ.</p>
+    <figure class="anim" data-anim="sd-queue"><figcaption>A queue absorbing a flash-sale spike</figcaption></figure>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>2. Pub/sub (publish–subscribe)</h3><span class="cx">One event, many listeners</span></div>
+    <div class="real"><p>A newspaper is printed once and delivered to every subscriber. The paper doesn't know or care who reads it.</p></div>
+    <p class="when"><b>Use when</b>one event triggers several independent reactions. "Order placed" → payment service charges, warehouse packs, email service confirms, analytics counts. The order service doesn't call each one; it publishes one event.</p>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>3. Event log (Kafka-style stream)</h3><span class="cx">Replayable history</span></div>
+    <div class="real"><p>A ship's logbook: entries are appended in order and never erased. Anyone can read from any page, and a new crew member can read the whole book from the start to catch up.</p></div>
+    <p class="when"><b>Use for</b>high-volume streams (clicks, metrics, location updates), and when new consumers must replay history. Messages stay for days; each consumer tracks its own position (offset). Partitions keep order per key.</p>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>4. Polling, long polling, SSE, WebSockets</h3><span class="cx">Getting updates to clients</span></div>
+    <div class="real"><p>Waiting for a package: checking the porch every 5 minutes (polling), asking the courier to call when they're on your street (long polling), a one-way radio update stream (server-sent events), or an open phone line where both of you can talk any time (WebSocket).</p></div>
+    <div class="tbl"><table>
+      <thead><tr><th>Method</th><th>Direction</th><th>Use for</th></tr></thead>
+      <tbody>
+        <tr><td>Short polling</td><td>Client asks repeatedly</td><td>Rare updates; simplest</td></tr>
+        <tr><td>Long polling</td><td>Server holds the request until there's news</td><td>Notifications where WebSockets aren't possible</td></tr>
+        <tr><td>Server-sent events</td><td>Server → client stream</td><td>Live scores, stock tickers, AI text streaming</td></tr>
+        <tr><td>WebSocket</td><td>Both ways, persistent</td><td>Chat, multiplayer games, collaborative editing</td></tr>
+      </tbody>
+    </table></div>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>5. Idempotency</h3><span class="cx">Safe to retry</span></div>
+    <div class="real"><p>Pressing an elevator button five times still calls the elevator once. Pressing "Pay" twice must also charge only once.</p></div>
+    <p class="when"><b>Why</b>queues and retries mean a message can arrive twice. Make handlers idempotent: the client sends a unique <strong>idempotency key</strong> with the request; the server stores processed keys and returns the saved result for duplicates.</p>
+<pre><code><span class="k">def</span> charge(request):
+    key = request.headers["Idempotency-Key"]
+    saved = db.get_result(key)
+    <span class="k">if</span> saved: <span class="k">return</span> saved                 <span class="c"># duplicate: don't charge again</span>
+    result = payments.charge(request.amount)
+    db.save_result(key, result)              <span class="c"># ideally in the same transaction</span>
+    <span class="k">return</span> result</code></pre>
+    <div class="tbl"><table>
+      <thead><tr><th>Delivery guarantee</th><th>Meaning</th><th>Needs</th></tr></thead>
+      <tbody>
+        <tr><td>At most once</td><td>May lose messages, never duplicates</td><td>Fine for metrics you can drop</td></tr>
+        <tr><td>At least once</td><td>Never loses, may duplicate</td><td>The common default; pair with idempotent handlers</td></tr>
+        <tr><td>Exactly once</td><td>Each effect happens once</td><td>Hard; in practice "at least once + idempotency"</td></tr>
+      </tbody>
+    </table></div>
+  </article>
+
+  <article class="pattern">
+    <div class="pattern-head"><h3>6. Rate limiting</h3><span class="cx">Protect the system from floods</span></div>
+    <div class="real"><p>A nightclub bouncer letting in a few people each minute. A group of friends can come in together if the room has space, but a crowd of 500 can't all rush in at once.</p></div>
+    <p class="when"><b>Use</b>to stop abuse, scrapers and accidental retry storms, and to share capacity fairly between customers. Reply <code>429 Too Many Requests</code> with a <code>Retry-After</code> header.</p>
+    <figure class="anim" data-anim="sd-token"><figcaption>Token bucket: bursts OK, floods rejected</figcaption></figure>
+    <div class="tbl"><table>
+      <thead><tr><th>Algorithm</th><th>Idea</th><th>Trade-off</th></tr></thead>
+      <tbody>
+        <tr><td>Token bucket</td><td>Tokens refill at a steady rate; each request spends one</td><td>Allows short bursts; the common choice</td></tr>
+        <tr><td>Leaky bucket</td><td>Requests drain from a queue at a fixed rate</td><td>Smooth output, adds delay</td></tr>
+        <tr><td>Fixed window</td><td>Count per calendar minute</td><td>Simple, but 2× burst at window edges</td></tr>
+        <tr><td>Sliding window log/counter</td><td>Count over the last 60 s exactly or approximately</td><td>Accurate, a bit more memory</td></tr>
+      </tbody>
+    </table></div>
+  </article>
+</section>
+
+<section id="deep">
+  <span class="eyebrow">Deep analysis</span>
+  <h2>Video upload: sync where it matters, async everywhere else</h2>
+  <div class="real"><p>Dropping off film at a photo lab. The counter gives you a ticket right away; developing, printing and enlarging happen in the back; you get a text when it's ready.</p></div>
+  <div class="trace">
+    <div><p><strong>Client asks the API for an upload URL</strong> (synchronous, fast). The server returns a signed URL for object storage.</p></div>
+    <div><p><strong>Client uploads the file straight to object storage</strong>, in resumable chunks. Your app servers never touch the gigabytes.</p></div>
+    <div><p><strong>Storage publishes "upload finished"</strong> to a pub/sub topic.</p></div>
+    <div><p><strong>Subscribers react in parallel:</strong> a transcoding queue creates 240p–4K versions; a thumbnail worker; a content-safety scanner; a search indexer.</p></div>
+    <div><p><strong>When transcoding completes</strong>, status flips to "ready" and a notification goes to the uploader. Failed jobs retry; jobs that keep failing go to a dead-letter queue for a human to inspect.</p></div>
+  </div>
+  <div class="google"><p>Say which steps are synchronous and which are async, and why. "The user only waits for the upload; transcoding happens through a queue so spikes don't affect the site" is exactly the reasoning interviewers listen for.</p></div>
+</section>
+
+
+
+<section id="quiz">
+  <span class="eyebrow">Test yourself</span>
+  <h2>Quiz</h2>
+  <p>Answer before you click. Filter by level; hard questions are the kind of follow-ups Google interviewers ask.</p>
+  <div class="qbar"><div class="filters" id="filters" role="group" aria-label="Filter by difficulty"></div><button class="btn" type="button" id="quiz-reset">Reset quiz</button></div>
+  <div class="quiz" id="quiz"></div>
+  <p class="score" id="score" aria-live="polite"></p>
+  <script type="application/json" id="quiz-data">[{"lvl": "easy", "q": "Which HTTP status means \"too many requests\"?", "opts": ["200", "404", "429", "500"], "a": 2, "why": "429 tells clients to slow down, often with a Retry-After header."}, {"lvl": "easy", "q": "Why send a welcome email through a queue instead of during sign-up?", "opts": ["Emails need encryption", "So sign-up responds instantly and the email is sent in the background, even if the email service is slow", "Queues are cheaper than email", "It's required by HTTP"], "a": 1, "why": "Slow, non-critical work shouldn't block the user."}, {"lvl": "easy", "q": "Which suits a two-way chat app best?", "opts": ["Short polling every 30 s", "WebSockets", "Email", "Batch jobs"], "a": 1, "why": "A persistent two-way connection delivers messages instantly in both directions."}, {"lvl": "medium", "q": "\"Order placed\" must trigger payment, shipping, email and analytics. Best pattern?", "opts": ["Order service calls all four one by one", "Publish one event to a pub/sub topic each service subscribes to", "Each service polls the orders table", "Put all logic in one service"], "a": 1, "why": "Pub/sub decouples them: adding a fifth consumer needs no change to the order service."}, {"lvl": "medium", "q": "Why is cursor pagination better than offset for a live feed?", "opts": ["Cursors are shorter", "New posts don't shift the pages, so no duplicates or gaps, and it uses an index instead of skipping rows", "Offsets don't work in SQL", "Cursors encrypt data"], "a": 1, "why": "OFFSET 10000 must scan and discard rows, and inserts shift what each page contains."}, {"lvl": "medium", "q": "A queue delivers \"at least once.\" What must handlers be?", "opts": ["Fast", "Idempotent", "Synchronous", "Stateless only"], "a": 1, "why": "Duplicates will happen; processing one twice must have the same effect as once."}, {"lvl": "medium", "q": "Fixed-window limiting at 100/minute. What's its known weakness?", "opts": ["It never resets", "A client can send 100 at 0:59 and 100 at 1:00, so 200 in two seconds", "It uses too much memory", "It can't return 429"], "a": 1, "why": "Sliding windows or token buckets smooth the boundary."}, {"lvl": "hard", "q": "A user double-clicks \"Pay\" and two requests reach different servers. What prevents a double charge?", "opts": ["A faster database", "An idempotency key from the client, stored with a unique constraint so the second request returns the first result", "A CDN", "Round-robin load balancing"], "a": 1, "why": "The key makes the operation safe to repeat regardless of which server handles it."}, {"lvl": "hard", "q": "Rate limiting must work across 50 API servers. Where does the counter live?", "opts": ["In each server's memory", "In a shared fast store like Redis, updated atomically (e.g. a Lua script or INCR with expiry)", "In the SQL database with a full transaction per request", "In the client"], "a": 1, "why": "Per-server counters let a client get 50× the limit. A shared atomic counter enforces one global limit."}, {"lvl": "hard", "q": "A job keeps crashing its worker every time it's retried. What should the system do?", "opts": ["Retry forever", "After N attempts, move it to a dead-letter queue and alert", "Delete the queue", "Restart all workers"], "a": 1, "why": "A \"poison message\" otherwise blocks or wastes the workers indefinitely."}]</script>
+</section>
+<footer><a href="index.html">All topics</a> · Next: <a href="sd-reliability.html">SD 6: Distributed systems</a></footer>
+</main>
+<script src="assets/dsa.js"></script>
+<script src="assets/anim.js"></script>
+</body>
+</html>

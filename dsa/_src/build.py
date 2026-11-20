@@ -12,7 +12,9 @@ OUT = SRC.parent
 # Reading order. "big-o" is a hand-written page that already exists.
 ORDER = ["big-o", "arrays", "strings", "linked-lists", "trees", "stacks-queues", "graphs",
          "dp", "heaps", "hashing", "bits", "sorting", "searching",
-         "patterns", "python", "interview"]
+         "patterns", "python", "interview",
+         "sd-basics", "sd-scaling", "sd-caching", "sd-data", "sd-async", "sd-reliability",
+         "sd-cases-1", "sd-cases-2", "sd-interview"]
 STATIC = {"big-o": {"slug": "big-o", "title": "Big-O", "week": "Week 0",
                     "blurb": "How code scales: the seven complexity classes, analysis rules, Python costs.",
                     "group": "Foundations"}}
@@ -86,15 +88,18 @@ def problems_html(mod):
     for name, lc, lvl, hint in probs:
         i = pid(slug, name)
         ids.append(i)
+        local = ".html" in lc or lc.startswith("#")
+        href = lc if local else f"https://leetcode.com/problems/{lc}/"
+        ext = "" if local else ' target="_blank" rel="noopener"'
         rows.append(
             f'<div class="prob"><input type="checkbox" id="{i}">'
-            f'<label for="{i}"><a href="https://leetcode.com/problems/{lc}/" target="_blank" rel="noopener">{html.escape(name)}</a>'
+            f'<label for="{i}"><a href="{href}"{ext}>{html.escape(name)}</a>'
             f'<span class="hint">{hint}</span></label><span class="lvl {lvl}">{lvl.title()}</span></div>')
     block = f"""
 <section id="problems">
   <span class="eyebrow">Your checklist</span>
-  <h2>Problems to solve</h2>
-  <p>These come from your 12-week checklist. Ticks are saved in this browser. The hint names the pattern, so cover it if you want a cold attempt.</p>
+  <h2>{mod.META.get("problems_title", "Problems to solve")}</h2>
+  <p>{mod.META.get("problems_intro", "These come from your 12-week checklist. Ticks are saved in this browser. The hint names the pattern, so cover it if you want a cold attempt.")}</p>
   <p class="progress"></p>
   <div class="problems">
     {''.join(rows)}
@@ -135,7 +140,7 @@ def nav(slug, metas):
     if nxt:
         parts.append(f'<a href="{nxt["slug"]}.html">{html.escape(nxt["title"])} →</a>')
     return ('<nav class="topbar" aria-label="Guide navigation"><div class="topbar-in">'
-            '<a class="home" href="index.html">DSA Field Guide</a>'
+            '<a class="home" href="index.html">DSA + System Design Guide</a>'
             f'<span class="pn">{"".join(parts)}</span></div></nav>')
 
 
@@ -200,7 +205,7 @@ def index(metas, idmap):
         f'<section id="{re.sub(r"[^a-z]+", "-", g.lower()).strip("-")}"><h2>{g}</h2><div class="grid">{"".join(t)}</div></section>'
         for g, t in tiles.items())
     body = (SRC / "index_body.html").read_text().replace("<!--GROUPS-->", groups)
-    out = HEAD.format(title="DSA Field Guide", desc="Data structures and algorithms prep for Google SWE interviews.")
+    out = HEAD.format(title="DSA + System Design Guide", desc="Data structures, algorithms and system design prep for Google SWE interviews.")
     out += body + '\n<script src="assets/dsa.js"></script>\n</body>\n</html>\n'
     (OUT / "index.html").write_text(out)
 
