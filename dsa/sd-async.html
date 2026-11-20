@@ -19,7 +19,7 @@
   <h1>APIs, queues, and rate limiting</h1>
   <p class="lead">How the pieces talk to each other. APIs are the front door; queues and pub/sub let slow work happen in the background; real-time channels push updates; rate limiters protect everything from overload.</p>
   <div class="meta"><span class="chip">System design · Core</span><span class="chip">10 quiz questions</span></div>
-  <nav class="toc" aria-label="On this page"><a href="#idea">A restaurant's order rail</a><a href="#api">Designing the front door</a><a href="#patterns">Six ways services talk</a><a href="#deep">Video upload: sync where it matters, async everywhere else</a><a href="#learn">Learn more</a><a href="#quiz">Quiz</a></nav>
+  <nav class="toc" aria-label="On this page"><a href="#idea">A restaurant's order rail</a><a href="#api">Designing the front door</a><a href="#patterns">Six ways services talk</a><a href="#deep">Video upload: sync where it matters, async everywhere else</a><a href="#leetcode">Related LeetCode problems</a><a href="#learn">Learn more</a><a href="#quiz">Quiz</a></nav>
 </header>
 
 <section id="idea">
@@ -152,6 +152,15 @@ DELETE /v1/posts/99                                  → 204
   <div class="google"><p>Say which steps are synchronous and which are async, and why. "The user only waits for the upload; transcoding happens through a queue so spikes don't affect the site" is exactly the reasoning interviewers listen for.</p></div>
 </section>
 
+
+<section id="leetcode">
+  <span class="eyebrow">Code it</span>
+  <h2>Related LeetCode problems</h2>
+  <div class="real"><p>A model train set teaches how real railways work in a size you can hold. These coding problems are small, runnable versions of the system ideas on this page.</p></div>
+  <p>Queues and rate limiting, as data-structure design problems.</p>
+  <div class="lc"><a class="lcq" href="https://leetcode.com/problems/design-circular-queue/" target="_blank" rel="noopener">Design Circular Queue<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/logger-rate-limiter/" target="_blank" rel="noopener">Logger Rate Limiter<span class="lvl easy">E</span><span class="prem" title="Needs LeetCode Premium">Premium</span></a><a class="lcq" href="https://leetcode.com/problems/design-hit-counter/" target="_blank" rel="noopener">Design Hit Counter<span class="lvl medium">M</span><span class="prem" title="Needs LeetCode Premium">Premium</span></a><a class="lcq" href="https://leetcode.com/problems/design-bounded-blocking-queue/" target="_blank" rel="noopener">Design Bounded Blocking Queue<span class="lvl medium">M</span><span class="prem" title="Needs LeetCode Premium">Premium</span></a><a class="lcq" href="https://leetcode.com/problems/moving-average-from-data-stream/" target="_blank" rel="noopener">Moving Average from Data Stream<span class="lvl easy">E</span><span class="prem" title="Needs LeetCode Premium">Premium</span></a></div>
+  <p class="note">"Premium" problems need a LeetCode subscription; you can still read their descriptions and discussions in many free write-ups.</p>
+</section>
 
 <section id="learn">
   <span class="eyebrow">Go deeper</span>

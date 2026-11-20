@@ -61,6 +61,7 @@
         <span class="k">else</span>:                  out.append(right[j]); j += 1
     <span class="k">return</span> out + left[i:] + right[j:]</code></pre>
     <figure class="anim" data-anim="sort-merge"><figcaption>Bottom-up merge sort on eight values</figcaption></figure>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/sort-an-array/" target="_blank" rel="noopener">Sort an Array<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/sort-list/" target="_blank" rel="noopener">Sort List<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/count-of-smaller-numbers-after-self/" target="_blank" rel="noopener">Count of Smaller Numbers After Self<span class="lvl hard">H</span></a><a class="lcq" href="https://leetcode.com/problems/reverse-pairs/" target="_blank" rel="noopener">Reverse Pairs<span class="lvl hard">H</span></a></div>
   </article>
 
   <article class="pattern">
@@ -82,6 +83,7 @@
         <span class="k">if</span> i &lt; k: lo = i + 1
         <span class="k">else</span>: hi = i - 1</code></pre>
     <figure class="anim" data-anim="sort-partition"><figcaption>Partitioning around pivot 5</figcaption></figure>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/kth-largest-element-in-an-array/" target="_blank" rel="noopener">Kth Largest Element in an Array<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/k-closest-points-to-origin/" target="_blank" rel="noopener">K Closest Points to Origin<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -97,6 +99,7 @@
             nums[hi], nums[i] = nums[i], nums[hi]; hi -= 1   <span class="c"># don't move i: recheck swapped value</span>
         <span class="k">else</span>:
             i += 1</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/relative-sort-array/" target="_blank" rel="noopener">Relative Sort Array<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/sort-colors/" target="_blank" rel="noopener">Sort Colors<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/maximum-gap/" target="_blank" rel="noopener">Maximum Gap<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -112,6 +115,7 @@
         <span class="k">else</span>:
             out.append([s, e])
     <span class="k">return</span> out</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/merge-intervals/" target="_blank" rel="noopener">Merge Intervals<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/insert-interval/" target="_blank" rel="noopener">Insert Interval<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/non-overlapping-intervals/" target="_blank" rel="noopener">Non-overlapping Intervals<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/meeting-rooms/" target="_blank" rel="noopener">Meeting Rooms<span class="lvl easy">E</span><span class="prem" title="Needs LeetCode Premium">Premium</span></a></div>
   </article>
 
   <article class="pattern">
@@ -127,6 +131,7 @@
 
 <span class="c"># Multi-key with a tuple: by frequency desc, then letter asc</span>
 words.sort(key=<span class="k">lambda</span> w: (-cnt[w], w))</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/largest-number/" target="_blank" rel="noopener">Largest Number<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/sort-characters-by-frequency/" target="_blank" rel="noopener">Sort Characters By Frequency<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/reorder-data-in-log-files/" target="_blank" rel="noopener">Reorder Data in Log Files<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -139,6 +144,7 @@ words.sort(key=<span class="k">lambda</span> w: (-cnt[w], w))</code></pre>
     <span class="k">while</span> h &lt; len(citations) <span class="k">and</span> citations[h] &gt; h:
         h += 1
     <span class="k">return</span> h</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/assign-cookies/" target="_blank" rel="noopener">Assign Cookies<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/h-index/" target="_blank" rel="noopener">H-Index<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/" target="_blank" rel="noopener">Minimum Number of Arrows to Burst Balloons<span class="lvl medium">M</span></a></div>
   </article>
 </section>
 
@@ -167,6 +173,7 @@ words.sort(key=<span class="k">lambda</span> w: (-cnt[w], w))</code></pre>
     <li>Interval problems: ask whether touching intervals like [1,2] and [2,3] count as overlapping.</li>
   </ul>
 </section>
+
 
 
 <section id="learn">

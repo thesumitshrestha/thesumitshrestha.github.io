@@ -19,7 +19,7 @@
   <h1>Design walkthroughs II: news feed, chat, autocomplete</h1>
   <p class="lead">Three product designs that test fan-out, real-time delivery and precomputation. Each follows the same interview steps so you can practice the routine, not memorize answers.</p>
   <div class="meta"><span class="chip">System design · Practice</span><span class="chip">8 problems</span><span class="chip">10 quiz questions</span></div>
-  <nav class="toc" aria-label="On this page"><a href="#idea">Same recipe, different dishes</a><a href="#feed">Design a news feed (like Instagram or X)</a><a href="#chat">Design a chat app (like WhatsApp or Google Chat)</a><a href="#autocomplete">Design search autocomplete (typeahead)</a><a href="#learn">Learn more</a><a href="#problems">Practice these designs</a><a href="#quiz">Quiz</a></nav>
+  <nav class="toc" aria-label="On this page"><a href="#idea">Same recipe, different dishes</a><a href="#feed">Design a news feed (like Instagram or X)</a><a href="#chat">Design a chat app (like WhatsApp or Google Chat)</a><a href="#autocomplete">Design search autocomplete (typeahead)</a><a href="#leetcode">Related LeetCode problems</a><a href="#learn">Learn more</a><a href="#problems">Practice these designs</a><a href="#quiz">Quiz</a></nav>
 </header>
 
 <section id="idea">
@@ -139,6 +139,15 @@ build path:  search logs ─▶ aggregation job (counts per query, time-decayed)
   <div class="google"><p>Interviewers want the key insight: precompute top-k at every trie node so serving is a lookup, and rebuild offline from logs. Then show you can shard it and keep it fast with client-side debouncing and caching.</p></div>
 </section>
 
+
+<section id="leetcode">
+  <span class="eyebrow">Code it</span>
+  <h2>Related LeetCode problems</h2>
+  <div class="real"><p>A model train set teaches how real railways work in a size you can hold. These coding problems are small, runnable versions of the system ideas on this page.</p></div>
+  <p>The coding-sized versions of these designs.</p>
+  <div class="lc"><a class="lcq" href="https://leetcode.com/problems/design-twitter/" target="_blank" rel="noopener">Design Twitter<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/design-search-autocomplete-system/" target="_blank" rel="noopener">Design Search Autocomplete System<span class="lvl hard">H</span><span class="prem" title="Needs LeetCode Premium">Premium</span></a><a class="lcq" href="https://leetcode.com/problems/implement-trie-prefix-tree/" target="_blank" rel="noopener">Implement Trie<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/top-k-frequent-words/" target="_blank" rel="noopener">Top K Frequent Words<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/merge-k-sorted-lists/" target="_blank" rel="noopener">Merge k Sorted Lists<span class="lvl hard">H</span></a></div>
+  <p class="note">"Premium" problems need a LeetCode subscription; you can still read their descriptions and discussions in many free write-ups.</p>
+</section>
 
 <section id="learn">
   <span class="eyebrow">Go deeper</span>

@@ -78,6 +78,7 @@
             path.pop()
     go(0, target)
     <span class="k">return</span> res</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/subsets/" target="_blank" rel="noopener">Subsets<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/subsets-ii/" target="_blank" rel="noopener">Subsets II<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/permutations/" target="_blank" rel="noopener">Permutations<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/combination-sum/" target="_blank" rel="noopener">Combination Sum<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/n-queens/" target="_blank" rel="noopener">N-Queens<span class="lvl hard">H</span></a></div>
   </article>
 
   <article class="pattern">
@@ -91,6 +92,7 @@
         <span class="k">if</span> i &lt;= 1: <span class="k">return</span> 1
         <span class="k">return</span> ways(i - 1) + ways(i - 2)
     <span class="k">return</span> ways(n)</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/fibonacci-number/" target="_blank" rel="noopener">Fibonacci Number<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/climbing-stairs/" target="_blank" rel="noopener">Climbing Stairs<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/decode-ways/" target="_blank" rel="noopener">Decode Ways<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -106,6 +108,7 @@
                 dp[a] = min(dp[a], dp[a - c] + 1)
     <span class="k">return</span> dp[amount] <span class="k">if</span> dp[amount] != INF <span class="k">else</span> -1</code></pre>
     <figure class="anim" data-anim="dp-coins"><figcaption>Filling the Coin Change table for amount 11</figcaption></figure>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/coin-change/" target="_blank" rel="noopener">Coin Change<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/coin-change-ii/" target="_blank" rel="noopener">Coin Change II<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/perfect-squares/" target="_blank" rel="noopener">Perfect Squares<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -118,6 +121,7 @@
         prev2, prev1 = prev1, max(prev1, prev2 + x)
     <span class="k">return</span> prev1</code></pre>
     <p class="note">House Robber II (houses in a circle): run this twice, once without the first house and once without the last, and take the max.</p>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/min-cost-climbing-stairs/" target="_blank" rel="noopener">Min Cost Climbing Stairs<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/house-robber/" target="_blank" rel="noopener">House Robber<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/house-robber-ii/" target="_blank" rel="noopener">House Robber II<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/delete-and-earn/" target="_blank" rel="noopener">Delete and Earn<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -135,6 +139,7 @@
                 dp[i][j] = max(dp[i-1][j], dp[i][j-1])  <span class="c"># drop one letter</span>
     <span class="k">return</span> dp[m][n]</code></pre>
     <figure class="anim" data-anim="dp-lcs"><figcaption>Filling the LCS table for "abcde" and "ace"</figcaption></figure>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/unique-paths/" target="_blank" rel="noopener">Unique Paths<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/minimum-path-sum/" target="_blank" rel="noopener">Minimum Path Sum<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/longest-common-subsequence/" target="_blank" rel="noopener">Longest Common Subsequence<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/edit-distance/" target="_blank" rel="noopener">Edit Distance<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -151,6 +156,7 @@
             dp[s] = dp[s] <span class="k">or</span> dp[s - x]
     <span class="k">return</span> dp[target]</code></pre>
     <p class="note">Loop backwards for "each item once" (0/1 knapsack). Loop forwards for "unlimited copies" (Coin Change). Mixing these up is the most common knapsack bug.</p>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/partition-equal-subset-sum/" target="_blank" rel="noopener">Partition Equal Subset Sum<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/target-sum/" target="_blank" rel="noopener">Target Sum<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/last-stone-weight-ii/" target="_blank" rel="noopener">Last Stone Weight II<span class="lvl medium">M</span></a></div>
   </article>
 </section>
 
@@ -191,6 +197,7 @@
     <span class="k">return</span> len(tails)</code></pre>
   <div class="real"><p>The card game Patience: deal cards onto piles, always placing a card on the leftmost pile whose top card is bigger or equal. The number of piles you end with is the LIS length.</p></div>
   <p class="note"><code>tails</code> is not itself a valid subsequence; only its length is meaningful. Interviewers like asking that.</p>
+<div class="lc"><span class="lc-label">Solve it on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/longest-increasing-subsequence/" target="_blank" rel="noopener">Longest Increasing Subsequence<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/russian-doll-envelopes/" target="_blank" rel="noopener">Russian Doll Envelopes<span class="lvl hard">H</span></a></div>
 </section>
 
 <section id="edge">
@@ -205,6 +212,7 @@
     <li>Duplicates in input for subsets/permutations: sort, then skip equal neighbors at the same depth.</li>
   </ul>
 </section>
+
 
 
 <section id="learn">

@@ -19,7 +19,7 @@
   <h1>Design walkthroughs I: URL shortener, rate limiter, web crawler</h1>
   <p class="lead">Three classic interview designs, worked end to end with the same steps you'll use in the interview: requirements, estimates, API, data model, high-level design, deep dives, and trade-offs.</p>
   <div class="meta"><span class="chip">System design · Practice</span><span class="chip">5 problems</span><span class="chip">10 quiz questions</span></div>
-  <nav class="toc" aria-label="On this page"><a href="#idea">Practice like a pilot in a simulator</a><a href="#url">Design a URL shortener (like bit.ly)</a><a href="#ratelimit">Design a distributed rate limiter</a><a href="#crawler">Design a web crawler</a><a href="#learn">Learn more</a><a href="#problems">Practice these designs</a><a href="#quiz">Quiz</a></nav>
+  <nav class="toc" aria-label="On this page"><a href="#idea">Practice like a pilot in a simulator</a><a href="#url">Design a URL shortener (like bit.ly)</a><a href="#ratelimit">Design a distributed rate limiter</a><a href="#crawler">Design a web crawler</a><a href="#leetcode">Related LeetCode problems</a><a href="#learn">Learn more</a><a href="#problems">Practice these designs</a><a href="#quiz">Quiz</a></nav>
 </header>
 
 <section id="idea">
@@ -138,6 +138,15 @@ GET  /{code}   → 301 or 302 Location: https://...   (404 if unknown or expired
   <div class="google"><p>This is Google's origin story, so interviewers may push on politeness, dedup and prioritization. Mention BFS over the link graph, a Bloom filter for seen URLs, and per-host queues, and you've covered the core.</p></div>
 </section>
 
+
+<section id="leetcode">
+  <span class="eyebrow">Code it</span>
+  <h2>Related LeetCode problems</h2>
+  <div class="real"><p>A model train set teaches how real railways work in a size you can hold. These coding problems are small, runnable versions of the system ideas on this page.</p></div>
+  <p>The coding-sized versions of these three designs.</p>
+  <div class="lc"><a class="lcq" href="https://leetcode.com/problems/encode-and-decode-tinyurl/" target="_blank" rel="noopener">Encode and Decode TinyURL<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/logger-rate-limiter/" target="_blank" rel="noopener">Logger Rate Limiter<span class="lvl easy">E</span><span class="prem" title="Needs LeetCode Premium">Premium</span></a><a class="lcq" href="https://leetcode.com/problems/design-hit-counter/" target="_blank" rel="noopener">Design Hit Counter<span class="lvl medium">M</span><span class="prem" title="Needs LeetCode Premium">Premium</span></a><a class="lcq" href="https://leetcode.com/problems/web-crawler/" target="_blank" rel="noopener">Web Crawler<span class="lvl medium">M</span><span class="prem" title="Needs LeetCode Premium">Premium</span></a><a class="lcq" href="https://leetcode.com/problems/web-crawler-multithreaded/" target="_blank" rel="noopener">Web Crawler Multithreaded<span class="lvl medium">M</span><span class="prem" title="Needs LeetCode Premium">Premium</span></a></div>
+  <p class="note">"Premium" problems need a LeetCode subscription; you can still read their descriptions and discussions in many free write-ups.</p>
+</section>
 
 <section id="learn">
   <span class="eyebrow">Go deeper</span>

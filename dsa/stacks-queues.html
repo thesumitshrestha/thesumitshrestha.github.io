@@ -62,6 +62,7 @@
             st.append(ch)
     <span class="k">return not</span> st            <span class="c"># leftovers = unclosed</span></code></pre>
     <figure class="anim" data-anim="stacks-parens"><figcaption>Checking "{[()]}(]" with a stack</figcaption></figure>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/valid-parentheses/" target="_blank" rel="noopener">Valid Parentheses<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/" target="_blank" rel="noopener">Minimum Remove to Make Valid Parentheses<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/longest-valid-parentheses/" target="_blank" rel="noopener">Longest Valid Parentheses<span class="lvl hard">H</span></a></div>
   </article>
 
   <article class="pattern">
@@ -78,6 +79,7 @@
     <span class="k">return</span> ans</code></pre>
     <figure class="anim" data-anim="stacks-temps"><figcaption>Monotonic stack on Daily Temperatures</figcaption></figure>
     <p class="note">Why O(n) despite the inner while? Each index is pushed once and popped at most once: at most 2n operations in total.</p>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/next-greater-element-i/" target="_blank" rel="noopener">Next Greater Element I<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/daily-temperatures/" target="_blank" rel="noopener">Daily Temperatures<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/online-stock-span/" target="_blank" rel="noopener">Online Stock Span<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/largest-rectangle-in-histogram/" target="_blank" rel="noopener">Largest Rectangle in Histogram<span class="lvl hard">H</span></a></div>
   </article>
 
   <article class="pattern">
@@ -92,6 +94,7 @@
     <span class="k">def</span> pop(self): self.st.pop()
     <span class="k">def</span> top(self): <span class="k">return</span> self.st[-1][0]
     <span class="k">def</span> getMin(self): <span class="k">return</span> self.st[-1][1]</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/implement-queue-using-stacks/" target="_blank" rel="noopener">Implement Queue using Stacks<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/min-stack/" target="_blank" rel="noopener">Min Stack<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -110,6 +113,7 @@
         <span class="k">else</span>:
             st.append(int(t))
     <span class="k">return</span> st[0]</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/evaluate-reverse-polish-notation/" target="_blank" rel="noopener">Evaluate Reverse Polish Notation<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/decode-string/" target="_blank" rel="noopener">Decode String<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/simplify-path/" target="_blank" rel="noopener">Simplify Path<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/basic-calculator/" target="_blank" rel="noopener">Basic Calculator<span class="lvl hard">H</span></a></div>
   </article>
 
   <article class="pattern">
@@ -125,6 +129,7 @@
         <span class="k">if</span> dq[0] &lt;= i - k: dq.popleft()            <span class="c"># left the window</span>
         <span class="k">if</span> i &gt;= k - 1: out.append(nums[dq[0]])
     <span class="k">return</span> out</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/sliding-window-maximum/" target="_blank" rel="noopener">Sliding Window Maximum<span class="lvl hard">H</span></a><a class="lcq" href="https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/" target="_blank" rel="noopener">Shortest Subarray with Sum at Least K<span class="lvl hard">H</span></a></div>
   </article>
 </section>
 
@@ -149,6 +154,7 @@
     <span class="k">return</span> best</code></pre>
   <p><strong>Complexity:</strong> O(n) time, O(n) space. Brute force (expand from every bar) is O(n²).</p>
   <div class="google"><p>If you spot "for each element, find the nearest bigger/smaller one," say "monotonic stack" out loud. It signals pattern fluency, which interviewers note in their write-up.</p></div>
+<div class="lc"><span class="lc-label">Solve it on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/largest-rectangle-in-histogram/" target="_blank" rel="noopener">Largest Rectangle in Histogram<span class="lvl hard">H</span></a><a class="lcq" href="https://leetcode.com/problems/maximal-rectangle/" target="_blank" rel="noopener">Maximal Rectangle<span class="lvl hard">H</span></a></div>
 </section>
 
 <section id="edge">
@@ -162,6 +168,7 @@
     <li>Division in RPN: Python's <code>//</code> floors negatives; use <code>int(a / b)</code> to truncate toward zero.</li>
   </ul>
 </section>
+
 
 
 <section id="learn">

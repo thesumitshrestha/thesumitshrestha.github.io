@@ -73,6 +73,7 @@
         <span class="k">if</span> target - x <span class="k">in</span> seen:      <span class="c"># O(1) lookup</span>
             <span class="k">return</span> [seen[target - x], i]
         seen[x] = i                 <span class="c"># store AFTER checking (no self-pairing)</span></code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/two-sum/" target="_blank" rel="noopener">Two Sum<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/contains-duplicate-ii/" target="_blank" rel="noopener">Contains Duplicate II<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/4sum-ii/" target="_blank" rel="noopener">4Sum II<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -89,6 +90,7 @@
     <span class="k">return</span> None</code></pre>
   <figure class="anim" data-anim="arrays-two-pointers"><figcaption>Two pointers finding a pair that sums to 14</figcaption></figure>
     <p class="note">3Sum = fix one number, then run this on the rest: O(n²). Container With Most Water = always move the shorter wall, because moving the taller one can never help.</p>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/" target="_blank" rel="noopener">Two Sum II<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/3sum/" target="_blank" rel="noopener">3Sum<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/3sum-closest/" target="_blank" rel="noopener">3Sum Closest<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/container-with-most-water/" target="_blank" rel="noopener">Container With Most Water<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -108,6 +110,7 @@ pre = [0]
         seen[run] = seen.get(run, 0) + 1
     <span class="k">return</span> count</code></pre>
     <p class="note">Why not sliding window here? Negative numbers break it: growing the window can make the sum smaller. Prefix sums don't care about signs.</p>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/range-sum-query-immutable/" target="_blank" rel="noopener">Range Sum Query - Immutable<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/find-pivot-index/" target="_blank" rel="noopener">Find Pivot Index<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/subarray-sum-equals-k/" target="_blank" rel="noopener">Subarray Sum Equals K<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/continuous-subarray-sum/" target="_blank" rel="noopener">Continuous Subarray Sum<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -121,6 +124,7 @@ pre = [0]
         best = max(best, cur)
     <span class="k">return</span> best</code></pre>
   <figure class="anim" data-anim="arrays-kadane"><figcaption>Kadane's deciding to extend or restart</figcaption></figure>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/maximum-subarray/" target="_blank" rel="noopener">Maximum Subarray<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/maximum-product-subarray/" target="_blank" rel="noopener">Maximum Product Subarray<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/maximum-sum-circular-subarray/" target="_blank" rel="noopener">Maximum Sum Circular Subarray<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -138,6 +142,7 @@ pre = [0]
         <span class="k">if</span> nums[i] != i + 1: <span class="k">return</span> i + 1
     <span class="k">return</span> n + 1</code></pre>
     <p class="note">The while loop looks like O(n²), but each swap puts one number in its final room, so there are at most n swaps total: O(n).</p>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/" target="_blank" rel="noopener">Find All Numbers Disappeared in an Array<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/find-the-duplicate-number/" target="_blank" rel="noopener">Find the Duplicate Number<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/set-matrix-zeroes/" target="_blank" rel="noopener">Set Matrix Zeroes<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/first-missing-positive/" target="_blank" rel="noopener">First Missing Positive<span class="lvl hard">H</span></a></div>
   </article>
 
   <article class="pattern">
@@ -160,6 +165,7 @@ pre = [0]
             left += 1
     <span class="k">return</span> res</code></pre>
     <p class="note">The two <code>if</code> checks stop a single leftover row or column from being read twice. That is the most common bug in this problem.</p>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/spiral-matrix/" target="_blank" rel="noopener">Spiral Matrix<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/spiral-matrix-ii/" target="_blank" rel="noopener">Spiral Matrix II<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/rotate-image/" target="_blank" rel="noopener">Rotate Image<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/diagonal-traverse/" target="_blank" rel="noopener">Diagonal Traverse<span class="lvl medium">M</span></a></div>
   </article>
 </section>
 
@@ -183,6 +189,7 @@ pre = [0]
             rmax = max(rmax, h[r]); water += rmax - h[r]; r -= 1
     <span class="k">return</span> water</code></pre>
   <div class="google"><p>Walking an interviewer through all three versions, in this order, is exactly what Google wants to see: a correct baseline, a named trade-off, then the insight that removes the trade-off.</p></div>
+<div class="lc"><span class="lc-label">Solve it on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/trapping-rain-water/" target="_blank" rel="noopener">Trapping Rain Water<span class="lvl hard">H</span></a></div>
 </section>
 
 <section id="edge">
@@ -198,6 +205,7 @@ pre = [0]
     <li>Off-by-one at the boundaries: <code>range(n)</code> vs <code>range(n - 1)</code>, <code>l &lt; r</code> vs <code>l &lt;= r</code>.</li>
   </ul>
 </section>
+
 
 
 <section id="learn">

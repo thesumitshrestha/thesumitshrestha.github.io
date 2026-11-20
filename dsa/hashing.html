@@ -71,6 +71,7 @@ bucket 4 │ "dog"
         seen.add(n)
         n = sum(int(d) ** 2 <span class="k">for</span> d <span class="k">in</span> str(n))
     <span class="k">return</span> n == 1</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/contains-duplicate/" target="_blank" rel="noopener">Contains Duplicate<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/happy-number/" target="_blank" rel="noopener">Happy Number<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/longest-consecutive-sequence/" target="_blank" rel="noopener">Longest Consecutive Sequence<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -83,6 +84,7 @@ bucket 4 │ "dog"
         <span class="k">if</span> have[ch] == 0: <span class="k">return</span> False
         have[ch] -= 1
     <span class="k">return</span> True</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/ransom-note/" target="_blank" rel="noopener">Ransom Note<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/majority-element/" target="_blank" rel="noopener">Majority Element<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/top-k-frequent-elements/" target="_blank" rel="noopener">Top K Frequent Elements<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -95,6 +97,7 @@ bucket 4 │ "dog"
         <span class="k">if</span> a2b.setdefault(x, y) != y <span class="k">or</span> b2a.setdefault(y, x) != x:
             <span class="k">return</span> False
     <span class="k">return</span> True</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/isomorphic-strings/" target="_blank" rel="noopener">Isomorphic Strings<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/word-pattern/" target="_blank" rel="noopener">Word Pattern<span class="lvl easy">E</span></a></div>
   </article>
 
   <article class="pattern">
@@ -111,6 +114,7 @@ bucket 4 │ "dog"
             <span class="k">if</span> any(k <span class="k">in</span> seen <span class="k">for</span> k <span class="k">in</span> keys): <span class="k">return</span> False
             seen.update(keys)
     <span class="k">return</span> True</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/group-anagrams/" target="_blank" rel="noopener">Group Anagrams<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/valid-sudoku/" target="_blank" rel="noopener">Valid Sudoku<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/group-shifted-strings/" target="_blank" rel="noopener">Group Shifted Strings<span class="lvl medium">M</span><span class="prem" title="Needs LeetCode Premium">Premium</span></a></div>
   </article>
 
   <article class="pattern">
@@ -125,6 +129,7 @@ bucket 4 │ "dog"
         <span class="k">if</span> bal <span class="k">in</span> first: best = max(best, i - first[bal])
         <span class="k">else</span>: first[bal] = i              <span class="c"># keep the EARLIEST</span>
     <span class="k">return</span> best</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/subarray-sum-equals-k/" target="_blank" rel="noopener">Subarray Sum Equals K<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/contiguous-array/" target="_blank" rel="noopener">Contiguous Array<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/continuous-subarray-sum/" target="_blank" rel="noopener">Continuous Subarray Sum<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -143,6 +148,7 @@ bucket 4 │ "dog"
         self.vals[i], self.pos[last] = last, i       <span class="c"># move last into the hole</span>
         self.vals.pop(); <span class="k">del</span> self.pos[x]; <span class="k">return</span> True
     <span class="k">def</span> getRandom(self): <span class="k">return</span> random.choice(self.vals)</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/design-hashmap/" target="_blank" rel="noopener">Design HashMap<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/insert-delete-getrandom-o1/" target="_blank" rel="noopener">Insert Delete GetRandom O(1)<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/lru-cache/" target="_blank" rel="noopener">LRU Cache<span class="lvl medium">M</span></a></div>
   </article>
 </section>
 
@@ -165,6 +171,7 @@ bucket 4 │ "dog"
         <span class="k">if</span> win == need: res.append(i - m + 1)
     <span class="k">return</span> res</code></pre>
   <div class="google"><p>When you hear yourself say "for each element, search for…", ask "could a hashmap answer that search in O(1)?" That question alone solves a large share of Medium problems.</p></div>
+<div class="lc"><span class="lc-label">Solve it on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/find-all-anagrams-in-a-string/" target="_blank" rel="noopener">Find All Anagrams in a String<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/permutation-in-string/" target="_blank" rel="noopener">Permutation in String<span class="lvl medium">M</span></a></div>
 </section>
 
 <section id="edge">
@@ -179,6 +186,7 @@ bucket 4 │ "dog"
     <li>Iteration order: Python dicts keep insertion order, but don't rely on that for correctness unless the problem says so.</li>
   </ul>
 </section>
+
 
 
 <section id="learn">

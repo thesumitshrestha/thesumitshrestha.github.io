@@ -130,6 +130,56 @@ def learn_html(slug):
 </section>"""
 
 
+def lc_chips(items):
+    out = []
+    for it in items:
+        name, slug, lvl = it[:3]
+        prem = len(it) > 3 and it[3]
+        out.append(f'<a class="lcq" href="https://leetcode.com/problems/{slug}/" target="_blank" rel="noopener">'
+                   f'{html.escape(name)}<span class="lvl {lvl}">{lvl[0].upper()}</span>'
+                   + ('<span class="prem" title="Needs LeetCode Premium">Premium</span>' if prem else "") + '</a>')
+    return "".join(out)
+
+
+def add_leetcode(slug, body):
+    from practice import PATTERN_LC, DEEP_LC
+    pats = PATTERN_LC.get(slug)
+    if pats:
+        parts = re.split(r"(</article>)", body)
+        n = sum(1 for x in parts if x == "</article>")
+        if n != len(pats):
+            sys.exit(f"[{slug}] {n} pattern cards but {len(pats)} LeetCode lists")
+        i, out = 0, []
+        for x in parts:
+            if x == "</article>":
+                out.append(f'<div class="lc"><span class="lc-label">Practice on LeetCode</span>{lc_chips(pats[i])}</div>\n  ')
+                i += 1
+            out.append(x)
+        body = "".join(out)
+    deep = DEEP_LC.get(slug)
+    if deep:
+        a = body.index('<section id="deep">')
+        b = body.index("</section>", a)
+        body = body[:b] + f'<div class="lc"><span class="lc-label">Solve it on LeetCode</span>{lc_chips(deep)}</div>\n' + body[b:]
+    return body
+
+
+def sd_lc_html(slug):
+    from practice import SD_LC
+    if slug not in SD_LC:
+        return ""
+    intro, items = SD_LC[slug]
+    return f"""
+<section id="leetcode">
+  <span class="eyebrow">Code it</span>
+  <h2>Related LeetCode problems</h2>
+  <div class="real"><p>A model train set teaches how real railways work in a size you can hold. These coding problems are small, runnable versions of the system ideas on this page.</p></div>
+  <p>{intro}</p>
+  <div class="lc">{lc_chips(items)}</div>
+  <p class="note">"Premium" problems need a LeetCode subscription; you can still read their descriptions and discussions in many free write-ups.</p>
+</section>"""
+
+
 def quiz_html(mod):
     quiz = getattr(mod, "QUIZ", [])
     if not quiz:
@@ -172,7 +222,9 @@ def page(mod, metas):
     probs, ids = problems_html(mod)
     qz = quiz_html(mod)
     lrn = learn_html(slug)
-    sections = toc(mod.BODY + lrn + probs + qz)
+    body = add_leetcode(slug, mod.BODY)
+    sdlc = sd_lc_html(slug)
+    sections = toc(body + sdlc + lrn + probs + qz)
     toc_html = '<nav class="toc" aria-label="On this page">' + "".join(
         f'<a href="#{sid}">{t}</a>' for sid, t in sections) + "</nav>"
     chips = [f'<span class="chip">{m["week"]}</span>']
@@ -191,7 +243,8 @@ def page(mod, metas):
   <div class="meta">{''.join(chips)}</div>
   {toc_html}
 </header>
-{mod.BODY}
+{body}
+{sdlc}
 {lrn}
 {probs}
 {qz}

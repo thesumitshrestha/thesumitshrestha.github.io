@@ -73,6 +73,7 @@
         tail = tail.next
     tail.next = a <span class="k">or</span> b          <span class="c"># attach the leftovers</span>
     <span class="k">return</span> dummy.next</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/merge-two-sorted-lists/" target="_blank" rel="noopener">Merge Two Sorted Lists<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/remove-linked-list-elements/" target="_blank" rel="noopener">Remove Linked List Elements<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/partition-list/" target="_blank" rel="noopener">Partition List<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -92,6 +93,7 @@ step 1:  None ← 1   2 → 3 → None     prev=1 cur=2
 step 2:  None ← 1 ← 2   3 → None     prev=2 cur=3
 step 3:  None ← 1 ← 2 ← 3            prev=3 cur=None → return 3</pre>
   <figure class="anim" data-anim="ll-reverse"><figcaption>Reversing 1 → 2 → 3 → 4</figcaption></figure>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/reverse-linked-list/" target="_blank" rel="noopener">Reverse Linked List<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/palindrome-linked-list/" target="_blank" rel="noopener">Palindrome Linked List<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/reverse-linked-list-ii/" target="_blank" rel="noopener">Reverse Linked List II<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/reverse-nodes-in-k-group/" target="_blank" rel="noopener">Reverse Nodes in k-Group<span class="lvl hard">H</span></a></div>
   </article>
 
   <article class="pattern">
@@ -112,6 +114,7 @@ step 3:  None ← 1 ← 2 ← 3            prev=3 cur=None → return 3</pre>
     <span class="k">return</span> False</code></pre>
   <figure class="anim" data-anim="ll-fast-slow"><figcaption>Slow and fast pointers finding the middle</figcaption></figure>
     <p class="note">Floyd's bonus: after they meet, reset one pointer to <code>head</code> and move both one step at a time. They meet again exactly at the start of the cycle.</p>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/middle-of-the-linked-list/" target="_blank" rel="noopener">Middle of the Linked List<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/linked-list-cycle/" target="_blank" rel="noopener">Linked List Cycle<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/linked-list-cycle-ii/" target="_blank" rel="noopener">Linked List Cycle II<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/find-the-duplicate-number/" target="_blank" rel="noopener">Find the Duplicate Number<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -126,6 +129,7 @@ step 3:  None ← 1 ← 2 ← 3            prev=3 cur=None → return 3</pre>
         fast, slow = fast.next, slow.next
     slow.next = slow.next.next      <span class="c"># slow is just before the target</span>
     <span class="k">return</span> dummy.next</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/remove-nth-node-from-end-of-list/" target="_blank" rel="noopener">Remove Nth Node From End of List<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/rotate-list/" target="_blank" rel="noopener">Rotate List<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -143,6 +147,7 @@ step 3:  None ← 1 ← 2 ← 3            prev=3 cur=None → return 3</pre>
         old2new[cur].random = old2new[cur.random]
         cur = cur.next
     <span class="k">return</span> old2new[head]</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/copy-list-with-random-pointer/" target="_blank" rel="noopener">Copy List with Random Pointer<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/clone-graph/" target="_blank" rel="noopener">Clone Graph<span class="lvl medium">M</span></a></div>
   </article>
 </section>
 
@@ -167,6 +172,7 @@ step 3:  None ← 1 ← 2 ← 3            prev=3 cur=None → return 3</pre>
         first.next, second.next = second, n1
         first, second = n1, n2</code></pre>
   <div class="google"><p>Google interviewers like problems that combine patterns. Name each step out loud ("I'll find the middle, reverse the back half, then merge") before writing any code.</p></div>
+<div class="lc"><span class="lc-label">Solve it on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/reorder-list/" target="_blank" rel="noopener">Reorder List<span class="lvl medium">M</span></a></div>
 </section>
 
 <section id="edge">
@@ -181,6 +187,7 @@ step 3:  None ← 1 ← 2 ← 3            prev=3 cur=None → return 3</pre>
     <li>Calling <code>.next</code> on <code>None</code>: check <code>fast and fast.next</code> in that order.</li>
   </ul>
 </section>
+
 
 
 <section id="learn">

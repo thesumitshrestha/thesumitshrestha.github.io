@@ -70,6 +70,7 @@ graph = defaultdict(list)
                 q.append(v)
     <span class="k">return</span> dist</code></pre>
     <figure class="anim" data-anim="graphs-islands"><figcaption>BFS flood fill counting islands</figcaption></figure>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/shortest-path-in-binary-matrix/" target="_blank" rel="noopener">Shortest Path in Binary Matrix<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/01-matrix/" target="_blank" rel="noopener">01 Matrix<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/open-the-lock/" target="_blank" rel="noopener">Open the Lock<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -90,6 +91,7 @@ graph = defaultdict(list)
                 count += 1; sink(r, c)
     <span class="k">return</span> count</code></pre>
     <p class="note">Ask before mutating the input grid. If not allowed, use a <code>visited</code> set. For huge grids, iterative BFS avoids Python's recursion limit.</p>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/number-of-islands/" target="_blank" rel="noopener">Number of Islands<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/max-area-of-island/" target="_blank" rel="noopener">Max Area of Island<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/surrounded-regions/" target="_blank" rel="noopener">Surrounded Regions<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/clone-graph/" target="_blank" rel="noopener">Clone Graph<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -109,6 +111,7 @@ graph = defaultdict(list)
                     grid[nr][nc] = 2; fresh -= 1; q.append((nr, nc))
         minutes += 1
     <span class="k">return</span> minutes <span class="k">if</span> fresh == 0 <span class="k">else</span> -1</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/rotting-oranges/" target="_blank" rel="noopener">Rotting Oranges<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/as-far-from-land-as-possible/" target="_blank" rel="noopener">As Far from Land as Possible<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/walls-and-gates/" target="_blank" rel="noopener">Walls and Gates<span class="lvl medium">M</span><span class="prem" title="Needs LeetCode Premium">Premium</span></a></div>
   </article>
 
   <article class="pattern">
@@ -128,6 +131,7 @@ graph = defaultdict(list)
             <span class="k">if</span> indeg[v] == 0: q.append(v)
     <span class="k">return</span> taken == n          <span class="c"># fewer means a cycle</span></code></pre>
     <figure class="anim" data-anim="graphs-topo"><figcaption>Kahn's algorithm ordering five tasks</figcaption></figure>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/course-schedule/" target="_blank" rel="noopener">Course Schedule<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/course-schedule-ii/" target="_blank" rel="noopener">Course Schedule II<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/alien-dictionary/" target="_blank" rel="noopener">Alien Dictionary<span class="lvl hard">H</span><span class="prem" title="Needs LeetCode Premium">Premium</span></a></div>
   </article>
 
   <article class="pattern">
@@ -148,6 +152,7 @@ graph = defaultdict(list)
         <span class="k">if</span> self.size[ra] &lt; self.size[rb]: ra, rb = rb, ra
         self.parent[rb] = ra; self.size[ra] += self.size[rb]  <span class="c"># union by size</span>
         <span class="k">return</span> True</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/number-of-provinces/" target="_blank" rel="noopener">Number of Provinces<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/redundant-connection/" target="_blank" rel="noopener">Redundant Connection<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/accounts-merge/" target="_blank" rel="noopener">Accounts Merge<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -167,6 +172,7 @@ graph = defaultdict(list)
                 dist[v] = nd
                 heapq.heappush(pq, (nd, v))
     <span class="k">return</span> dist</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/network-delay-time/" target="_blank" rel="noopener">Network Delay Time<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/path-with-minimum-effort/" target="_blank" rel="noopener">Path With Minimum Effort<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/cheapest-flights-within-k-stops/" target="_blank" rel="noopener">Cheapest Flights Within K Stops<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/swim-in-rising-water/" target="_blank" rel="noopener">Swim in Rising Water<span class="lvl hard">H</span></a></div>
   </article>
 </section>
 
@@ -215,6 +221,7 @@ graph = defaultdict(list)
         steps += 1
     <span class="k">return</span> 0</code></pre>
   <div class="google"><p>Google loves graphs that aren't drawn for you: words, board states, lock combinations. Say "I'll model this as a graph where nodes are… and edges are…" before anything else.</p></div>
+<div class="lc"><span class="lc-label">Solve it on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/word-ladder/" target="_blank" rel="noopener">Word Ladder<span class="lvl hard">H</span></a><a class="lcq" href="https://leetcode.com/problems/word-ladder-ii/" target="_blank" rel="noopener">Word Ladder II<span class="lvl hard">H</span></a></div>
 </section>
 
 <section id="edge">
@@ -230,6 +237,7 @@ graph = defaultdict(list)
     <li>Unreachable target: return -1 or infinity as the problem says.</li>
   </ul>
 </section>
+
 
 
 <section id="learn">

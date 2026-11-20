@@ -55,6 +55,7 @@
         <span class="k">if</span> nums[mid] &lt; target: lo = mid + 1
         <span class="k">else</span>: hi = mid - 1
     <span class="k">return</span> -1</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/binary-search/" target="_blank" rel="noopener">Binary Search<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/guess-number-higher-or-lower/" target="_blank" rel="noopener">Guess Number Higher or Lower<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/search-a-2d-matrix/" target="_blank" rel="noopener">Search a 2D Matrix<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -75,6 +76,7 @@ first_true(0, len(nums), <span class="k">lambda</span> i: nums[i] &gt;= target)
 bisect.bisect_left(nums, target)        <span class="c"># first i with nums[i] &gt;= target</span>
 bisect.bisect_right(nums, target)       <span class="c"># first i with nums[i] &gt;  target</span></code></pre>
     <p class="note">First and Last Position of an element = <code>bisect_left</code> and <code>bisect_right − 1</code>, checking the element exists.</p>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/first-bad-version/" target="_blank" rel="noopener">First Bad Version<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/search-insert-position/" target="_blank" rel="noopener">Search Insert Position<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/" target="_blank" rel="noopener">Find First and Last Position of Element in Sorted Array<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/time-based-key-value-store/" target="_blank" rel="noopener">Time Based Key-Value Store<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -101,6 +103,7 @@ bisect.bisect_right(nums, target)       <span class="c"># first i with nums[i] &
         <span class="k">if</span> nums[mid] &gt; nums[hi]: lo = mid + 1          <span class="c"># min is right of mid</span>
         <span class="k">else</span>: hi = mid
     <span class="k">return</span> nums[lo]</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/search-in-rotated-sorted-array/" target="_blank" rel="noopener">Search in Rotated Sorted Array<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/" target="_blank" rel="noopener">Find Minimum in Rotated Sorted Array<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/search-in-rotated-sorted-array-ii/" target="_blank" rel="noopener">Search in Rotated Sorted Array II<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -118,6 +121,7 @@ bisect.bisect_right(nums, target)       <span class="c"># first i with nums[i] &
         <span class="k">else</span>: lo = mid + 1
     <span class="k">return</span> lo</code></pre>
     <figure class="anim" data-anim="search-answer"><figcaption>Searching over speeds, not array positions</figcaption></figure>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/koko-eating-bananas/" target="_blank" rel="noopener">Koko Eating Bananas<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/" target="_blank" rel="noopener">Capacity To Ship Packages Within D Days<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/minimum-number-of-days-to-make-m-bouquets/" target="_blank" rel="noopener">Minimum Number of Days to Make m Bouquets<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/split-array-largest-sum/" target="_blank" rel="noopener">Split Array Largest Sum<span class="lvl hard">H</span></a></div>
   </article>
 
   <article class="pattern">
@@ -131,6 +135,7 @@ bisect.bisect_right(nums, target)       <span class="c"># first i with nums[i] &
         <span class="k">if</span> nums[mid] &lt; nums[mid + 1]: lo = mid + 1    <span class="c"># uphill to the right</span>
         <span class="k">else</span>: hi = mid
     <span class="k">return</span> lo</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/peak-index-in-a-mountain-array/" target="_blank" rel="noopener">Peak Index in a Mountain Array<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/find-peak-element/" target="_blank" rel="noopener">Find Peak Element<span class="lvl medium">M</span></a></div>
   </article>
 </section>
 
@@ -158,6 +163,7 @@ bisect.bisect_right(nums, target)       <span class="c"># first i with nums[i] &
     <span class="k">return</span> lo</code></pre>
   <p><strong>Complexity:</strong> O(n log(sum)). The DP alternative is O(n² · k).</p>
   <div class="google"><p>Phrases like "minimize the maximum" or "maximize the minimum" are strong hints for binary search on the answer. Saying so early impresses interviewers.</p></div>
+<div class="lc"><span class="lc-label">Solve it on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/split-array-largest-sum/" target="_blank" rel="noopener">Split Array Largest Sum<span class="lvl hard">H</span></a><a class="lcq" href="https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/" target="_blank" rel="noopener">Capacity To Ship Packages Within D Days<span class="lvl medium">M</span></a></div>
 </section>
 
 <section id="edge">
@@ -172,6 +178,7 @@ bisect.bisect_right(nums, target)       <span class="c"># first i with nums[i] &
     <li>Rotated arrays with duplicates make the worst case O(n); mention it if asked.</li>
   </ul>
 </section>
+
 
 
 <section id="learn">

@@ -72,6 +72,7 @@
     cnt = [0] * 26
     <span class="k">for</span> ch <span class="k">in</span> word: cnt[ord(ch) - ord('a')] += 1
     <span class="k">return</span> tuple(cnt)          <span class="c"># hashable → Group Anagrams key</span></code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/valid-anagram/" target="_blank" rel="noopener">Valid Anagram<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/first-unique-character-in-a-string/" target="_blank" rel="noopener">First Unique Character in a String<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/group-anagrams/" target="_blank" rel="noopener">Group Anagrams<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -90,6 +91,7 @@
   <figure class="anim" data-anim="strings-window"><figcaption>Sliding window on "abcabcbb"</figcaption></figure>
     <p class="note">General template
 : expand <code>right</code> every step; <code>while</code> the window is invalid, shrink <code>left</code>; record the answer. Minimum Window Substring uses the same skeleton with a "how many characters still needed" counter.</p>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" target="_blank" rel="noopener">Longest Substring Without Repeating Characters<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/permutation-in-string/" target="_blank" rel="noopener">Permutation in String<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/longest-repeating-character-replacement/" target="_blank" rel="noopener">Longest Repeating Character Replacement<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/minimum-window-substring/" target="_blank" rel="noopener">Minimum Window Substring<span class="lvl hard">H</span></a></div>
   </article>
 
   <article class="pattern">
@@ -104,6 +106,7 @@
         <span class="k">if</span> s[l].lower() != s[r].lower(): <span class="k">return</span> False
         l, r = l + 1, r - 1
     <span class="k">return</span> True</code></pre>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/valid-palindrome/" target="_blank" rel="noopener">Valid Palindrome<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/valid-palindrome-ii/" target="_blank" rel="noopener">Valid Palindrome II<span class="lvl easy">E</span></a><a class="lcq" href="https://leetcode.com/problems/reverse-string/" target="_blank" rel="noopener">Reverse String<span class="lvl easy">E</span></a></div>
   </article>
 
   <article class="pattern">
@@ -122,6 +125,7 @@
     <span class="k">return</span> best</code></pre>
   <figure class="anim" data-anim="strings-center"><figcaption>Growing a palindrome from its center</figcaption></figure>
     <p class="note">Forgetting the even-length center (<code>i, i + 1</code>) misses palindromes like "abba". Manacher's algorithm does this in O(n), but it's rarely expected.</p>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/longest-palindromic-substring/" target="_blank" rel="noopener">Longest Palindromic Substring<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/palindromic-substrings/" target="_blank" rel="noopener">Palindromic Substrings<span class="lvl medium">M</span></a></div>
   </article>
 
   <article class="pattern">
@@ -137,6 +141,7 @@
         num = num * 10 + int(s[i]); i += 1
     <span class="k">return</span> max(-2**31, min(2**31 - 1, sign * num))</code></pre>
     <div class="google"><p>On parsing problems, list the cases out loud before coding (spaces, sign, junk after digits, overflow). Interviewers grade the questions you ask as much as the code.</p></div>
+  <div class="lc"><span class="lc-label">Practice on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/string-to-integer-atoi/" target="_blank" rel="noopener">String to Integer (atoi)<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/decode-string/" target="_blank" rel="noopener">Decode String<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/basic-calculator-ii/" target="_blank" rel="noopener">Basic Calculator II<span class="lvl medium">M</span></a></div>
   </article>
 </section>
 
@@ -166,6 +171,7 @@
             need[s[left]] += 1; missing += 1; left += 1
     <span class="k">return</span> "" <span class="k">if</span> best[1] == float('inf') <span class="k">else</span> s[best[0]:best[1] + 1]</code></pre>
   <p><strong>Complexity:</strong> each pointer moves at most n times, so O(n + m) time and O(k) space for the counter.</p>
+<div class="lc"><span class="lc-label">Solve it on LeetCode</span><a class="lcq" href="https://leetcode.com/problems/minimum-window-substring/" target="_blank" rel="noopener">Minimum Window Substring<span class="lvl hard">H</span></a></div>
 </section>
 
 <section id="edge">
@@ -180,6 +186,7 @@
     <li>All characters identical ("aaaa") for window problems.</li>
   </ul>
 </section>
+
 
 
 <section id="learn">

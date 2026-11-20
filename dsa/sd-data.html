@@ -19,7 +19,7 @@
   <h1>Databases and data at scale</h1>
   <p class="lead">The database is usually the hardest part to scale, because it holds the truth. This page covers choosing SQL vs NoSQL, indexes, replication, sharding, consistent hashing, and the CAP trade-off.</p>
   <div class="meta"><span class="chip">System design · Core</span><span class="chip">10 quiz questions</span></div>
-  <nav class="toc" aria-label="On this page"><a href="#idea">A library that keeps growing</a><a href="#choose">SQL vs NoSQL</a><a href="#patterns">Six techniques for data at scale</a><a href="#cap">CAP theorem and consistency models</a><a href="#deep">Designing storage for a chat app's messages</a><a href="#learn">Learn more</a><a href="#quiz">Quiz</a></nav>
+  <nav class="toc" aria-label="On this page"><a href="#idea">A library that keeps growing</a><a href="#choose">SQL vs NoSQL</a><a href="#patterns">Six techniques for data at scale</a><a href="#cap">CAP theorem and consistency models</a><a href="#deep">Designing storage for a chat app's messages</a><a href="#leetcode">Related LeetCode problems</a><a href="#learn">Learn more</a><a href="#quiz">Quiz</a></nav>
 </header>
 
 <section id="idea">
@@ -149,6 +149,15 @@ SELECT * FROM posts WHERE user_id = 42 ORDER BY created_at DESC LIMIT 20;</code>
   <div class="google"><p>Google built Bigtable, Spanner and Colossus, so interviewers like hearing why you'd pick a wide-column store vs a globally consistent SQL database. Justify the choice from the access pattern, not the brand name.</p></div>
 </section>
 
+
+<section id="leetcode">
+  <span class="eyebrow">Code it</span>
+  <h2>Related LeetCode problems</h2>
+  <div class="real"><p>A model train set teaches how real railways work in a size you can hold. These coding problems are small, runnable versions of the system ideas on this page.</p></div>
+  <p>Small versions of storage-engine ideas: versioned values, snapshots and hashing.</p>
+  <div class="lc"><a class="lcq" href="https://leetcode.com/problems/time-based-key-value-store/" target="_blank" rel="noopener">Time Based Key-Value Store<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/snapshot-array/" target="_blank" rel="noopener">Snapshot Array<span class="lvl medium">M</span></a><a class="lcq" href="https://leetcode.com/problems/design-hashset/" target="_blank" rel="noopener">Design HashSet<span class="lvl easy">E</span></a></div>
+  <p class="note">"Premium" problems need a LeetCode subscription; you can still read their descriptions and discussions in many free write-ups.</p>
+</section>
 
 <section id="learn">
   <span class="eyebrow">Go deeper</span>
