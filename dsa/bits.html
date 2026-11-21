@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="assets/dsa.css">
+<link rel="stylesheet" href="assets/checklist.css">
 </head>
 <body>
 <nav class="topbar" aria-label="Guide navigation"><div class="topbar-in"><a class="home" href="index.html">DSA + System Design Guide</a><span class="pn"><a href="hashing.html">← Hashing</a><a href="sorting.html">Sorting →</a></span></div></nav>
@@ -18,8 +19,8 @@
   <span class="eyebrow">Algorithms</span>
   <h1>Bit manipulation</h1>
   <p class="lead">Every integer is a row of on/off switches. A handful of tricks with AND, OR, XOR and shifts solve problems in O(1) space that would otherwise need a hashmap.</p>
-  <div class="meta"><span class="chip">Week 10</span><span class="chip">12 problems</span><span class="chip">10 quiz questions</span></div>
-  <nav class="toc" aria-label="On this page"><a href="#idea">A row of light switches</a><a href="#tricks">One-line tricks to memorize</a><a href="#patterns">Five bit patterns</a><a href="#deep">Single Number II: every number appears three times except one</a><a href="#edge">Pitfalls</a><a href="#learn">Learn more</a><a href="#problems">Problems to solve</a><a href="#quiz">Quiz</a></nav>
+  <div class="meta"><span class="chip">Week 10</span><span class="chip">12 problems</span><span class="chip">10 quiz questions</span><a class="chip chip-steps" href="#checklist" data-steps="dsa:t:bits:read,dsa:t:bits:anim,dsa:t:bits:code,dsa:t:bits:learn,dsa:t:bits:quiz,dsa:t:bits:problems,dsa:t:bits:done">Checklist</a></div>
+  <nav class="toc" aria-label="On this page"><a href="#idea">A row of light switches</a><a href="#tricks">One-line tricks to memorize</a><a href="#patterns">Five bit patterns</a><a href="#deep">Single Number II: every number appears three times except one</a><a href="#edge">Pitfalls</a><a href="#learn">Learn more</a><a href="#problems">Problems to solve</a><a href="#quiz">Quiz</a><a href="#checklist">Your checklist for this topic</a></nav>
 </header>
 
 <section id="idea">
@@ -199,6 +200,15 @@ n&amp;n-1 = 1 0 1 0 0 0     → lowest 1 removed</pre>
   <div class="quiz" id="quiz"></div>
   <p class="score" id="score" aria-live="polite"></p>
   <script type="application/json" id="quiz-data">[{"lvl": "easy", "q": "What is `6 & 3`?", "opts": ["1", "2", "7", "5"], "a": 1, "why": "110 & 011 = 010 = 2."}, {"lvl": "easy", "q": "What is `5 ^ 5`?", "opts": ["0", "5", "10", "1"], "a": 0, "why": "XOR of a number with itself is always 0."}, {"lvl": "easy", "q": "`1 << 4` equals:", "opts": ["4", "8", "16", "5"], "a": 2, "why": "Shifting 1 left by 4 places is 2⁴ = 16."}, {"lvl": "medium", "q": "What does `x & (x - 1)` do?", "opts": ["Doubles x", "Clears the lowest set bit", "Sets the lowest bit", "Counts bits"], "a": 1, "why": "x − 1 flips the lowest 1 and the zeros below it; AND keeps everything above."}, {"lvl": "medium", "q": "Why does `x & 1 == 0` give a surprising result?", "opts": ["It doesn't", "`==` binds tighter than `&`, so it's `x & (1 == 0)` = `x & False` = 0", "XOR is needed", "Python can't AND booleans"], "a": 1, "why": "Write `(x & 1) == 0`. Precedence bugs are common in bit code."}, {"lvl": "medium", "q": "Counting Bits: `ans[i] = ans[i >> 1] + (i & 1)`. For i = 7?", "opts": ["2", "3", "4", "1"], "a": 1, "why": "ans[3] = 2 (binary 11), plus 1 because 7 is odd: 3 (binary 111)."}, {"lvl": "medium", "q": "Missing Number for `[3, 0, 1]` via XOR of indices and values (start acc = n = 3):", "opts": ["2", "3", "0", "1"], "a": 0, "why": "3 ^ (0^3) ^ (1^0) ^ (2^1) = 2. Every present number cancels with its index."}, {"lvl": "hard", "q": "Bitwise AND of Numbers Range [5, 7]:", "opts": ["5", "4", "7", "0"], "a": 1, "why": "101 & 110 & 111 = 100 = 4. The answer is the common binary prefix of left and right."}, {"lvl": "hard", "q": "Why do Python bit problems sometimes need `& 0xFFFFFFFF`?", "opts": ["Speed", "Python ints are unbounded, so 32-bit overflow/negatives must be emulated", "To convert to strings", "To avoid recursion"], "a": 1, "why": "In C or Java ints wrap at 32 bits. Python's don't, so you mask and convert back to signed yourself."}, {"lvl": "hard", "q": "Maximum XOR of Two Numbers: what structure gives O(32n)?", "opts": ["Heap", "A binary trie of the numbers' bits; for each number greedily walk the opposite bit", "Sorting", "Union-find"], "a": 1, "why": "From the highest bit down, prefer the branch that makes this bit 1 in the XOR."}]</script>
+</section>
+
+<section id="checklist">
+  <span class="eyebrow">Track it</span>
+  <h2>Your checklist for this topic</h2>
+  <div class="real"><p>Like a pilot's checklist before takeoff: ticking each step means nothing gets skipped, and you can see at a glance what's left.</p></div>
+  <p class="steps-progress" data-steps="dsa:t:bits:read,dsa:t:bits:anim,dsa:t:bits:code,dsa:t:bits:learn,dsa:t:bits:quiz,dsa:t:bits:problems,dsa:t:bits:done"></p>
+  <ul class="steps"><li class="step-row"><input type="checkbox" id="step-bits-read" data-key="dsa:t:bits:read"><label for="step-bits-read">Read the page, including every real-life example</label></li><li class="step-row"><input type="checkbox" id="step-bits-anim" data-key="dsa:t:bits:anim"><label for="step-bits-anim">Played every animation step by step</label></li><li class="step-row"><input type="checkbox" id="step-bits-code" data-key="dsa:t:bits:code"><label for="step-bits-code">Typed each pattern template from memory</label></li><li class="step-row"><input type="checkbox" id="step-bits-learn" data-key="dsa:t:bits:learn"><label for="step-bits-learn">Watched or read at least one Learn more resource</label></li><li class="step-row"><input type="checkbox" id="step-bits-quiz" data-key="dsa:t:bits:quiz"><label for="step-bits-quiz">Scored 8 out of 10 or better on the quiz</label></li><li class="step-row"><input type="checkbox" id="step-bits-problems" data-key="dsa:t:bits:problems"><label for="step-bits-problems">Solved every problem on the list</label></li><li class="step-row final"><input type="checkbox" id="step-bits-done" data-key="dsa:t:bits:done"><label for="step-bits-done">Done with this topic</label></li></ul>
+  <p class="note">Ticks are saved in this browser and shown on the <a href="index.html#topic-checklist">topic checklist</a>. To keep a backup or move them to another device, use <a href="index.html#backup">Back up or move your progress</a>.</p>
 </section>
 <footer><a href="index.html">All topics</a> · Next: <a href="sorting.html">Sorting</a></footer>
 </main>

@@ -1,0 +1,23 @@
+/* Topic checklists and progress backup. Shared by every page, including the hand-written Big-O page. */
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.step-row{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.step-row input{width:20px;height:20px;margin:0;accent-color:var(--easy,var(--good))}
+.step-row label{min-width:0;cursor:pointer}
+.step-row.done label{color:var(--muted)}
+.step-row.done:not(.final) label{text-decoration:line-through}
+.step-row.final{border-width:2px;border-color:var(--easy,var(--good))}
+.step-row.final label{font-weight:600}
+.step-row.final.done{background:color-mix(in srgb,var(--easy,var(--good)) 14%,var(--surface))}
+.steps.topics .step-row.done{background:color-mix(in srgb,var(--easy,var(--good)) 12%,var(--surface))}
+.steps-count{font:600 .78rem var(--f-mono);color:var(--muted);white-space:nowrap;text-decoration:none}
+.steps-progress{font:600 .9rem var(--f-mono);color:var(--muted);margin:0}
+.chip.chip-steps{text-decoration:none;color:var(--ink)}
+.chip.chip-steps.all{border-color:var(--easy,var(--good));color:var(--easy,var(--good))}
+#checklist .real{background:var(--real-soft,var(--accent-soft));border-radius:10px;padding:14px 16px}
+#checklist .real::before{content:"Real life";display:block;font:700 .7rem/1 var(--f-mono);text-transform:uppercase;letter-spacing:.12em;color:var(--real,var(--accent));margin-bottom:6px}
+#checklist{display:flex;flex-direction:column;gap:14px}
+.backup textarea{width:100%;min-height:90px;font:12px/1.4 var(--f-mono);padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);resize:vertical}
+.backup .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.backup button{font:600 .85rem var(--f-mono);padding:8px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:var(--surface);cursor:pointer}
+.backup button.ghost{background:var(--surface);color:var(--ink);border-color:var(--line)}
+.backup-msg{font-size:.9rem;color:var(--easy,var(--good));min-height:1.2em;margin:0}

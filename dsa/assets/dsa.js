@@ -43,6 +43,70 @@
     total.textContent = n + " of " + all.length + " checklist problems solved";
   }
 
+
+  // ---- topic checklists (keys like dsa:t:<page>:<step>) ----
+  const stepBoxes = [...document.querySelectorAll("input[data-key]")];
+  const paintSteps = () => {
+    stepBoxes.forEach(b => {
+      const on = store.get(b.dataset.key) === "1";
+      b.checked = on;
+      const row = b.closest(".step-row"); if (row) row.classList.toggle("done", on);
+    });
+    document.querySelectorAll("[data-steps]").forEach(el => {
+      const keys = el.dataset.steps.split(",").filter(Boolean);
+      const n = keys.filter(k => store.get(k) === "1").length;
+      const all = n === keys.length;
+      if (el.classList.contains("chip-steps")) { el.textContent = "Checklist " + n + " / " + keys.length + (all ? " ✓" : ""); el.classList.toggle("all", all); }
+      else if (el.classList.contains("steps-count")) el.textContent = n + " / " + keys.length + " steps";
+      else el.textContent = n + " of " + keys.length + " steps done" + (all ? ". Topic complete!" : "");
+    });
+    const overall = document.getElementById("topics-overall");
+    if (overall) {
+      const tops = [...document.querySelectorAll("#topic-checklist input[data-key]")];
+      const n = tops.filter(b => b.checked).length;
+      overall.textContent = n + " of " + tops.length + " topics done";
+    }
+  };
+  stepBoxes.forEach(b => b.addEventListener("change", () => {
+    store.set(b.dataset.key, b.checked ? "1" : null);
+    paintSteps();
+  }));
+  paintSteps();
+  window.addEventListener("storage", e => { if (e.key && e.key.startsWith("dsa:")) location.reload(); });
+
+  // ---- back up / move progress ----
+  const codeBox = document.getElementById("progress-code");
+  if (codeBox) {
+    const msg = document.getElementById("progress-msg");
+    const collect = () => {
+      const o = {};
+      try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && k.startsWith("dsa:") && localStorage.getItem(k) === "1") o[k] = 1; } } catch (e) {}
+      return o;
+    };
+    const countEl = document.getElementById("progress-count");
+    if (countEl) countEl.textContent = Object.keys(collect()).length + " ticks saved in this browser";
+    document.getElementById("progress-copy").addEventListener("click", () => {
+      const code = "DSA1:" + btoa(Object.keys(collect()).sort().join("\n"));
+      codeBox.value = code;
+      const done = () => { msg.textContent = "Copied. Paste it somewhere safe, like a note or an email to yourself."; };
+      try {
+        navigator.clipboard.writeText(code).then(done, () => { codeBox.select(); msg.textContent = "Selected. Press Copy (⌘C / Ctrl+C) to copy it."; });
+      } catch (e) { codeBox.select(); msg.textContent = "Selected. Press Copy (⌘C / Ctrl+C) to copy it."; }
+    });
+    document.getElementById("progress-load").addEventListener("click", () => {
+      const raw = codeBox.value.trim();
+      let keys;
+      try {
+        if (!raw.startsWith("DSA1:")) throw new Error();
+        keys = atob(raw.slice(5)).split("\n").filter(k => /^dsa:[a-z]:[\w\-:]+$/.test(k));
+      } catch (e) { msg.textContent = "That doesn't look like a progress code. It should start with DSA1:"; return; }
+      let added = 0;
+      keys.forEach(k => { if (store.get(k) !== "1") { store.set(k, "1"); added++; } });
+      msg.textContent = "Loaded. Added " + added + " new tick" + (added === 1 ? "" : "s") + "; nothing was removed. Refreshing…";
+      setTimeout(() => location.reload(), 1200);
+    });
+  }
+
   // ---- quiz ----
   const dataEl = document.getElementById("quiz-data");
   const quiz = document.getElementById("quiz");

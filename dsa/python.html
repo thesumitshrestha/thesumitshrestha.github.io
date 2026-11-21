@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="assets/dsa.css">
+<link rel="stylesheet" href="assets/checklist.css">
 </head>
 <body>
 <nav class="topbar" aria-label="Guide navigation"><div class="topbar-in"><a class="home" href="index.html">DSA + System Design Guide</a><span class="pn"><a href="patterns.html">← Pattern finder</a><a href="interview.html">Interview playbook →</a></span></div></nav>
@@ -18,8 +19,8 @@
   <span class="eyebrow">Interview prep</span>
   <h1>Python for coding interviews</h1>
   <p class="lead">The standard library pieces that save the most time in a 45-minute round, plus the Python gotchas that silently break solutions.</p>
-  <div class="meta"><span class="chip">Use anytime</span><span class="chip">10 quiz questions</span></div>
-  <nav class="toc" aria-label="On this page"><a href="#idea">Know your toolbox before the job</a><a href="#collections">The four you'll use weekly</a><a href="#heap-bisect">Priority queues and sorted lookups</a><a href="#everyday">Short idioms worth memorizing</a><a href="#gotchas">Bugs that look like correct code</a><a href="#learn">Learn more</a><a href="#quiz">Quiz</a></nav>
+  <div class="meta"><span class="chip">Use anytime</span><span class="chip">10 quiz questions</span><a class="chip chip-steps" href="#checklist" data-steps="dsa:t:python:read,dsa:t:python:learn,dsa:t:python:quiz,dsa:t:python:done">Checklist</a></div>
+  <nav class="toc" aria-label="On this page"><a href="#idea">Know your toolbox before the job</a><a href="#collections">The four you'll use weekly</a><a href="#heap-bisect">Priority queues and sorted lookups</a><a href="#everyday">Short idioms worth memorizing</a><a href="#gotchas">Bugs that look like correct code</a><a href="#learn">Learn more</a><a href="#quiz">Quiz</a><a href="#checklist">Your checklist for this topic</a></nav>
 </header>
 
 <section id="idea">
@@ -139,6 +140,15 @@ math.gcd(12, 18) == 6;  math.ceil(7 / 2) == 4</code></pre>
   <div class="quiz" id="quiz"></div>
   <p class="score" id="score" aria-live="polite"></p>
   <script type="application/json" id="quiz-data">[{"lvl": "easy", "q": "What does `Counter('aab')['z']` return?", "opts": ["KeyError", "0", "None", "-1"], "a": 1, "why": "Counter returns 0 for missing keys."}, {"lvl": "easy", "q": "Which gives an O(1) pop from the front?", "opts": ["`list.pop(0)`", "`deque.popleft()`", "`list.remove(x)`", "`heapq.heappop`"], "a": 1, "why": "deque is a double-ended queue built for this."}, {"lvl": "easy", "q": "What is `-7 // 2`?", "opts": ["-3", "-4", "-3.5", "3"], "a": 1, "why": "`//` floors toward negative infinity."}, {"lvl": "medium", "q": "What does this print?", "code": "grid = [[0] * 2] * 2\ngrid[0][0] = 1\nprint(grid)", "opts": ["[[1, 0], [0, 0]]", "[[1, 0], [1, 0]]", "[[1, 1], [1, 1]]", "Error"], "a": 1, "why": "Both rows are the same list object."}, {"lvl": "medium", "q": "What does this print after two calls?", "code": "def add(x, items=[]):\n    items.append(x)\n    return items\nadd(1)\nprint(add(2))", "opts": ["[2]", "[1, 2]", "[1]", "Error"], "a": 1, "why": "The default list is created once when the function is defined and shared by every call."}, {"lvl": "medium", "q": "`sorted(['bb', 'a', 'ccc', 'dd'], key=lambda w: (-len(w), w))` gives:", "opts": ["['a', 'bb', 'dd', 'ccc']", "['ccc', 'bb', 'dd', 'a']", "['ccc', 'dd', 'bb', 'a']", "['a', 'ccc', 'bb', 'dd']"], "a": 1, "why": "Longest first; ties ('bb', 'dd') alphabetical."}, {"lvl": "medium", "q": "`list(accumulate([3, 1, 4]))` gives:", "opts": ["[3, 1, 4]", "[3, 4, 8]", "[8]", "[4, 1, 3]"], "a": 1, "why": "Running totals: prefix sums in one call."}, {"lvl": "hard", "q": "Why might `heapq.heappush(h, (dist, node))` crash where `node` is a custom object?", "opts": ["Heaps can't hold tuples", "Equal `dist` values make Python compare the nodes, which may not support `<`", "dist must be an int", "It doesn't crash"], "a": 1, "why": "Insert a unique counter as a tiebreaker: `(dist, count, node)`."}, {"lvl": "hard", "q": "A recursive DFS on a 10⁵-node path graph fails with RecursionError. Best interview response?", "opts": ["Ignore it", "Convert to an iterative stack/BFS, and mention `sys.setrecursionlimit` as a quick workaround", "Switch languages", "Use a heap"], "a": 1, "why": "Python's default limit is about 1,000 frames. Iterative traversal avoids it entirely."}, {"lvl": "hard", "q": "What does `@cache` require of a function's arguments?", "opts": ["They must be integers", "They must be hashable (no lists or dicts)", "Exactly one argument", "Nothing"], "a": 1, "why": "Arguments become dictionary keys. Pass tuples instead of lists, or index into an outer list."}]</script>
+</section>
+
+<section id="checklist">
+  <span class="eyebrow">Track it</span>
+  <h2>Your checklist for this topic</h2>
+  <div class="real"><p>Like a pilot's checklist before takeoff: ticking each step means nothing gets skipped, and you can see at a glance what's left.</p></div>
+  <p class="steps-progress" data-steps="dsa:t:python:read,dsa:t:python:learn,dsa:t:python:quiz,dsa:t:python:done"></p>
+  <ul class="steps"><li class="step-row"><input type="checkbox" id="step-python-read" data-key="dsa:t:python:read"><label for="step-python-read">Read the page, including every real-life example</label></li><li class="step-row"><input type="checkbox" id="step-python-learn" data-key="dsa:t:python:learn"><label for="step-python-learn">Watched or read at least one Learn more resource</label></li><li class="step-row"><input type="checkbox" id="step-python-quiz" data-key="dsa:t:python:quiz"><label for="step-python-quiz">Scored 8 out of 10 or better on the quiz</label></li><li class="step-row final"><input type="checkbox" id="step-python-done" data-key="dsa:t:python:done"><label for="step-python-done">Done with this topic</label></li></ul>
+  <p class="note">Ticks are saved in this browser and shown on the <a href="index.html#topic-checklist">topic checklist</a>. To keep a backup or move them to another device, use <a href="index.html#backup">Back up or move your progress</a>.</p>
 </section>
 <footer><a href="index.html">All topics</a> · Next: <a href="interview.html">Interview playbook</a></footer>
 </main>

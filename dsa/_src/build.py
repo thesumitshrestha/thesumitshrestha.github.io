@@ -33,6 +33,7 @@ HEAD = """<!doctype html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="assets/dsa.css">
+<link rel="stylesheet" href="assets/checklist.css">
 </head>
 <body>
 """
@@ -180,6 +181,70 @@ def sd_lc_html(slug):
 </section>"""
 
 
+NO_CHECKLIST = {"resources"}
+BIGO_STEPS = [("read", "Read the page, including every real-life example"),
+              ("anim", "Played with the growth slider at several sizes"),
+              ("quiz", "Answered the practice questions, most of them right"),
+              ("done", "Done with this topic")]
+
+
+def topic_steps(slug, mod):
+    if slug == "big-o":
+        return BIGO_STEPS
+    if slug in NO_CHECKLIST:
+        return []
+    from learn import LEARN
+    body, is_sd = mod.BODY, slug.startswith("sd-")
+    steps = [("read", "Read the page, including every real-life example")]
+    if "data-anim=" in body:
+        steps.append(("anim", "Played every animation step by step"))
+    if 'class="pattern"' in body and not is_sd:
+        steps.append(("code", "Typed each pattern template from memory"))
+    if is_sd:
+        steps.append(("explain", "Explained each idea out loud in my own words"))
+    if LEARN.get(slug):
+        steps.append(("learn", "Watched or read at least one Learn more resource"))
+    if getattr(mod, "QUIZ", []):
+        steps.append(("quiz", "Scored 8 out of 10 or better on the quiz"))
+    if getattr(mod, "PROBLEMS", []):
+        steps.append(("problems", "Finished the practice list" if is_sd or slug in ("sd-interview",) else "Solved every problem on the list"))
+    steps.append(("done", "Done with this topic"))
+    return steps
+
+
+def step_key(slug, k):
+    return f"dsa:t:{slug}:{k}"
+
+
+def checklist_html(slug, steps):
+    if not steps:
+        return ""
+    rows = "".join(
+        f'<li class="step-row{" final" if k == "done" else ""}"><input type="checkbox" id="step-{slug}-{k}" data-key="{step_key(slug, k)}">'
+        f'<label for="step-{slug}-{k}">{html.escape(label)}</label></li>' for k, label in steps)
+    keys = ",".join(step_key(slug, k) for k, _ in steps)
+    return f"""
+<section id="checklist">
+  <span class="eyebrow">Track it</span>
+  <h2>Your checklist for this topic</h2>
+  <div class="real"><p>Like a pilot's checklist before takeoff: ticking each step means nothing gets skipped, and you can see at a glance what's left.</p></div>
+  <p class="steps-progress" data-steps="{keys}"></p>
+  <ul class="steps">{rows}</ul>
+  <p class="note">Ticks are saved in this browser and shown on the <a href="index.html#topic-checklist">topic checklist</a>. To keep a backup or move them to another device, use <a href="index.html#backup">Back up or move your progress</a>.</p>
+</section>"""
+
+
+def guard_ids(current):
+    """Never let a rebuild drop a checkbox ID that already exists, or saved ticks would be orphaned."""
+    lock = SRC / "ids.lock.json"
+    old = set(json.loads(lock.read_text())) if lock.exists() else set()
+    missing = sorted(old - set(current))
+    if missing and "--allow-remove" not in sys.argv:
+        sys.exit("Refusing to build: these saved-checkbox IDs would disappear and orphan your ticks:\n  "
+                 + "\n  ".join(missing[:20]))
+    lock.write_text(json.dumps(sorted(old | set(current)), indent=0))
+
+
 def quiz_html(mod):
     quiz = getattr(mod, "QUIZ", [])
     if not quiz:
@@ -224,7 +289,9 @@ def page(mod, metas):
     lrn = learn_html(slug)
     body = add_leetcode(slug, mod.BODY)
     sdlc = sd_lc_html(slug)
-    sections = toc(body + sdlc + lrn + probs + qz)
+    steps = topic_steps(slug, mod)
+    chk = checklist_html(slug, steps)
+    sections = toc(body + sdlc + lrn + probs + qz + chk)
     toc_html = '<nav class="toc" aria-label="On this page">' + "".join(
         f'<a href="#{sid}">{t}</a>' for sid, t in sections) + "</nav>"
     chips = [f'<span class="chip">{m["week"]}</span>']
@@ -232,6 +299,9 @@ def page(mod, metas):
         chips.append(f'<span class="chip">{len(ids)} problems</span>')
     if getattr(mod, "QUIZ", []):
         chips.append(f'<span class="chip">{len(mod.QUIZ)} quiz questions</span>')
+    if steps:
+        keys = ",".join(step_key(slug, k) for k, _ in steps)
+        chips.append(f'<a class="chip chip-steps" href="#checklist" data-steps="{keys}">Checklist</a>')
     out = HEAD.format(title=html.escape(m["page_title"]), desc=html.escape(m["blurb"]))
     out += nav(slug, metas)
     out += f"""
@@ -248,6 +318,7 @@ def page(mod, metas):
 {lrn}
 {probs}
 {qz}
+{chk}
 <footer>{nav_footer(slug, metas)}</footer>
 </main>
 <script src="assets/dsa.js"></script>
@@ -256,7 +327,7 @@ def page(mod, metas):
 </html>
 """
     (OUT / f"{slug}.html").write_text(out)
-    return ids
+    return ids, [step_key(slug, k) for k, _ in steps]
 
 
 def nav_footer(slug, metas):
@@ -268,7 +339,7 @@ def nav_footer(slug, metas):
     return s
 
 
-def index(metas, idmap):
+def index(metas, idmap, stepmap):
     tiles = {}
     for slug in ORDER:
         m = metas[slug]
@@ -281,10 +352,37 @@ def index(metas, idmap):
     groups = "".join(
         f'<section id="{re.sub(r"[^a-z]+", "-", g.lower()).strip("-")}"><h2>{g}</h2><div class="grid">{"".join(t)}</div></section>'
         for g, t in tiles.items())
-    body = (SRC / "index_body.html").read_text().replace("<!--GROUPS-->", groups)
+    rows_by_group = {}
+    for slug in ORDER:
+        keys = stepmap.get(slug)
+        if not keys:
+            continue
+        m = metas[slug]
+        rows_by_group.setdefault(m["group"], []).append(
+            f'<li class="step-row"><input type="checkbox" id="topic-{slug}" data-key="{step_key(slug, "done")}">'
+            f'<label for="topic-{slug}"><a href="{slug}.html">{html.escape(m["title"])}</a></label>'
+            f'<a class="steps-count" href="{slug}.html#checklist" data-steps="{",".join(keys)}"></a></li>')
+    checklist = "".join(f'<h3>{g}</h3><ul class="steps topics">{"".join(r)}</ul>' for g, r in rows_by_group.items())
+    body = (SRC / "index_body.html").read_text().replace("<!--GROUPS-->", groups).replace("<!--CHECKLIST-->", checklist)
     out = HEAD.format(title="DSA + System Design Guide", desc="Data structures, algorithms and system design prep for Google SWE interviews.")
     out += body + '\n<script src="assets/dsa.js"></script>\n</body>\n</html>\n'
     (OUT / "index.html").write_text(out)
+
+
+def patch_bigo():
+    """Add the checklist to the hand-written Big-O page, between markers, so rebuilding is safe."""
+    f = OUT / "big-o.html"
+    s = f.read_text()
+    block = ("<!--CHECKLIST-START-->" + checklist_html("big-o", BIGO_STEPS)
+             + '\n<link rel="stylesheet" href="assets/checklist.css"><script src="assets/dsa.js" defer></script><!--CHECKLIST-END-->')
+    if "<!--CHECKLIST-START-->" in s:
+        s = re.sub(r"<!--CHECKLIST-START-->.*?<!--CHECKLIST-END-->", lambda _: block, s, flags=re.S)
+    else:
+        anchor = '<section>\n  <span class="eyebrow">Avoid these</span>'
+        i = s.index(anchor)
+        end = s.index("</section>", i) + len("</section>")
+        s = s[:end] + "\n\n" + block + s[end:]
+    f.write_text(s)
 
 
 def main():
@@ -296,8 +394,13 @@ def main():
         check(mod)
         mods[slug] = mod
         metas[slug] = mod.META
-    idmap = {slug: page(mod, metas) for slug, mod in mods.items()}
-    index(metas, idmap)
+    built = {slug: page(mod, metas) for slug, mod in mods.items()}
+    idmap = {k: v[0] for k, v in built.items()}
+    stepmap = {k: v[1] for k, v in built.items() if v[1]}
+    stepmap["big-o"] = [step_key("big-o", k) for k, _ in BIGO_STEPS]
+    patch_bigo()
+    index(metas, idmap, stepmap)
+    guard_ids([i for v in idmap.values() for i in v] + [k for v in stepmap.values() for k in v])
     print("built", len(mods), "topic pages + index;",
           sum(len(v) for v in idmap.values()), "problems,",
           sum(len(getattr(m, "QUIZ", [])) for m in mods.values()), "quiz questions")
