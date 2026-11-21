@@ -1,0 +1,19 @@
+/* Standard quiz styles for the hand-written Big-O page (topic pages get these from dsa.css). */
+#quiz .qbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+#quiz .filters{display:flex;flex-wrap:wrap;gap:6px}
+#quiz .filters button,#quiz .btn{font:600 .82rem var(--f-mono);padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+#quiz .filters button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+#quiz .quiz{display:grid;gap:14px}
+#quiz .q{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:12px}
+#quiz .q-top{display:flex;gap:8px;align-items:center}
+#quiz .q-text{font-weight:500;margin:0}
+#quiz .opts{display:grid;gap:8px}
+#quiz .opts button{text-align:left;font:500 .93rem/1.4 var(--f-body);padding:9px 12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+#quiz .opts button.right{background:var(--good);border-color:var(--good);color:var(--surface)}
+#quiz .opts button.wrong{border-color:var(--bad);color:var(--bad)}
+#quiz .opts button:disabled{cursor:default}
+#quiz .explain{font-size:.93rem;border-top:1px dashed var(--line);padding-top:10px;margin:0}
+#quiz .score{font:600 .9rem var(--f-mono);color:var(--muted);margin:0}
+#quiz .lvl{font:700 .7rem var(--f-mono);text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:999px;border:1px solid currentColor}
+#quiz .lvl.easy{color:var(--good)}#quiz .lvl.medium{color:var(--c5)}#quiz .lvl.hard{color:var(--bad)}
+#quiz pre{margin:0}

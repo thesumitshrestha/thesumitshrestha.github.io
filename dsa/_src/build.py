@@ -48,6 +48,33 @@ def load(slug):
     return mod
 
 
+from quiz_dsa import MORE as _QD
+from quiz_sd import MORE as _QS
+EXTRA_QUIZ = {**_QD, **_QS}
+QUIZ_MIN, LEVEL_MIN = 20, 6
+
+
+def check_quiz(slug, quiz):
+    errs = []
+    if len(quiz) < QUIZ_MIN:
+        errs.append(f"quiz has {len(quiz)} questions; needs at least {QUIZ_MIN}")
+    for lv in ("easy", "medium", "hard"):
+        n = sum(q["lvl"] == lv for q in quiz)
+        if n < LEVEL_MIN:
+            errs.append(f"quiz has {n} {lv} questions; needs at least {LEVEL_MIN}")
+    seen = set()
+    for n, q in enumerate(quiz):
+        if not 0 <= q["a"] < len(q["opts"]):
+            errs.append(f"question {n + 1}: answer index out of range")
+        if len(set(q["opts"])) != len(q["opts"]):
+            errs.append(f"question {n + 1}: duplicate options")
+        if q["q"] + q.get("code", "") in seen:
+            errs.append(f"question {n + 1}: duplicate question")
+        seen.add(q["q"] + q.get("code", ""))
+    if errs:
+        sys.exit(f"[{slug}] " + "; ".join(errs))
+
+
 def check(mod):
     """Enforce the house rules: real-life examples everywhere, a balanced quiz."""
     slug = mod.META["slug"]
@@ -64,14 +91,8 @@ def check(mod):
     for k in anims:
         if k not in ANIM_KEYS:
             errs.append("unknown animation key: " + k)
-    quiz = getattr(mod, "QUIZ", [])
-    if quiz:
-        for lv in ("easy", "medium", "hard"):
-            if sum(q["lvl"] == lv for q in quiz) < 3:
-                errs.append(f"quiz needs at least 3 {lv} questions")
-        for n, q in enumerate(quiz):
-            if not 0 <= q["a"] < len(q["opts"]):
-                errs.append(f"quiz question {n + 1}: answer index out of range")
+    if slug not in NO_CHECKLIST:
+        check_quiz(slug, getattr(mod, "QUIZ", []))
     if errs:
         sys.exit(f"[{slug}] " + "; ".join(errs))
 
@@ -369,6 +390,19 @@ def index(metas, idmap, stepmap):
     (OUT / "index.html").write_text(out)
 
 
+def patch_bigo_quiz():
+    quiz = EXTRA_QUIZ["big-o"]
+    check_quiz("big-o", quiz)
+    class _M:  # minimal stand-in for a topic module
+        QUIZ = quiz
+    block = ("<!--QUIZ-START-->" + quiz_html(_M)
+             + '\n<link rel="stylesheet" href="assets/quiz.css"><!--QUIZ-END-->')
+    f = OUT / "big-o.html"
+    s = f.read_text()
+    s = re.sub(r"<!--QUIZ-START-->.*?<!--QUIZ-END-->", lambda _: block, s, flags=re.S)
+    f.write_text(s)
+
+
 def patch_bigo():
     """Add the checklist to the hand-written Big-O page, between markers, so rebuilding is safe."""
     f = OUT / "big-o.html"
@@ -391,6 +425,7 @@ def main():
         if slug in STATIC:
             continue
         mod = load(slug)
+        mod.QUIZ = list(getattr(mod, "QUIZ", [])) + EXTRA_QUIZ.get(slug, [])
         check(mod)
         mods[slug] = mod
         metas[slug] = mod.META
@@ -399,6 +434,7 @@ def main():
     stepmap = {k: v[1] for k, v in built.items() if v[1]}
     stepmap["big-o"] = [step_key("big-o", k) for k, _ in BIGO_STEPS]
     patch_bigo()
+    patch_bigo_quiz()
     index(metas, idmap, stepmap)
     guard_ids([i for v in idmap.values() for i in v] + [k for v in stepmap.values() for k in v])
     print("built", len(mods), "topic pages + index;",

@@ -128,18 +128,24 @@
       (q.code ? "<pre><code>" + esc(q.code) + "</code></pre>" : "") +
       '<div class="opts"></div><p class="explain" hidden></p>';
     const opts = el.querySelector(".opts"), ex = el.querySelector(".explain");
-    q.opts.forEach((o, j) => {
+    // shuffle option order so the right answer isn't always in the same place
+    const order = q.opts.map((_, k) => k);
+    for (let k = order.length - 1; k > 0; k--) { const r = Math.floor(Math.random() * (k + 1)); [order[k], order[r]] = [order[r], order[k]]; }
+    const btnFor = {};
+    order.forEach((j, pos) => {
+      const o = q.opts[j];
       const b = document.createElement("button");
       b.type = "button";
-      b.id = "q" + i + "o" + j;
+      b.id = "q" + i + "o" + pos;
       b.innerHTML = inline(o);
+      btnFor[j] = b;
       b.addEventListener("click", () => {
         if (el.dataset.answered) return;
         el.dataset.answered = "1";
         done++;
         [...opts.children].forEach(c => (c.disabled = true));
         if (j === q.a) { b.classList.add("right"); right++; ex.innerHTML = "<strong>Correct.</strong> " + inline(q.why); }
-        else { b.classList.add("wrong"); opts.children[q.a].classList.add("right"); ex.innerHTML = "<strong>Not quite.</strong> " + inline(q.why); }
+        else { b.classList.add("wrong"); btnFor[q.a].classList.add("right"); ex.innerHTML = "<strong>Not quite.</strong> " + inline(q.why); }
         ex.hidden = false;
         showScore();
       });

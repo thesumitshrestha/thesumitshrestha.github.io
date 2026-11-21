@@ -367,13 +367,17 @@ nums.sort()                    <span class="c"># n log n</span>
   <div class="callout"><strong>What to say in the interview:</strong> "The brute force is O(n²) because of the nested loop. With n up to 10⁵ that's too slow, so I'll use a hashmap to get O(n) time at the cost of O(n) space." That one sentence shows everything they grade.</div>
 </section>
 
-<section>
-  <span class="eyebrow">Tonight's exercise</span>
-  <h2>Practice: name the Big-O</h2>
-  <p>Work out each answer before clicking. Say why out loud, as you would in an interview.</p>
+<!--QUIZ-START-->
+<section id="quiz">
+  <span class="eyebrow">Test yourself</span>
+  <h2>Quiz</h2>
+  <p>Answer before you click. Filter by level; hard questions are the kind of follow-ups Google interviewers ask.</p>
+  <div class="qbar"><div class="filters" id="filters" role="group" aria-label="Filter by difficulty"></div><button class="btn" type="button" id="quiz-reset">Reset quiz</button></div>
   <div class="quiz" id="quiz"></div>
   <p class="score" id="score" aria-live="polite"></p>
+  <script type="application/json" id="quiz-data">[{"lvl": "easy", "q": "What is the Big-O of this function?", "opts": ["O(1)", "O(n)", "O(n²)", "O(log n)"], "a": 1, "why": "One pass over the list with constant work per item. Space is O(1).", "code": "def total(nums):\n    s = 0\n    for x in nums:\n        s += x\n    return s"}, {"lvl": "easy", "q": "What is the Big-O of this function?", "opts": ["O(n)", "O(n log n)", "O(n²)", "O(2ⁿ)"], "a": 2, "why": "Nested loops over the same list: n × n prints.", "code": "def pairs(nums):\n    for a in nums:\n        for b in nums:\n            print(a, b)"}, {"lvl": "easy", "q": "O(2n + 5) simplifies to:", "opts": ["O(2n)", "O(n)", "O(n + 5)", "O(1)"], "a": 1, "why": "Drop constants and lower terms: only the growth shape matters."}, {"lvl": "easy", "q": "Average cost of `d[key]` on a Python dict:", "opts": ["O(1)", "O(log n)", "O(n)", "O(n²)"], "a": 0, "why": "The key is hashed straight to its slot."}, {"lvl": "easy", "q": "Which grows fastest as n gets large?", "opts": ["O(n log n)", "O(n²)", "O(2ⁿ)", "O(n)"], "a": 2, "why": "Exponential beats any polynomial: 2ⁿ doubles with every extra item."}, {"lvl": "easy", "q": "Binary search over 1,000,000 sorted items needs about how many checks?", "opts": ["20", "1,000", "500,000", "1,000,000"], "a": 0, "why": "2²⁰ ≈ 1,048,576, so about 20 halvings."}, {"lvl": "easy", "q": "Extra space used by reversing a list in place with two pointers:", "opts": ["O(n)", "O(1)", "O(log n)", "O(n²)"], "a": 1, "why": "Only two index variables, regardless of list size."}, {"lvl": "medium", "q": "What is the Big-O of this function?", "opts": ["O(log n)", "O(n)", "O(√n)", "O(1)"], "a": 0, "why": "n halves every iteration, so the loop runs about log₂ n times.", "code": "def halve(n):\n    steps = 0\n    while n > 1:\n        n //= 2\n        steps += 1\n    return steps"}, {"lvl": "medium", "q": "What is the Big-O of this function?", "opts": ["O(n)", "O(n log n)", "O(n²)", "O(1)"], "a": 1, "why": "Sorting is O(n log n) and dominates the O(n) scan. A set would make it O(n) time, O(n) space.", "code": "def has_dup(nums):\n    nums.sort()\n    for i in range(1, len(nums)):\n        if nums[i] == nums[i-1]:\n            return True\n    return False"}, {"lvl": "medium", "q": "In an interview, what is the Big-O of building a string like this?", "opts": ["O(n)", "O(n²)", "O(1)", "O(log n)"], "a": 1, "why": "Strings are immutable, so += can copy the whole string each time. CPython sometimes optimizes it, but say O(n²) and use a list + `\"\".join()`.", "code": "def build(s):\n    out = \"\"\n    for ch in s:\n        out += ch.upper()\n    return out"}, {"lvl": "medium", "q": "Two separate (not nested) loops over the same list of n items:", "opts": ["O(n²)", "O(n)", "O(log n)", "O(n log n)"], "a": 1, "why": "n + n = 2n, and constants are dropped."}, {"lvl": "medium", "q": "How many times does this loop run?", "opts": ["O(n)", "O(log n)", "O(n / 3)", "O(√n)"], "a": 1, "why": "i triples each time, so it reaches n after about log₃ n steps, which is still O(log n).", "code": "i = 1\nwhile i < n:\n    i *= 3"}, {"lvl": "medium", "q": "A recursive function goes n levels deep and does O(1) work per call. Its space complexity is:", "opts": ["O(1)", "O(n)", "O(log n)", "O(n²)"], "a": 1, "why": "Each waiting call sits on the call stack."}, {"lvl": "medium", "q": "A LeetCode problem says n ≤ 10⁵. Which complexity should you aim for?", "opts": ["O(n²)", "O(n log n) or better", "O(2ⁿ)", "O(n!)"], "a": 1, "why": "10¹⁰ operations (n²) is far too slow; ~10⁶ (n log n) is fine."}, {"lvl": "hard", "q": "What is the Big-O, where `b` is a list?", "opts": ["O(a + b)", "O(a · b)", "O(a)", "O(b)"], "a": 1, "why": "`x in b` scans b each time. Convert b to a set first and it becomes O(a + b).", "code": "def common(a, b):\n    out = []\n    for x in a:\n        if x in b:\n            out.append(x)\n    return out"}, {"lvl": "hard", "q": "What is the Big-O of generating all subsets this way?", "opts": ["O(n²)", "O(2ⁿ) subsets (O(n · 2ⁿ) to copy them)", "O(n!)", "O(n log n)"], "a": 1, "why": "Each element is in or out: 2ⁿ subsets.", "code": "def subsets(nums):\n    if not nums:\n        return [[]]\n    rest = subsets(nums[1:])\n    return rest + [[nums[0]] + r for r in rest]"}, {"lvl": "hard", "q": "What is the Big-O?", "opts": ["O(n)", "O(n log n)", "O(n²)", "O(n³)"], "a": 2, "why": "The inner loop runs n, n−1, …, 1 times: n(n+1)/2, which is O(n²).", "code": "for i in range(n):\n    for j in range(i, n):\n        work()"}, {"lvl": "hard", "q": "What is the Big-O?", "opts": ["O(n)", "O(n log n)", "O(n²)", "O(log n)"], "a": 1, "why": "The outer loop runs n times; the inner loop doubles j, so it runs log n times each.", "code": "for i in range(n):\n    j = 1\n    while j < n:\n        j *= 2"}, {"lvl": "hard", "q": "`fib(n)` with memoization (`@cache`) runs in:", "opts": ["O(2ⁿ)", "O(n)", "O(n²)", "O(log n)"], "a": 1, "why": "Each fib(k) for k ≤ n is computed once; later calls are lookups."}, {"lvl": "hard", "q": "Appending to a Python list n times costs O(n) total even though resizing copies the list. Why?", "opts": ["Lists never resize", "The capacity grows by a constant factor, so copies happen rarely and add up to O(n) (amortized O(1) per append)", "Python copies in O(1)", "It's actually O(n²)"], "a": 1, "why": "Copies of size 1, 2, 4, … n sum to about 2n."}]</script>
 </section>
+<link rel="stylesheet" href="assets/quiz.css"><!--QUIZ-END-->
 
 <section>
   <span class="eyebrow">Avoid these</span>
@@ -448,60 +452,6 @@ nums.sort()                    <span class="c"># n log n</span>
   slider.addEventListener('input',()=>render());
   slider.value=fromN(20); render(20);
 
-  // quiz
-  const qs=[
-    {code:`def total(nums):
-    s = 0
-    for x in nums:
-        s += x
-    return s`,opts:["O(1)","O(n)","O(n²)"],a:1,why:"One pass over the list with constant work per item. Space is O(1): just one variable."},
-    {code:`def pairs(nums):
-    for a in nums:
-        for b in nums:
-            print(a, b)`,opts:["O(n)","O(n log n)","O(n²)"],a:2,why:"Nested loops over the same list: n × n prints."},
-    {code:`def halve(n):
-    steps = 0
-    while n > 1:
-        n //= 2
-        steps += 1
-    return steps`,opts:["O(log n)","O(n)","O(√n)"],a:0,why:"n is cut in half each iteration, so the loop runs about log₂ n times."},
-    {code:`def common(a, b):
-    out = []
-    for x in a:
-        if x in b:      # b is a list
-            out.append(x)
-    return out`,opts:["O(a + b)","O(a · b)","O(a)"],a:1,why:"The hidden loop: `x in b` scans list b each time. Convert b to a set first and it becomes O(a + b)."},
-    {code:`def has_dup(nums):
-    nums.sort()
-    for i in range(1, len(nums)):
-        if nums[i] == nums[i-1]:
-            return True
-    return False`,opts:["O(n)","O(n log n)","O(n²)"],a:1,why:"Sorting is O(n log n), the scan is O(n). Keep the bigger term: O(n log n). A set would make it O(n) time but O(n) space."},
-    {code:`def build(s):
-    out = ""
-    for ch in s:
-        out += ch.upper()
-    return out`,opts:["O(n)","O(n²)","O(1)"],a:1,why:"Strings are immutable, so each += copies the whole string so far. In practice CPython sometimes optimizes this, but in an interview call it O(n²) and fix it with a list plus \"\".join()."},
-    {code:`def subsets(nums):
-    if not nums:
-        return [[]]
-    rest = subsets(nums[1:])
-    return rest + [[nums[0]] + r for r in rest]`,opts:["O(n²)","O(2ⁿ)","O(n!)"],a:1,why:"Every element is either in or out, giving 2ⁿ subsets; the output alone is that big (times n to copy each list, so O(n · 2ⁿ) to be exact)."}
-  ];
-  const quiz=document.getElementById('quiz'), score=document.getElementById('score'); let right=0, done=0;
-  const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;');
-  qs.forEach((q,i)=>{
-    const el=document.createElement('div');el.className='q';
-    el.innerHTML=`<span class="tag">Question ${i+1} of ${qs.length}</span><pre><code>${esc(q.code)}</code></pre><div class="opts"></div><p class="explain" hidden></p>`;
-    const opts=el.querySelector('.opts'), ex=el.querySelector('.explain'); let answered=false;
-    q.opts.forEach((o,j)=>{const b=document.createElement('button');b.type='button';b.id=`q${i}o${j}`;b.textContent=o;
-      b.addEventListener('click',()=>{ if(answered) return; answered=true; done++;
-        if(j===q.a){b.classList.add('right');right++;ex.innerHTML='<strong>Correct.</strong> '+esc(q.why)}
-        else{b.classList.add('wrong');opts.children[q.a].classList.add('right');ex.innerHTML='<strong>Answer: '+q.opts[q.a]+'.</strong> '+esc(q.why)}
-        ex.hidden=false; score.textContent=`Score: ${right} / ${done} answered`+(done===qs.length?(right>=6?' · Ready for Day 2.':' · Re-read the seven rules, then try again tomorrow.'):'');
-      });opts.appendChild(b)});
-    quiz.appendChild(el);
-  });
 })();
 </script>
 
